@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>IPC机制 | wangyz</title><meta name="description" content="IPC机制"><meta name="keywords" content="IPC"><meta name="author" content="wangyz,milovetingting@gmail.com"><meta name="copyright" content="wangyz"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="IPC机制"><meta name="twitter:description" content="IPC机制"><meta name="twitter:image" content="http://wangyz.cn/images/default.png"><meta property="og:type" content="article"><meta property="og:title" content="IPC机制"><meta property="og:url" content="http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/"><meta property="og:site_name" content="wangyz"><meta property="og:description" content="IPC机制"><meta property="og:image" content="http://wangyz.cn/images/default.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/"><link rel="prev" title="Android Gradle 高级自定义" href="http://wangyz.cn/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC9%E7%AB%A0-Android_Gradle%E9%AB%98%E7%BA%A7%E8%87%AA%E5%AE%9A%E4%B9%89/"><link rel="next" title="Activity的生命周期和启动模式" href="http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: wangyz","link":"链接: http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/","source":"来源: wangyz","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">wangyz</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div></div></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">29</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">27</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">3</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#IPC机制"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">IPC机制</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#1、Android-IPC简介"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">1、Android IPC简介</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#2、Android中的多进程模式"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">2、Android中的多进程模式</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#3、IPC基础概念"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">3、IPC基础概念</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#4、Android中的IPC方式"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">4、Android中的IPC方式</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IPC机制"><span class="toc-number">1.</span> <span class="toc-text">IPC机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、Android-IPC简介"><span class="toc-number">1.1.</span> <span class="toc-text">1、Android IPC简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、Android中的多进程模式"><span class="toc-number">1.2.</span> <span class="toc-text">2、Android中的多进程模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3、IPC基础概念"><span class="toc-number">1.3.</span> <span class="toc-text">3、IPC基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4、Android中的IPC方式"><span class="toc-number">1.4.</span> <span class="toc-text">4、Android中的IPC方式</span></a></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(/images/default.png)"><div id="post-info"><div id="post-title"><div class="posttitle">IPC机制</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-01-01<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-01-01</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Android%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/">Android艺术探索</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">2.2k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 7 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h1 id="IPC机制"><a href="#IPC机制" class="headerlink" title="IPC机制"></a>IPC机制</h1><h2 id="1、Android-IPC简介"><a href="#1、Android-IPC简介" class="headerlink" title="1、Android IPC简介"></a>1、Android IPC简介</h2><blockquote>
+<p>IPC是Inter-Process Communication的缩写，含义为进程间通信或者跨进程通信，是指两个进程之间进行数据交换的过程。</p>
+</blockquote>
+<p>ANR:Application Not Responding,应用无响应。</p>
+<h2 id="2、Android中的多进程模式"><a href="#2、Android中的多进程模式" class="headerlink" title="2、Android中的多进程模式"></a>2、Android中的多进程模式</h2><p>在Android中使用多进程，可以通过给四大组件在AndroidMenifest中指定android:process属性。默认进程的进程名是包名。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">xml</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:process</span>=<span class="string">":remote"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:process</span>=<span class="string">"com.example.ipc.remote"</span>/&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>上述两种声明的区别：</p>
+<blockquote>
+<p>首先，”:”的含义是指要在当前的进程名前附加上当前的包名，即完整进程名为:com.example.ipc:remote,而第二种则为完整的命名方式。其次，进程名以”:”开头的进程属于当前应用的私有进程，其它应用的组件不可以和它跑在同一个进程中，而进程名不以”:”开头的进程属于全局进程，其它应用通过ShareUID方式可以和它跑在同一个进程中。</p>
+</blockquote>
+<blockquote>
+<p>Android系统会为每个应用分配一个唯一的UID，具有相同UID的应用才能共享数据。两个应用通过ShareUID跑在同一个进程，需要这两个应用有相同的ShareUID并且签名相同才可以。在这种情况下，它们可以互相访问对方的私有数据，比如data目录，组件信息等，不管他们是否跑在同一个进程中。如果在同一个进程中，还可以共享内存数据。</p>
+</blockquote>
+<h2 id="3、IPC基础概念"><a href="#3、IPC基础概念" class="headerlink" title="3、IPC基础概念"></a>3、IPC基础概念</h2><p>Serializable接口</p>
+<blockquote>
+<p>静态成员变量属于类不属于对象，所以不会参与序列化过程；用transient关键字标记的成员变量不参与序列化过程。</p>
+<p>可以通过重写writeObject和readObject方法去修改serialize的过程。</p>
+</blockquote>
+<p>Parcelable接口</p>
+<blockquote>
+<p>一个类只要实现这个接口，就可以实现序列化并可以通过Intent和Binder传递。</p>
+</blockquote>
+<p>Serializable是Java中的序列化接口，其使用起来简单但是开销很大，序列化和反序列化过程需要大量I/O操作。Parcelable是Android中的序列化方式，因此更适合在Android平台上，它的缺点是使用起来稍微麻烦，但是效率很高，这是Android推荐的序列化方式，因此首选Parcelable。Parcelable主要用在内存序列化上。如果要将对象序列化到存储设备或将对象序列化后通过网络传输，建议使用Serializable。</p>
+<p>Binder</p>
+<blockquote>
+<p>首先，当客户端发起远程请求时，由于当前线程会被挂起直至服务端进程返回数据，所以如果一个远程方法是很耗时的，那么不能在UI线程中发起此远程请求；其它，由于服务端的Binder方法运行在Binder的线程池中，所以Binder方法不管是否耗时都应该采用同步的方式去实现，因为它已经运行在一个线程中了。</p>
+</blockquote>
+<p><a href="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" data-fancybox="group" data-caption="Binder的工作机制" class="fancybox"><img alt="Binder的工作机制" title="Binder的工作机制" data-src="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>linkToDeath和unlinkToDeath</p>
+<blockquote>
+<p>Binder运行在服务端进程，如果服务端进程由于某些原因异常终止，这个时候我们到服务端的Binder连接断裂（称之为Binder死亡）,会导致我们的远程调用失败。如果我们不知道Binder连接已经断裂，那么客户端的功能就会受到影响。为了解决这个问题，Binder中提供了两个配对的方法linkToDeath和unlinkToDeath,通过linkToDeath，可以给Binder设置一个死亡代理，当Binder死亡时，我们就会收到通知，这个时候就可以重新发起连接请求从而恢复连接。具体设置代理的步骤如下：</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">private</span> IBinder.DeathRecipient mDeathRecipient = <span class="keyword">new</span> IBinder.DeathRecipient()&#123;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">binderDied</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(mBookManager==<span class="keyword">null</span>)&#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		mBookManager.asBinder().unlinkToDeath(mDeathRecipient,<span class="number">0</span>);</span><br><span class="line">		mBookManager=<span class="keyword">null</span>;</span><br><span class="line">		<span class="comment">//<span class="doctag">TODO:</span>重新绑定远程Service</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在客户端绑定远程服务成功后，给binder设置死亡代理:<br>    mService = IMessageBoxManager.Stub.asInterface(binder);<br>    binder.linkToDeath(mDeathRecipient,0);</p>
+<p>通过Binder的isBinderAlive方法可以判断Binder是否死亡。</p>
+<h2 id="4、Android中的IPC方式"><a href="#4、Android中的IPC方式" class="headerlink" title="4、Android中的IPC方式"></a>4、Android中的IPC方式</h2><ul>
+<li><p>使用Bundle</p>
+<blockquote>
+<p>Bundle实现了Parcelable接口，可以方便地在不同的进程间传输。传输的数据必须能被序列化，比如基本类型、实现了Parcelable接口的对象、实现了Serializable接口的对象以及一些Android支持的特殊对象。</p>
+</blockquote>
+</li>
+<li><p>使用文件共享</p>
+</li>
+<li><p>使用Messenger</p>
+<blockquote>
+<p>一次处理一个请求，因此在服务端不用考虑线程同步的问题，因为服务端中不存在并发执行的情形。</p>
+</blockquote>
+</li>
+</ul>
+<p><a href="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" data-fancybox="group" data-caption="Messenger的工作原理" class="fancybox"><img alt="Messenger的工作原理" title="Messenger的工作原理" data-src="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ul>
+<li>使用AIDL</li>
+</ul>
+<p>AIDL支持的数据类型:</p>
+<blockquote>
+<p>基本数据类型(int、long、char、boolean、double等)；</p>
+</blockquote>
+<blockquote>
+<p>String和CharSequence;</p>
+</blockquote>
+<blockquote>
+<p>List:只支持ArrayList,里面每个元素都必须能够被AIDL支持;</p>
+</blockquote>
+<blockquote>
+<p>Map:只支持HashMap,里面的每个元素都必须能够被AIDL支持，包括key和value;</p>
+</blockquote>
+<blockquote>
+<p>Parcelable:所有实现了Parcelable接口的对象;</p>
+</blockquote>
+<blockquote>
+<p>AIDL:所有的AIDL接口本身也可以在AIDL文件中使用。</p>
+</blockquote>
+<p>以上6种数据类型就是AIDL所支持的所有类型，其中自定义的Parcelable对象和AIDL对象必须要显式import进来，不管它们是否和当前的AIDL文件位于同一个包内。</p>
+<p>如果AIDL文件中用到了自定义的Parcelable对象，那么必须新建一个和它同名的AIDL文件，并在其中声明它为Parcelable类型。</p>
+<p>AIDL中除了基本数据类型，其它类型的参数必须标上方向：in、out或者inout，in表示输入型参数，out表示输出型参数，inout表示输入输出型参数。</p>
+<p>AIDL接口只支持方法，不支持声明静态常量。</p>
+<p>为了方便AIDL开发，建议把所有和AIDL相关的类和文件全部放入同一个包中。AIDL的包结构在服务端和客户端要保持一致，否则运行会出错。这是因为客户端需要反序列化服务端中和AIDL接口相关的所有类，如果类的完整路径不一样的话，就无法成功反序列化，程序也无法正常运行。</p>
+<p>CopyOnWriteArrayList支持并发读/写。</p>
+<p>RemoteCallbackList是系统专门提供的用于删除跨进程listener的接口。RemoteCallbackList是一个泛型，支持管理任意的AIDL接口。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RemoteCallbackList</span>&lt;<span class="title">E</span> <span class="keyword">extends</span> <span class="title">IInterface</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>在它的内部有一个Map结构专门用来保存所有的AIDL回调，这个Map的key是IBinder类型，value是Callback类型。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayMap&lt;IBinder,Callback&gt; mCallbacks = <span class="keyword">new</span> ArrayMap&lt;IBinder,Callback&gt;();</span><br></pre></td></tr></table></figure></div>
+
+<p>其中Callback封装了真正的远程listener。当客户端注册listener的时候，它会把这个listener的信息存入mCallbacks中，其中Key和value分别通过下面的方式获得：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IBinder key = listener.asBinder();</span><br><span class="line">Callback value = <span class="keyword">new</span> Callback(listener,cookie);</span><br></pre></td></tr></table></figure></div>
+
+<p>当客户端解注册的时候，只要遍历服务端所有的listener,找出那个和解注册listener具有相同Binder对象的服务端listener并把它删除就可以了。当客户端进程终止后，RemoteCallbackList能够自动移除客户端所注册的listener。RemoteCallbackList内部自动实现了线程同步的功能，所以使用它来注册和解注册时，不需要做额外的线程同步工作。</p>
+<p>使用RemoteCallbackList,有一点需要注意。我们无法像操作List一样去操作它，尽管它的名字中也带个List，但是它并不是一个List。遍历RemoteCallbackList，必须要按照下面的方式进行，其中beginBroadcast和finishBroadcast必须配对使用，哪怕我们仅仅是想要获取RemoteCallbackList的元素个数。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">final</span> <span class="keyword">int</span> N = mListenerList.beginBroadcast();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;N;i++)&#123;	</span><br><span class="line">	IOnNewBookArrivedListener l = mListenerList.getBroadcastItem(i);</span><br><span class="line">	<span class="keyword">if</span>(l!=<span class="keyword">null</span>)&#123;</span><br><span class="line">		<span class="comment">//TODO</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">mListenerList.finishBroadcast();</span><br></pre></td></tr></table></figure></div>
+
+<p>AIDL中使用权限验证功能</p>
+<blockquote>
+<p>第一种方法：在onBind中进行验证，验证不通过就直接返回null。可以使用permission验证这种验证方式。先在AndroidMenifest中声明所需的权限。</p>
+</blockquote>
+<blockquote>
+<p>定义权限后，就可以在Service的onBind方法做权限验证。</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> check = checkCallingOrSelfPermission(<span class="string">"xx.xx.xx"</span>);</span><br><span class="line">	<span class="keyword">if</span>(check==PackageManager.PERMISSION_DENIED)&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> mBinder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>第二种方法：可以在服务端的onTransact中进行权限验证，如果验证失败，就直接返回false,这样服务端就不会终止执行AIDL中的方法从而达到保护服务端的效果。可以验证permission,也可以验证Uid和Pid。</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code,Parcel data,Parcel reply,<span class="keyword">int</span> flags)</span> <span class="keyword">throws</span> RemoteException</span>&#123;</span><br><span class="line">	<span class="keyword">int</span> check = checkCallingOrSelfPermission(<span class="string">"xx.xx.xx"</span>);</span><br><span class="line">	<span class="keyword">if</span>(check==PackageManager.PERMISSION_DENIED)&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	String packageName = <span class="keyword">null</span>;</span><br><span class="line">	String[] packages = getPackageManager().getPackgesForUid(getCallingUid());</span><br><span class="line">	<span class="keyword">if</span>(packages!=<span class="keyword">null</span>&amp;&amp;packages.length&gt;<span class="number">0</span>)&#123;</span><br><span class="line">		packageName = packages[<span class="number">0</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(!packageName.startWith(<span class="string">"xx.xx"</span>))&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">super</span>.onTransact(code,data,reply,flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>使用ContentProvider</li>
+</ul>
+<blockquote>
+<p>ContentProvider的onCreate方法运行在主线程，其它query、getType、insert、delete、update方法运行在Binder线程池中。需要注意，query、update、insert、delete四大方法存在多线程并发访问，因此方法内部要做好线程同步。</p>
+</blockquote>
+<ul>
+<li>使用Socket</li>
+</ul>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:milovetingting@gmail.com">wangyz</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/">http://wangyz.cn/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://wangyz.cn">wangyz</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/IPC/">IPC    </a></div><div class="post_share"><div class="social-share" data-image="/images/default.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC9%E7%AB%A0-Android_Gradle%E9%AB%98%E7%BA%A7%E8%87%AA%E5%AE%9A%E4%B9%89/"><img class="prev_cover lazyload" data-src="/images/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Android Gradle 高级自定义</span></div></a></div><div class="next-post pull_right"><a href="/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/"><img class="next_cover lazyload" data-src="/images/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>Activity的生命周期和启动模式</span></div></a></div></nav></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By wangyz</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script></body></html>
