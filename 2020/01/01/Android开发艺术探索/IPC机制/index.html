@@ -104,7 +104,7 @@ function activateLightMode(){
 <blockquote>
 <p>首先，当客户端发起远程请求时，由于当前线程会被挂起直至服务端进程返回数据，所以如果一个远程方法是很耗时的，那么不能在UI线程中发起此远程请求；其它，由于服务端的Binder方法运行在Binder的线程池中，所以Binder方法不管是否耗时都应该采用同步的方式去实现，因为它已经运行在一个线程中了。</p>
 </blockquote>
-<p><a href="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" data-fancybox="group" data-caption="Binder的工作机制" class="fancybox"><img alt="Binder的工作机制" title="Binder的工作机制" data-src="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="Binder的工作机制" class="fancybox"><img alt="Binder的工作机制" data-src="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" src="/img/loading.gif" class="lazyload" title="Binder的工作机制"></a></p>
 <p>linkToDeath和unlinkToDeath</p>
 <blockquote>
 <p>Binder运行在服务端进程，如果服务端进程由于某些原因异常终止，这个时候我们到服务端的Binder连接断裂（称之为Binder死亡）,会导致我们的远程调用失败。如果我们不知道Binder连接已经断裂，那么客户端的功能就会受到影响。为了解决这个问题，Binder中提供了两个配对的方法linkToDeath和unlinkToDeath,通过linkToDeath，可以给Binder设置一个死亡代理，当Binder死亡时，我们就会收到通知，这个时候就可以重新发起连接请求从而恢复连接。具体设置代理的步骤如下：</p>
@@ -127,7 +127,7 @@ function activateLightMode(){
 </blockquote>
 </li>
 </ul>
-<p><a href="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" data-fancybox="group" data-caption="Messenger的工作原理" class="fancybox"><img alt="Messenger的工作原理" title="Messenger的工作原理" data-src="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="Messenger的工作原理" class="fancybox"><img alt="Messenger的工作原理" data-src="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" src="/img/loading.gif" class="lazyload" title="Messenger的工作原理"></a></p>
 <ul>
 <li>使用AIDL</li>
 </ul>
