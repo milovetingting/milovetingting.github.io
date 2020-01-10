@@ -1,13 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>单例模式</title>
+    <url>/2020/01/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>整个系统只需要拥有一个全局对象，这样有利于我们协调系统整体的行为。</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<p>实现单例模式主要有如下几个关键点：</p>
+<ul>
+<li><p>构造函数不对外开放，一般为private</p>
+</li>
+<li><p>通过一个静态方法或者枚举返回单例类对象</p>
+</li>
+<li><p>确保单例类的对象有且只有一个，尤其是在多线程环境下</p>
+</li>
+<li><p>确保单例类对象在反序列化时不会重新构建对象</p>
+</li>
+</ul>
+<h2 id="单例模式的写法"><a href="#单例模式的写法" class="headerlink" title="单例模式的写法"></a>单例模式的写法</h2><ul>
+<li>饿汉式</li>
+</ul>
+<p>在声明静态对象时已经初始化。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton mInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> mInstance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>懒汉式</li>
+</ul>
+<p>懒汉模式是声明一个静态对象，并且在用户第一次调用getInstance时进行初始化。优点是：单例只在使用时才会被实例化。缺点是：第一次加载需要及时进行实例化，反应稍慢，每次调用时都进行同步，造成不必要的同步开销。这种模式不建议使用。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton mInstance;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mInstance == <span class="keyword">null</span>) &#123;</span><br><span class="line">			mInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> mInstance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>DCL(Double Check Lock)实现单例</li>
+</ul>
+<p>DCL模式实现单例的优点是既能够在需要时才初始化单例，又能够保证线程安全，且单例对象初始化后调用getInstance不进行同步锁。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton mInstance;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mInstance == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">				<span class="keyword">if</span> (mInstance == <span class="keyword">null</span>) &#123;</span><br><span class="line">					mInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> mInstance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>静态内部类单例模式</li>
+</ul>
+<p>当第一次加载Singleton类时并不会初始化sInstance，只有在第一次调用Sington的getInstance方法时才会导致sInstance被初始化。这是推荐使用的单例模式实现方式。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> SingletonHolder.sInstance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton sInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>枚举单例</li>
+</ul>
+<p>在上述的几种单例模式实现中，在反序列化的情况下，它们就会出现重新创建对象。</p>
+<p>序列化可以将一个单例的实例对象写到磁盘，然后再读回来，从而有效地获得一个实例。即使构造函数是私有的，反序列化时依然可以通过特殊的途径去创建一个新的实例。反序列化操作提供了一个特别的钩子函数，类中具有一个私有的readResolve()函数，这个函数可以让开发人员控制对象的反序列化。如果要杜绝对象在反序列化时重新生成对象，必须加入readResolve函数。而枚举则不存在这个问题。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> mInstance;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>对于序列化，有两点需要注意：</p>
+<ol>
+<li><p>可序列化类中的字段类型不是Java的内置类型，那么该字段也需要实现Serializable接口</p>
+</li>
+<li><p>如果调整了可序列化类的内部结构，如新增，去除某个字段，但没有修改serialVersionUID,那么会引发java.io.InvalidClassException异常或者导致某个属性为0或者null。此时的最好方案是直接将serialVersionUID设置为0L，这样即使修改类的内部结构，反序列化也不会报错，只是新修改的字段会为0或者null。</p>
+</li>
+</ol>
+<p>写法简单是枚举单例的最大优点。枚举在Java中与普通的类是一样的，不仅能够有字段，还能够有自己的方法。最重要的是默认枚举实例的创建是线程安全的，并且在任何情况下它都是一个单例。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;</span><br><span class="line"></span><br><span class="line">	INSTANCE;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>使用容器实现单例模式</li>
+</ul>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonManager</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, Object&gt; objMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerService</span><span class="params">(String key, Object instance)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (!objMap.containsKey(key)) &#123;</span><br><span class="line">			objMap.put(key, instance);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getService</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> objMap.get(key);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在程序的初始阶段，将多种单例类型注入到一个统一的管理类中，在使用时根据key获取对象。这种方式使得我们可以管理多种类型的单例，并且在使用时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐藏具体实现，降低耦合度。</p>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>面向对象的六大原则</title>
+    <url>/2020/01/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="面向对象的六大原则"><a href="#面向对象的六大原则" class="headerlink" title="面向对象的六大原则"></a>面向对象的六大原则</h1><h2 id="单一职责原则"><a href="#单一职责原则" class="headerlink" title="单一职责原则"></a>单一职责原则</h2><p>就一个类而言，应该仅有一个引起它变化的原因。</p>
+<h2 id="开闭原则"><a href="#开闭原则" class="headerlink" title="开闭原则"></a>开闭原则</h2><p>软件中的对象(类、模块、函数等)应该对于扩展是开放的，对于修改是封闭的。</p>
+<p>遵循开闭原则的重要手段是通过抽象。</p>
+<h2 id="里氏替换原则"><a href="#里氏替换原则" class="headerlink" title="里氏替换原则"></a>里氏替换原则</h2><p>所有引用基类的地方必须能透明地使用其子类的对象。</p>
+<h2 id="依赖倒置原则"><a href="#依赖倒置原则" class="headerlink" title="依赖倒置原则"></a>依赖倒置原则</h2><blockquote>
+<p>高层模块不应该依赖低层模块，两者都应该依赖其抽象</p>
+<p>抽象不应该依赖细节</p>
+<p>细节应该依赖抽象</p>
+</blockquote>
+<h2 id="接口隔离原则"><a href="#接口隔离原则" class="headerlink" title="接口隔离原则"></a>接口隔离原则</h2><p>类之间的依赖应该建立在最小的接口上。</p>
+<h2 id="迪米特原则"><a href="#迪米特原则" class="headerlink" title="迪米特原则"></a>迪米特原则</h2><p>一个类应该对其他对象有最少的了解。</p>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>四大组件的工作过程</title>
     <url>/2020/01/09/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客</p>
 <p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="四大组件的工作过程"><a href="#四大组件的工作过程" class="headerlink" title="四大组件的工作过程"></a>四大组件的工作过程</h1><p><a href="/images/four_components.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/four_components.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h1 id="四大组件的工作过程"><a href="#四大组件的工作过程" class="headerlink" title="四大组件的工作过程"></a>四大组件的工作过程</h1><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/four_components.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <blockquote>
 <p>四大组件:Activity、Service、BroadcastReceiver、ContentProvider</p>
 </blockquote>
@@ -70,7 +171,7 @@
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Activity <span class="title">performLaunchActivity</span><span class="params">(ActivityClientRecord r, Intent customIntent)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        ContextImpl appContext = createBaseContextForActivity(r);</span><br><span class="line">        Activity activity = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            java.lang.ClassLoader cl = appContext.getClassLoader();</span><br><span class="line">            activity = mInstrumentation.newActivity(</span><br><span class="line">                    cl, component.getClassName(), r.intent);</span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mInstrumentation.onException(activity, e)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                    <span class="string">"Unable to instantiate activity "</span> + component</span><br><span class="line">                    + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Application app = r.packageInfo.makeApplication(<span class="keyword">false</span>, mInstrumentation);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">//...</span></span><br><span class="line">                Window window = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">if</span> (r.mPendingRemoveWindow != <span class="keyword">null</span> &amp;&amp; r.mPreserveWindow) &#123;</span><br><span class="line">                    window = r.mPendingRemoveWindow;</span><br><span class="line">                    r.mPendingRemoveWindow = <span class="keyword">null</span>;</span><br><span class="line">                    r.mPendingRemoveWindowManager = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                appContext.setOuterContext(activity);</span><br><span class="line">                activity.attach(appContext, <span class="keyword">this</span>, getInstrumentation(), r.token,</span><br><span class="line">                        r.ident, app, r.intent, r.activityInfo, title, r.parent,</span><br><span class="line">                        r.embeddedID, r.lastNonConfigurationInstances, config,</span><br><span class="line">                        r.referrer, r.voiceInteractor, window, r.configCallback);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//...</span></span><br><span class="line">                <span class="keyword">if</span> (r.isPersistable()) &#123;</span><br><span class="line">                    mInstrumentation.callActivityOnCreate(activity, r.state, r.persistentState);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    mInstrumentation.callActivityOnCreate(activity, r.state);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!activity.mCalled) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> SuperNotCalledException(</span><br><span class="line">                        <span class="string">"Activity "</span> + r.intent.getComponent().toShortString() +</span><br><span class="line">                        <span class="string">" did not call through to super.onCreate()"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                r.activity = activity;</span><br><span class="line">                r.stopped = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">if</span> (!r.activity.mFinished) &#123;</span><br><span class="line">                    activity.performStart();</span><br><span class="line">                    r.stopped = <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!r.activity.mFinished) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (r.isPersistable()) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (r.state != <span class="keyword">null</span> || r.persistentState != <span class="keyword">null</span>) &#123;</span><br><span class="line">                            mInstrumentation.callActivityOnRestoreInstanceState(activity, r.state,</span><br><span class="line">                                    r.persistentState);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (r.state != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        mInstrumentation.callActivityOnRestoreInstanceState(activity, r.state);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!r.activity.mFinished) &#123;</span><br><span class="line">                    activity.mCalled = <span class="keyword">false</span>;</span><br><span class="line">                    <span class="keyword">if</span> (r.isPersistable()) &#123;</span><br><span class="line">                        mInstrumentation.callActivityOnPostCreate(activity, r.state,</span><br><span class="line">                                r.persistentState);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        mInstrumentation.callActivityOnPostCreate(activity, r.state);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (!activity.mCalled) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> SuperNotCalledException(</span><br><span class="line">                            <span class="string">"Activity "</span> + r.intent.getComponent().toShortString() +</span><br><span class="line">                            <span class="string">" did not call through to super.onPostCreate()"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            r.paused = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">            mActivities.put(r.token, r);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (SuperNotCalledException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> e;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mInstrumentation.onException(activity, e)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                    <span class="string">"Unable to start activity "</span> + component</span><br><span class="line">                    + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> activity;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>Activity启动时序图</p>
-<p><a href="/images/activity_start.jpg" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/activity_start.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/activity_start.jpg" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="Service的工作过程"><a href="#Service的工作过程" class="headerlink" title="Service的工作过程"></a>Service的工作过程</h2><h3 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h3><p>Service的启动是从ContextWrapper的startService开始</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ComponentName <span class="title">startService</span><span class="params">(Intent service)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBase.startService(service);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -102,7 +203,7 @@
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleCreateService</span><span class="params">(CreateServiceData data)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// If we are getting ready to gc after going to the background, well</span></span><br><span class="line">        <span class="comment">// we are back active so skip it.</span></span><br><span class="line">        unscheduleGcIdler();</span><br><span class="line"></span><br><span class="line">        LoadedApk packageInfo = getPackageInfoNoCheck(</span><br><span class="line">                data.info.applicationInfo, data.compatInfo);</span><br><span class="line">        Service service = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            java.lang.ClassLoader cl = packageInfo.getClassLoader();</span><br><span class="line">            service = (Service) cl.loadClass(data.info.name).newInstance();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mInstrumentation.onException(service, e)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                    <span class="string">"Unable to instantiate service "</span> + data.info.name</span><br><span class="line">                    + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (localLOGV) Slog.v(TAG, <span class="string">"Creating service "</span> + data.info.name);</span><br><span class="line"></span><br><span class="line">            ContextImpl context = ContextImpl.createAppContext(<span class="keyword">this</span>, packageInfo);</span><br><span class="line">            context.setOuterContext(service);</span><br><span class="line"></span><br><span class="line">            Application app = packageInfo.makeApplication(<span class="keyword">false</span>, mInstrumentation);</span><br><span class="line">            service.attach(context, <span class="keyword">this</span>, data.info.name, data.token, app,</span><br><span class="line">                    ActivityManager.getService());</span><br><span class="line">            service.onCreate();</span><br><span class="line">            mServices.put(data.token, service);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ActivityManager.getService().serviceDoneExecuting(</span><br><span class="line">                        data.token, SERVICE_DONE_EXECUTING_ANON, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> e.rethrowFromSystemServer();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!mInstrumentation.onException(service, e)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                    <span class="string">"Unable to create service "</span> + data.info.name</span><br><span class="line">                    + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>Service启动的时序图</p>
-<p><a href="/images/service_start.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/service_start.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/service_start.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="Service的绑定过程"><a href="#Service的绑定过程" class="headerlink" title="Service的绑定过程"></a>Service的绑定过程</h3><p>Service的绑定是从ContextWrapper的bindService方法开始的</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">bindService</span><span class="params">(Intent service, ServiceConnection conn,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBase.bindService(service, conn, flags);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -130,7 +231,7 @@
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleBindService</span><span class="params">(BindServiceData data)</span> </span>&#123;</span><br><span class="line">        Service s = mServices.get(data.token);</span><br><span class="line">        <span class="keyword">if</span> (DEBUG_SERVICE)</span><br><span class="line">            Slog.v(TAG, <span class="string">"handleBindService s="</span> + s + <span class="string">" rebind="</span> + data.rebind);</span><br><span class="line">        <span class="keyword">if</span> (s != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                data.intent.setExtrasClassLoader(s.getClassLoader());</span><br><span class="line">                data.intent.prepareToEnterProcess();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!data.rebind) &#123;</span><br><span class="line">                        IBinder binder = s.onBind(data.intent);</span><br><span class="line">                        ActivityManager.getService().publishService(</span><br><span class="line">                                data.token, data.intent, binder);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        s.onRebind(data.intent);</span><br><span class="line">                        ActivityManager.getService().serviceDoneExecuting(</span><br><span class="line">                                data.token, SERVICE_DONE_EXECUTING_ANON, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    ensureJitEnabled();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException ex) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> ex.rethrowFromSystemServer();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!mInstrumentation.onException(s, e)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                            <span class="string">"Unable to bind to service "</span> + s</span><br><span class="line">                            + <span class="string">" with "</span> + data.intent + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>服务的绑定时序图:</p>
-<p><a href="/images/service_bind.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/service_bind.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/service_bind.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="BroadcastReceiver的工作过程"><a href="#BroadcastReceiver的工作过程" class="headerlink" title="BroadcastReceiver的工作过程"></a>BroadcastReceiver的工作过程</h2><h3 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h3><p>广播的注册分为静态注册和动态注册，其中静态注册的广播在应用安装时由系统自动完成注册。这里只分析广播的动态注册过程。动态注册是从ContextWrapper的registerReceiver方法开始的</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Intent <span class="title">registerReceiver</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        BroadcastReceiver receiver, IntentFilter filter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBase.registerReceiver(receiver, filter);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -187,9 +288,9 @@
 
 <p>在run中回调receiver的onReceiver方法</p>
 <p>广播注册的时序图</p>
-<p><a href="/images/broadcast_register.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/broadcast_register.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/broadcast_register.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>广播发送及接收的时序图</p>
-<p><a href="/images/broadcast_post_receive.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/broadcast_post_receive.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/broadcast_post_receive.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="ContentProvider的工作过程"><a href="#ContentProvider的工作过程" class="headerlink" title="ContentProvider的工作过程"></a>ContentProvider的工作过程</h2><p>当ContentProvider所在的进程启动时，ContentProvider会同时启动并被发布到AMS中，这个时候ContentProvider的onCreate要先于Application的onCreate执行。</p>
 <p>应用启动时的入口为ActivityThread的main方法</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        Looper.prepareMainLooper();</span><br><span class="line"></span><br><span class="line">        ActivityThread thread = <span class="keyword">new</span> ActivityThread();</span><br><span class="line">        thread.attach(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (sMainThreadHandler == <span class="keyword">null</span>) &#123;</span><br><span class="line">            sMainThreadHandler = thread.getHandler();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">false</span>) &#123;</span><br><span class="line">            Looper.myLooper().setMessageLogging(<span class="keyword">new</span></span><br><span class="line">                    LogPrinter(Log.DEBUG, <span class="string">"ActivityThread"</span>));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// End of event ActivityThreadMain.</span></span><br><span class="line">        Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);</span><br><span class="line">        Looper.loop();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Main thread loop unexpectedly exited"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
@@ -228,7 +329,7 @@
 
 <p>在publishContentProviders方法中，主要是将provider信息保存到Map中，移除CONTENT_PROVIDER_PUBLISH_TIMEOUT_MSG消息。因为在AMS的attachApplicationLocked方法中发送了一个CONTENT_PROVIDER_PUBLISH_TIMEOUT_MSG消息，以便在超时的时候作出相应的处理。</p>
 <p>ContentProvider的启动时序图</p>
-<p><a href="/images/contentprovider_start.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/contentprovider_start.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/contentprovider_start.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>访问ContentProvider需要通过ContentResolver,ContentResolver是一个抽象类，通过Context获取到的ContentResolver，其实是ContextImpl中的内部类ApplicationContentResolver的一个实例。当ContentProvider所在进程未启动时，第一次访问它就会触发ContentProvider的创建，ContentProvider的进程也会启动。通过ContentProvider的增删改查的任何一个方法都会触发ContentProvider的启动。这里选择query方法来分析。</p>
 <p>ContentProvider的使用方法一般是如下这样：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">context.getContentResolver().query()</span><br></pre></td></tr></table></figure></div>
@@ -260,7 +361,7 @@
 <p>ContentProviderHolder调用getContentProviderImpl方法获取ContentResoverHolder</p>
 <p>获取到Provider后，就会调用ContentProvider的query方法，这个方法是我们自定义ContentProvider时需要实现的。代码就切换到了我们定义的ContentProvider。</p>
 <p>ContentProvider的Query时序图</p>
-<p><a href="/images/contentprovider_query.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/contentprovider_query.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/contentprovider_query.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 ]]></content>
       <categories>
         <category>Android艺术探索</category>
@@ -279,7 +380,7 @@
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="理解Window和WindowManager"><a href="#理解Window和WindowManager" class="headerlink" title="理解Window和WindowManager"></a>理解Window和WindowManager</h1><p><a href="/images/window_windowmanager_mind.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/window_windowmanager_mind.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h1 id="理解Window和WindowManager"><a href="#理解Window和WindowManager" class="headerlink" title="理解Window和WindowManager"></a>理解Window和WindowManager</h1><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/window_windowmanager_mind.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Window表示一个窗口的概念,是一个抽象类，具体实现是PhoneWindow,可以通过WindowManager创建一个Window。WindowManager是外界访问Window的入口，Window具体实现位于WindowManagerService中，WindowManager和WindowManagerService的交互是一个IPC过程。</span><br></pre></td></tr></table></figure></div>
 
 <h2 id="Window和WindowManager"><a href="#Window和WindowManager" class="headerlink" title="Window和WindowManager"></a>Window和WindowManager</h2><p><strong>WindowManager.LayoutParams</strong></p>
@@ -410,7 +511,7 @@
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Hexo-Butterfly-Github-Coding搭建个人博客"><a href="#Hexo-Butterfly-Github-Coding搭建个人博客" class="headerlink" title="Hexo+Butterfly+Github+Coding搭建个人博客"></a>Hexo+Butterfly+Github+Coding搭建个人博客</h1><p><a href="/images/Hexo_mind.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/Hexo_mind.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h1 id="Hexo-Butterfly-Github-Coding搭建个人博客"><a href="#Hexo-Butterfly-Github-Coding搭建个人博客" class="headerlink" title="Hexo+Butterfly+Github+Coding搭建个人博客"></a>Hexo+Butterfly+Github+Coding搭建个人博客</h1><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/Hexo_mind.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>之前用<a href="https://docsify.js.org" target="_blank" rel="noopener">docsify</a>搭建了一个简单的博客，但是docsify主题较少(也可能本人没有找到正确的设置方法⊙﹏⊙‖∣)，没有自己很喜欢的主题。于是，在近期，利用空闲的时间，用<a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>重新搭建了一个<a href="http://www.milovetingting.cn">博客</a>。关于Hexo的具体介绍，可以在其官方网站查看具体的说明。</p>
 <h2 id="搭建Hexo"><a href="#搭建Hexo" class="headerlink" title="搭建Hexo"></a>搭建Hexo</h2><p>搭建Hexo比较简单，按照<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">官方文档</a>的步骤操作即可。这里，简单记录如下：</p>
 <h3 id="安装前提"><a href="#安装前提" class="headerlink" title="安装前提"></a>安装前提</h3><p>安装Hexo需要先安装:</p>
@@ -424,13 +525,13 @@
 <h3 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h3><p>完成以上两个程序安装后，即可使用npm安装Hexo。</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_install.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_install.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_install.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>以Windows环境为例，打开CMD命令窗口，定位到需要存放md的文件夹路径下，如:C:\Blog,执行以下命令:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_init.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_init.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_init.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>命令执行完成后，将在C:\Blog\下生成相应的文件，目录如下：</p>
-<p><a href="/images/hexo_dir.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_dir.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_dir.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line"></span><br><span class="line">|-- _config.yml</span><br><span class="line"></span><br><span class="line">|-- package.json</span><br><span class="line"></span><br><span class="line">|-- scaffods</span><br><span class="line"></span><br><span class="line">|-- source</span><br><span class="line"></span><br><span class="line">    |-- _drafts</span><br><span class="line"></span><br><span class="line">    |-- _posts</span><br><span class="line"></span><br><span class="line">|-- themes</span><br></pre></td></tr></table></figure></div>
 
 <p>主要关注以下目录及文件:</p>
@@ -443,24 +544,24 @@
 <h3 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h3><p>可通过以下命令生成静态页面:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_g.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_g.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_g.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>会在根目录C:\Blog\下生成public文件夹，里面包含相应的html页面。</p>
-<p><a href="/images/hexo_public1.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_public1.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/hexo_public2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_public2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_public1.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_public2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h3><p>可通过以下命令启动服务器:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_s.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_s.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_s.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>打开浏览器，输入网址: <a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> ，即可看到hexo生成的静态页面。</p>
-<p><a href="/images/hexo_preview.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_preview.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_preview.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="应用Butterfly主题"><a href="#应用Butterfly主题" class="headerlink" title="应用Butterfly主题"></a>应用Butterfly主题</h2><p>默认的主题可能并不是我们想要的效果，那么就可以通过更换主题来实现。可以在官网的<a href="https://hexo.io/themes/" target="_blank" rel="noopener">主题页面</a>选择想要的主题。这里，选择Butterfly主题来应用。</p>
 <p>Butterfly主页的展示页面：<a href="https://jerryc.me" target="_blank" rel="noopener">https://jerryc.me</a> ,对应的文档页面为:<a href="https://jerryc.me/posts/21cfbf15" target="_blank" rel="noopener">https://jerryc.me/posts/21cfbf15</a> </p>
-<p><a href="/images/butterfly_doc.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/butterfly_doc.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/butterfly_doc.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>根据文档说明直接配置主题即可，这里简单记录如下：</p>
 <h3 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h3><p>可通过以下命令安装主题:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone -b master https:&#x2F;&#x2F;github.com&#x2F;jerryc127&#x2F;hexo-theme-butterfly.git themes&#x2F;Butterfly</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/butterfly_install.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/butterfly_install.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/butterfly_install.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="主题应用"><a href="#主题应用" class="headerlink" title="主题应用"></a>主题应用</h3><p>修改站点配置文件_config.yml,把主题修改为Butterfly</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">theme: Butterfly</span><br></pre></td></tr></table></figure></div>
 
@@ -468,44 +569,44 @@
 <p>执行以下指令,以查看应用主题后的效果:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean #清除旧的内容</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_clean.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_clean.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_clean.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g #生成发布用的静态页面</span><br></pre></td></tr></table></figure></div>
 
 <p>如果第一次操作，可能会报以下的错误</p>
-<p><a href="/images/hexo_g_error.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_g_error.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_g_error.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>关于解决方案，文档里已经在最上方列出:</p>
-<p><a href="/images/hexo_g_tip.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_g_tip.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_g_tip.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>按照提示，执行以下命令即可：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install cheerio@0.22.0 --save</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_cheerio.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_cheerio.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_cheerio.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>再次执行生成的指令:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_g2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_g2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_g2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>重新启动服务器:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></div>
 
 <p>刷新网址:<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a></p>
 <p>可以看到，会报以下错误:</p>
-<p><a href="/images/hexo_localhost_error.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_localhost_error.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_localhost_error.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>对应的解决方案可以在Butterfly的<a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener">Github主页</a>看到：</p>
-<p><a href="/images/hexo_localhost_tip.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_localhost_tip.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_localhost_tip.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>安装以下插件即可：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-pug hexo-renderer-stylus</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_renderer.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_renderer.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_renderer.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>再次依次执行：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line"></span><br><span class="line">hexo g</span><br><span class="line"></span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure></div>
 
 <p>刷新<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> ,可以看到更新后的主题:</p>
-<p><a href="/images/hexo_butterfly_review.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_butterfly_review.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/hexo_butterfly_preview2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_butterfly_preview2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_butterfly_review.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_butterfly_preview2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>其它细节设置可以参考Butterfly的<a href="https://jerryc.me/posts/21cfbf15" target="_blank" rel="noopener">文档</a>来配置。</p>
 <h2 id="部署到Github"><a href="#部署到Github" class="headerlink" title="部署到Github"></a>部署到Github</h2><h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>这里假设已经注册过了Github帐户，如果没有，可以去<a href="https://github.com" target="_blank" rel="noopener">Github</a>注册。</p>
 <p>注册好了后，登录Github,创建仓库：点击右上角的+号，选择new repository:</p>
-<p><a href="/images/github_new_repository.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/github_new_repository.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/github_new_repository2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/github_new_repository2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/github_new_repository.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/github_new_repository2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在这里，建议将仓库名设置成以下格式：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">username.github.io</span><br></pre></td></tr></table></figure></div>
 
@@ -517,10 +618,10 @@
 <h3 id="生成公钥"><a href="#生成公钥" class="headerlink" title="生成公钥"></a>生成公钥</h3><p>执行以下命令，然后连续三次回车,生成公钥:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/github_rsa.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/github_rsa.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/github_rsa.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在C盘/用户/用户名/.ssh目录下找到id_rsa.pub文件,用文本编辑工具打开，并复制所有文本内容。在Github页面右上角，点击用户头像-Settings-SSH and GPG keys-New SSH key</p>
-<p><a href="/images/github_add_key.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/github_add_key.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/github_add_key2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/github_add_key2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/github_add_key.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/github_add_key2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>Title可以随意填写，Key需要填写刚才复制的公钥文本内容。</p>
 <p>添加完成后，在控制台输入:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure></div>
@@ -532,20 +633,20 @@
 <p>直接通过hexo来发布到github，需要安装以下插件：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_deployer_git.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_deployer_git.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_deployer_git.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>安装成功后，执行以下命令：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/hexo_d.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_d.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_d.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>刷新github对应的repository页面，即可看到提交的内容：</p>
-<p><a href="/images/git_commit.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/git_commit.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/git_commit.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="配置静态站点"><a href="#配置静态站点" class="headerlink" title="配置静态站点"></a>配置静态站点</h3><p>点击Settings,进入GitHub Pages配置，由于之前新建仓库的时候，仓库名为username.github.io，github已经自己为我们发布了静态的页面。如果不是username.github.io的格式，则需要手动配置。</p>
-<p><a href="/images/git_static_setting.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/git_static_setting.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/git_static_setting2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/git_static_setting2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/git_static_setting.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/git_static_setting2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>打开username.github.io网址，可以看到之前的配置已经生效。</p>
 <p><font color="red">请注意，文中所有的”username”请换成自己对应的用户名</font></p>
-<p><a href="/images/hexo_pub.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_pub.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/hexo_pub2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/hexo_pub2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_pub.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/hexo_pub2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="部署到Coding"><a href="#部署到Coding" class="headerlink" title="部署到Coding"></a>部署到Coding</h2><p>部署到Coding和部署到Github的过程大同小异，这里不再详细说明。</p>
 <h3 id="创建仓库-1"><a href="#创建仓库-1" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>注册<a href="https://coding.net" target="_blank" rel="noopener">Coding</a>，登录后新建仓库。</p>
 <h3 id="配置Git-1"><a href="#配置Git-1" class="headerlink" title="配置Git"></a>配置Git</h3><p>如果之前已经部署到了Github，那么则不需要再次执行配置Git。</p>
@@ -560,66 +661,66 @@
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure></div>
 
 <p>在coding对应的项目页面刷新即可看到新的提交。</p>
-<h3 id="配置静态站点-1"><a href="#配置静态站点-1" class="headerlink" title="配置静态站点"></a>配置静态站点</h3><p><a href="/images/coding_pages.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/coding_pages.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="配置静态站点-1"><a href="#配置静态站点-1" class="headerlink" title="配置静态站点"></a>配置静态站点</h3><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/coding_pages.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在项目所在页面，点击左侧的Pages服务，点击同意协议后，就会配置生成静态应用。</p>
-<p><a href="/images/coding_review.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/coding_review.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/coding_review2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/coding_review2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/coding_review.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/coding_review2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="绑定个人域名"><a href="#绑定个人域名" class="headerlink" title="绑定个人域名"></a>绑定个人域名</h2><p>配置好Github和Coding的静态页面好，已经可以通过网络访问到对应的页面了。如果需要个性化域名，则需要申请对应的域名并绑定到Github和Coding上。</p>
 <h3 id="域名注册"><a href="#域名注册" class="headerlink" title="域名注册"></a>域名注册</h3><p>域名申请，有很多的服务商可以提供相应的服务。由于本人是通过阿里云申请的域名，下面以阿里云的域名配置为例，来说明域名的绑定。</p>
 <h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>登录阿里云的控制台，点击左侧菜单-域名，进入域名管理页面。</p>
-<p><a href="/images/aliyun.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在域名列表中，找到需要解析的域名，点击对应的解析按钮</p>
-<p><a href="/images/aliyun1.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun1.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun1.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>点击”添加记录”</p>
-<p><a href="/images/aliyun2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>首先添加对Github的解析:</p>
 <h4 id="解析-Github"><a href="#解析-Github" class="headerlink" title="@解析-Github"></a>@解析-Github</h4><p>在cmd窗口中，ping之前配置的静态页面地址</p>
-<p><a href="/images/aliyun3.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun3.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>可以获取到对应的ip地址</p>
 <p>编辑如下：</p>
-<p><a href="/images/aliyun4.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun4.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>记录类型选择A</p>
 <p>主机记录输入@</p>
 <p>解析线路选择境外,因为我们是准备国内访问时访问到Coding，国外访问时访问到Github</p>
 <p>记录值输入刚才获取到的ip地址,如:185.199.110.153</p>
 <p>点击确定</p>
 <h4 id="www解析-Github"><a href="#www解析-Github" class="headerlink" title="www解析-Github"></a>www解析-Github</h4><p>点击添加记录按钮，在打开的新的表单中输入：</p>
-<p><a href="/images/aliyun5.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun5.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>记录类型选择CNME</p>
 <p>主机记录输入www</p>
 <p>解析线路选择境外</p>
 <p>记录值就输入Github的静态页面地址</p>
 <p>点击确定。</p>
 <h4 id="解析-Coding"><a href="#解析-Coding" class="headerlink" title="@解析-Coding"></a>@解析-Coding</h4><p>在cmd窗口中，ping之前配置的静态页面地址</p>
-<p><a href="/images/aliyun6.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun6.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>可以获取到对应的ip地址</p>
 <p>编辑如下：</p>
-<p><a href="/images/aliyun7.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun7.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun7.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>记录类型选择A</p>
 <p>主机记录输入@</p>
 <p>解析线路选择默认</p>
 <p>记录值输入刚才获取到的ip地址,如:150.109.19.98</p>
 <p>点击确定</p>
 <h4 id="www解析-Coding"><a href="#www解析-Coding" class="headerlink" title="www解析-Coding"></a>www解析-Coding</h4><p>点击添加记录按钮，在打开的新的表单中输入：</p>
-<p><a href="/images/aliyun8.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/aliyun8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/aliyun8.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>记录类型选择CNME</p>
 <p>主机记录输入www</p>
 <p>解析线路选择默认</p>
 <p>记录值就输入Coding的静态页面地址</p>
 <p>点击确定。</p>
 <h3 id="配置项目CNAME"><a href="#配置项目CNAME" class="headerlink" title="配置项目CNAME"></a>配置项目CNAME</h3><p>在项目根目录-source目录下，新建CNAME文件,内容输入前面申请的域名，如:<a href="http://www.milovetingting.cn">www.milovetingting.cn</a></p>
-<p><a href="/images/cname.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/cname.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/cname.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>依次执行</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure></div>
 
 <p>提交成功后，就可以在Github和Coding对应的项目根目录下发到提交到的CNAME文件。</p>
 <p>由于提交了CNAME文件，Github的静态页面服务已经自动绑定了新提交的域名：</p>
-<p><a href="/images/cname2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/cname2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/cname2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>由于我之前已经绑定了 <a href="http://www.milovetingting.cn">www.milovetingting.cn</a> ,所以这里演示时会提示不能重复绑定。如果没有绑定过重复域名，则会立即生效。</p>
 <p>Coding的个人域名绑定，在提交CNAME后，还需要再去设置才能生效</p>
-<p><a href="/images/cname3.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/cname3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/cname3.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在Pages服务，点击右侧的设置图标进行具体的设置：</p>
-<p><a href="/images/cname4.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/cname4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/cname4.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>在绑定新域名中输入申请的域名，点击绑定。</p>
 <h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>其实，关于Hexo搭建博客的文章，网上还是比较多的。写这篇文章的主要目标，是记录此次搭建博客的过程，便于后续再次部署时查找资料，也希望能帮助到有需要的人。</p>
 <p>END</p>
@@ -912,35 +1013,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Android Gradle 插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
-<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
-<p>App插件id: com.android.application</p>
-<p>Library插件id: com.android.library</p>
-<p>Test插件id: com.android.test</p>
-<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置好后，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
-<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
-<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
-<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android动画</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Android%E5%8A%A8%E7%94%BB/</url>
     <content><![CDATA[<blockquote>
@@ -996,6 +1068,35 @@
       </categories>
       <tags>
         <tag>动画</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android Gradle 插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
+<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
+<p>App插件id: com.android.application</p>
+<p>Library插件id: com.android.library</p>
+<p>Test插件id: com.android.test</p>
+<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
+<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
+<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
+<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -1120,87 +1221,6 @@
       </tags>
   </entry>
   <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Gradle插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -1284,82 +1304,84 @@
       </tags>
   </entry>
   <entry>
-    <title>View的工作原理</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
-<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
-<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
-<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
-<p><a href="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" title="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
-<p>SpecMode有三类，如下所示：</p>
-<p><strong>UNSPECIFIED</strong></p>
-<blockquote>
-<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
 </blockquote>
-<p><strong>EXACTLY</strong></p>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
 <blockquote>
-<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
 </blockquote>
-<p><strong>AT_MOST</strong></p>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
 <blockquote>
-<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
 </blockquote>
-<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
-<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
-<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
-<p><a href="/images/performTraversals%E6%B5%81%E7%A8%8B.png" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" title="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
-<p><strong>View的measure过程</strong></p>
-<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
-<p><strong>ViewGroup的measure过程</strong></p>
-<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
-<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
-<p>在Activity已启动的时候获取View的宽/高：</p>
-<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
-<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
-<p><strong>2、view.post(runnable)</strong></p>
-<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
-<p><strong>3、ViewTreeObserver</strong></p>
-<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
-<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
-<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
-<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
 <ul>
-<li><p>1、绘制背景-background.draw(canvas)</p>
-</li>
-<li><p>2、绘制自己-onDraw</p>
-</li>
-<li><p>3、绘制children-dispatchDraw</p>
-</li>
-<li><p>4、绘制装饰-onDrawScrollBars</p>
-</li>
+<li>FLAG_ONE_SHOT:</li>
 </ul>
-<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
-<li><strong>继承View重写onDraw方法</strong></li>
-</ul>
-<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
 <ul>
-<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
+<li>FLAG_NO_CREATE:</li>
 </ul>
-<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
 <ul>
-<li>继承特定的View(如TextView)</li>
+<li>FLAG_CANCEL_CURRENT:</li>
 </ul>
-<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
 <ul>
-<li>继承特定的ViewGroup(如LinearLayout)</li>
+<li>FLAG_UPDATE_CURRENT:</li>
 </ul>
-<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
 ]]></content>
       <categories>
         <category>Android艺术探索</category>
       </categories>
       <tags>
-        <tag>View</tag>
+        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -1466,55 +1488,82 @@
       </tags>
   </entry>
   <entry>
-    <title>Gradle构建脚本基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
+    <title>View的工作原理</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
-<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
-<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
-<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
-<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
-<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
-<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>创建任务的另一种方式:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
-<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>另外，一个任务可以依赖多个任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
-<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
-<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
+<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
+<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
+<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
+<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload" title="DecorView的结构"></a></p>
+<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
+<p>SpecMode有三类，如下所示：</p>
+<p><strong>UNSPECIFIED</strong></p>
+<blockquote>
+<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
+</blockquote>
+<p><strong>EXACTLY</strong></p>
+<blockquote>
+<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
+</blockquote>
+<p><strong>AT_MOST</strong></p>
+<blockquote>
+<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
+</blockquote>
+<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
+<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
+<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload" title="performTraversals流程"></a></p>
+<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
+<p><strong>View的measure过程</strong></p>
+<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
+<p><strong>ViewGroup的measure过程</strong></p>
+<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
+<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
+<p>在Activity已启动的时候获取View的宽/高：</p>
+<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
+<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
+<p><strong>2、view.post(runnable)</strong></p>
+<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
+<p><strong>3、ViewTreeObserver</strong></p>
+<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
+<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
+<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
+<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
+<ul>
+<li><p>1、绘制背景-background.draw(canvas)</p>
+</li>
+<li><p>2、绘制自己-onDraw</p>
+</li>
+<li><p>3、绘制children-dispatchDraw</p>
+</li>
+<li><p>4、绘制装饰-onDrawScrollBars</p>
+</li>
+</ul>
+<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
+<li><strong>继承View重写onDraw方法</strong></li>
+</ul>
+<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
+<ul>
+<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
+</ul>
+<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
+<ul>
+<li>继承特定的View(如TextView)</li>
+</ul>
+<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
+<ul>
+<li>继承特定的ViewGroup(如LinearLayout)</li>
+</ul>
+<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
+]]></content>
       <categories>
-        <category>Gradle权威指南</category>
+        <category>Android艺术探索</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
+        <tag>View</tag>
       </tags>
   </entry>
   <entry>
@@ -1525,7 +1574,7 @@
 </blockquote>
 <h1 id="View的事件体系"><a href="#View的事件体系" class="headerlink" title="View的事件体系"></a>View的事件体系</h1><h2 id="1、View基础知识"><a href="#1、View基础知识" class="headerlink" title="1、View基础知识"></a>1、View基础知识</h2><h3 id="1-1、什么是View"><a href="#1-1、什么是View" class="headerlink" title="1.1、什么是View"></a>1.1、什么是View</h3><p>View是Android中所有控件的基类。View是一种界面层的控件的一种抽象，代表了一个控件。除了View,还有ViewGroup，内部包含了许多个控件，即一组View。</p>
 <h3 id="1-2、View的位置参数"><a href="#1-2、View的位置参数" class="headerlink" title="1.2、View的位置参数"></a>1.2、View的位置参数</h3><p>View的位置主要由它的四个顶点来决定，分别对应于View的四个属性：top、left、right、bottom，其中top是左上角纵坐标，left是左上角横坐标，right是右下角横坐标，bottom是右下角纵坐标。这些坐标都是相对于View的父容器来说的。是一种相对坐标。</p>
-<p><a href="/images/View%E7%9A%84%E5%9D%90%E6%A0%87%E4%BD%8D%E7%BD%AE%E5%92%8C%E7%88%B6%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB.png" data-fancybox="group" data-caption="View的坐标位置和父容器的关系" class="fancybox"><img alt="View的坐标位置和父容器的关系" title="View的坐标位置和父容器的关系" data-src="/images/View%E7%9A%84%E5%9D%90%E6%A0%87%E4%BD%8D%E7%BD%AE%E5%92%8C%E7%88%B6%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="View的坐标位置和父容器的关系" class="fancybox"><img alt="View的坐标位置和父容器的关系" data-src="/images/View%E7%9A%84%E5%9D%90%E6%A0%87%E4%BD%8D%E7%BD%AE%E5%92%8C%E7%88%B6%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB.png" src="/img/loading.gif" class="lazyload" title="View的坐标位置和父容器的关系"></a></p>
 <blockquote>
 <p>width = right - left</p>
 <p>height = bottom - top</p>
@@ -1543,7 +1592,7 @@
 <p>y=top+translationY</p>
 </blockquote>
 <p>View在平移的过程中，top和left表示的是原始左上角的位置信息，其值并不会发生改变，此时发生改变的是x、y、transaltionX和translationY这四个参数。</p>
-<p><a href="/images/ScrollX%E5%92%8CScrollY.png" data-fancybox="group" data-caption="ScrollX和ScrollY" class="fancybox"><img alt="ScrollX和ScrollY" title="ScrollX和ScrollY" data-src="/images/ScrollX%E5%92%8CScrollY.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ScrollX和ScrollY" class="fancybox"><img alt="ScrollX和ScrollY" data-src="/images/ScrollX%E5%92%8CScrollY.png" src="/img/loading.gif" class="lazyload" title="ScrollX和ScrollY"></a></p>
 <h3 id="1-3、MotionEvent和ToushSlop"><a href="#1-3、MotionEvent和ToushSlop" class="headerlink" title="1.3、MotionEvent和ToushSlop"></a>1.3、MotionEvent和ToushSlop</h3><p><strong>MotionEvent</strong></p>
 <p>在手指接触屏幕后产生的一系列事件中，典型的事件类型有如下几种:</p>
 <blockquote>
@@ -1650,7 +1699,7 @@
 <li><p>场景3–上面两种情况的嵌套</p>
 </li>
 </ul>
-<p><a href="https://upload-images.jianshu.io/upload_/images/3381990-7a840c64ca54d99a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-fancybox="group" data-caption="03.滑动冲突的场景.png" class="fancybox"><img alt="03.滑动冲突的场景.png" title="03.滑动冲突的场景.png" data-src="https://upload-images.jianshu.io/upload_/images/3381990-7a840c64ca54d99a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="03.滑动冲突的场景.png" class="fancybox"><img alt="03.滑动冲突的场景.png" data-src="https://upload-images.jianshu.io/upload_/images/3381990-7a840c64ca54d99a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" src="/img/loading.gif" class="lazyload" title="03.滑动冲突的场景.png"></a></p>
 <h3 id="5-2、滑动冲突的处理规则"><a href="#5-2、滑动冲突的处理规则" class="headerlink" title="5.2、滑动冲突的处理规则"></a>5.2、滑动冲突的处理规则</h3><p>对于场景1，根据滑动是水平滑动还是竖直滑动来判断到底由谁来拦截事件。</p>
 <p>对于场景2，根据业务规则来决定由谁拦截事件。</p>
 <p>对于场景3，根据业务规则来决定由谁拦截事件。</p>
@@ -1670,6 +1719,58 @@
       <tags>
         <tag>View</tag>
         <tag>事件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Gradle构建脚本基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
+<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
+<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
+<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
+<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
+<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
+<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>创建任务的另一种方式:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
+<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>另外，一个任务可以依赖多个任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
+<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
+<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
@@ -1762,7 +1863,7 @@
 <blockquote>
 <p>首先，当客户端发起远程请求时，由于当前线程会被挂起直至服务端进程返回数据，所以如果一个远程方法是很耗时的，那么不能在UI线程中发起此远程请求；其它，由于服务端的Binder方法运行在Binder的线程池中，所以Binder方法不管是否耗时都应该采用同步的方式去实现，因为它已经运行在一个线程中了。</p>
 </blockquote>
-<p><a href="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" data-fancybox="group" data-caption="Binder的工作机制" class="fancybox"><img alt="Binder的工作机制" title="Binder的工作机制" data-src="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="Binder的工作机制" class="fancybox"><img alt="Binder的工作机制" data-src="/images/Binder%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6.png" src="/img/loading.gif" class="lazyload" title="Binder的工作机制"></a></p>
 <p>linkToDeath和unlinkToDeath</p>
 <blockquote>
 <p>Binder运行在服务端进程，如果服务端进程由于某些原因异常终止，这个时候我们到服务端的Binder连接断裂（称之为Binder死亡）,会导致我们的远程调用失败。如果我们不知道Binder连接已经断裂，那么客户端的功能就会受到影响。为了解决这个问题，Binder中提供了两个配对的方法linkToDeath和unlinkToDeath,通过linkToDeath，可以给Binder设置一个死亡代理，当Binder死亡时，我们就会收到通知，这个时候就可以重新发起连接请求从而恢复连接。具体设置代理的步骤如下：</p>
@@ -1785,7 +1886,7 @@
 </blockquote>
 </li>
 </ul>
-<p><a href="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" data-fancybox="group" data-caption="Messenger的工作原理" class="fancybox"><img alt="Messenger的工作原理" title="Messenger的工作原理" data-src="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="Messenger的工作原理" class="fancybox"><img alt="Messenger的工作原理" data-src="/images/Messenger%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.png" src="/img/loading.gif" class="lazyload" title="Messenger的工作原理"></a></p>
 <ul>
 <li>使用AIDL</li>
 </ul>
@@ -1992,11 +2093,11 @@
 </blockquote>
 <p><strong>Activity会经历如下生命周期:</strong></p>
 <p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
-<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload" title="Activity生命周期"></a></p>
 <h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
 <p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
 </blockquote>
-<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload" title="异常情况下的Activity的重建过程.png"></a></p>
 <h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
 <h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
 <p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
@@ -2078,17 +2179,17 @@
 <h2 id="配置NDK"><a href="#配置NDK" class="headerlink" title="配置NDK"></a>配置NDK</h2><h3 id="下载NDK"><a href="#下载NDK" class="headerlink" title="下载NDK"></a>下载NDK</h3><p>一般在SDK下已经有自带的ndk文件夹，如sdk目录下的ndk-bundle文件夹。</p>
 <a id="more"></a>
 
-<p><a href="/images/ndk.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>如果没有，可以在SDK Manager中下载</p>
-<p><a href="/images/ndk2.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk2.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>下载LLDB、NDK两项</p>
 <p>下载完成后，可以在sdk目录下看到ndk的文件夹</p>
-<p><a href="/images/ndk3.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk3.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>我的电脑-属性-高级系统设置-环境变量</p>
 <p>新建一个ANDROID_NDK变量，配置上ndk文件夹的位置(在这个文件夹下可以看ndk-build.cmd等文件)</p>
-<p><a href="/images/ndk4.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk4.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>然后将这个变量加入到path变量中</p>
-<p><a href="/images/ndk5.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk5.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <h2 id="生成SO库"><a href="#生成SO库" class="headerlink" title="生成SO库"></a>生成SO库</h2><p>新建一个Hello.java文件，里面增加一个本地方法</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">hi</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure></div>
 
@@ -2111,7 +2212,7 @@
 
 <p>执行后生成所需的so文件。</p>
 <h2 id="引用SO库"><a href="#引用SO库" class="headerlink" title="引用SO库"></a>引用SO库</h2><p>在app/src/main目录下新建目录jniLibs,将对应的so复制到该目录下:</p>
-<p><a href="/images/ndk6.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk6.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>在Activity中引入：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"Hello"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -2124,8 +2225,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android Studio</tag>
         <tag>NDK</tag>
+        <tag>Android Studio</tag>
       </tags>
   </entry>
   <entry>
@@ -2171,8 +2272,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android Studio</tag>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
@@ -2231,7 +2332,7 @@
 <li><p>4、<strong>如果任务队列和线程池都已满，则会交给handler饱和策略来处理</strong>。</p>
 </li>
 </ul>
-<p><a href="/images/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AD%96%E7%95%A5.png" data-fancybox="group" data-caption="线程池策略" class="fancybox"><img alt="线程池策略" title="线程池策略" data-src="/images/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AD%96%E7%95%A5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="线程池策略" class="fancybox"><img alt="线程池策略" data-src="/images/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AD%96%E7%95%A5.png" src="/img/loading.gif" class="lazyload" title="线程池策略"></a></p>
 <p>下面通过一个简单的案例来验证以上规则：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">WorkThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">			System.out.println(<span class="string">"Thread: "</span> + name + <span class="string">" work finish"</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Executor executor = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">5</span>, <span class="number">100</span>, <span class="number">60</span>, TimeUnit.SECONDS, <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(<span class="number">5</span>));</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">		WorkThread thread = <span class="keyword">new</span> WorkThread(<span class="string">""</span> + i);</span><br><span class="line">		executor.execute(thread);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -2611,55 +2712,55 @@ Thread: 6 work finish</code></pre><p>前五个线程在核心线程中执行，�
 
 <p><strong>具体新建怎样的Module，可以根据实际业务来调整。这里选择新建”Home”、”Project”、”User”来模拟业务。</strong></p>
 <h2 id="二、增加Flag以便在release和debug模式下切换"><a href="#二、增加Flag以便在release和debug模式下切换" class="headerlink" title="二、增加Flag以便在release和debug模式下切换"></a>二、增加Flag以便在release和debug模式下切换</h2><p><strong>1、在gradle.properties文件中增加一个变量</strong></p>
-<pre><code>isDebug = false</code></pre><p><a href="/images/flag.png" data-fancybox="group" data-caption="flag" class="fancybox"><img alt="flag" title="flag" data-src="/images/flag.png" src="/img/loading.gif" class="lazyload"></a></p>
+<pre><code>isDebug = false</code></pre><p><a href="/img/loading.gif" data-fancybox="group" data-caption="flag" class="fancybox"><img alt="flag" data-src="/images/flag.png" src="/img/loading.gif" class="lazyload" title="flag"></a></p>
 <p><strong>当isDebug为true时，为Debug模式，其它的Module可以作为单独的App运行。当isDebug为false时，为Release模式，其它的Module为Library模式，不能单独运行,此时只有主App可以运行。</strong></p>
 <p><strong>2、修改app的build.gradle文件</strong></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">implementation <span class="keyword">project</span>(<span class="string">':common'</span>)</span><br><span class="line"><span class="keyword">if</span> (!isDebug.toBoolean()) &#123;</span><br><span class="line">    implementation <span class="keyword">project</span>(<span class="string">':home'</span>)</span><br><span class="line">    implementation <span class="keyword">project</span>(<span class="string">':project'</span>)</span><br><span class="line">    implementation <span class="keyword">project</span>(<span class="string">':user'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/app_flag.png" data-fancybox="group" data-caption="app_flag" class="fancybox"><img alt="app_flag" title="app_flag" data-src="/images/app_flag.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="app_flag" class="fancybox"><img alt="app_flag" data-src="/images/app_flag.png" src="/img/loading.gif" class="lazyload" title="app_flag"></a></p>
 <p><strong>3、修改home的build.gradle文件</strong></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">if</span> (isDebug.toBoolean()) &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.library'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/home_flag.png" data-fancybox="group" data-caption="home_flag" class="fancybox"><img alt="home_flag" title="home_flag" data-src="/images/home_flag.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_flag" class="fancybox"><img alt="home_flag" data-src="/images/home_flag.png" src="/img/loading.gif" class="lazyload" title="home_flag"></a></p>
 <p><strong>4、修改project的build.gradle文件</strong></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">if</span> (isDebug.toBoolean()) &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.library'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/project_flag.png" data-fancybox="group" data-caption="project_flag" class="fancybox"><img alt="project_flag" title="project_flag" data-src="/images/project_flag.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="project_flag" class="fancybox"><img alt="project_flag" data-src="/images/project_flag.png" src="/img/loading.gif" class="lazyload" title="project_flag"></a></p>
 <p><strong>5、修改user的build.gradle文件</strong></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">if</span> (isDebug.toBoolean()) &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    apply plugin: <span class="string">'com.android.library'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/user_flag.png" data-fancybox="group" data-caption="user_flag" class="fancybox"><img alt="user_flag" title="user_flag" data-src="/images/user_flag.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="user_flag" class="fancybox"><img alt="user_flag" data-src="/images/user_flag.png" src="/img/loading.gif" class="lazyload" title="user_flag"></a></p>
 <p>为便于各Module单独调试开发，可以在各Module下根据isDebug的变量区分模式。</p>
 <p>切换工程到Project模式下，将原来的AndroidManifest.xml文件移除，在Module的src/main目录下新建debug和release目录，在新建的两个目录下，分别新建AndroidManifest.xml文件。以Home模块为例：</p>
-<p><a href="/images/home_manifest.png" data-fancybox="group" data-caption="home_manifest" class="fancybox"><img alt="home_manifest" title="home_manifest" data-src="/images/home_manifest.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_manifest" class="fancybox"><img alt="home_manifest" data-src="/images/home_manifest.png" src="/img/loading.gif" class="lazyload" title="home_manifest"></a></p>
 <p><strong>Debug模式下的AndroidManifest.xml</strong></p>
-<p><a href="/images/home_debug_manifest.png" data-fancybox="group" data-caption="home_debug_manifest" class="fancybox"><img alt="home_debug_manifest" title="home_debug_manifest" data-src="/images/home_debug_manifest.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_debug_manifest" class="fancybox"><img alt="home_debug_manifest" data-src="/images/home_debug_manifest.png" src="/img/loading.gif" class="lazyload" title="home_debug_manifest"></a></p>
 <p><strong>Release模式下的AndroidManifest.mxl</strong></p>
-<p><a href="/images/home_release_manifest.png" data-fancybox="group" data-caption="home_release_manifest" class="fancybox"><img alt="home_release_manifest" title="home_release_manifest" data-src="/images/home_release_manifest.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_release_manifest" class="fancybox"><img alt="home_release_manifest" data-src="/images/home_release_manifest.png" src="/img/loading.gif" class="lazyload" title="home_release_manifest"></a></p>
 <p>在Home下的build.gradle文件中配置AndroidManifest.xml</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">xml</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        if (isDebug.toBoolean()) &#123;</span><br><span class="line">            manifest.srcFile 'src/main/debug/AndroidManifest.xml'</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            manifest.srcFile 'src/main/release/AndroidManifest.xml'</span><br><span class="line">            java &#123; exclude 'debug/**' &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 
-<p><a href="/images/home_gradle_source.png" data-fancybox="group" data-caption="home_gradle_source" class="fancybox"><img alt="home_gradle_source" title="home_gradle_source" data-src="/images/home_gradle_source.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_gradle_source" class="fancybox"><img alt="home_gradle_source" data-src="/images/home_gradle_source.png" src="/img/loading.gif" class="lazyload" title="home_gradle_source"></a></p>
 <p>其它Module也是相似的处理。</p>
 <h2 id="三、统一管理Module版本号"><a href="#三、统一管理Module版本号" class="headerlink" title="三、统一管理Module版本号"></a>三、统一管理Module版本号</h2><p>1、为便于统一管理版本号，在项目的根目录下的build.gradle文件中增加统一的版本号:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   ext &#123;</span><br><span class="line">    compileSdkVersion = <span class="number">28</span></span><br><span class="line"></span><br><span class="line">    minSdkVersion = <span class="number">21</span></span><br><span class="line">    targetSdkVersion = <span class="number">28</span></span><br><span class="line">    versionCode = <span class="number">1</span></span><br><span class="line">    versionName = <span class="string">"1.0"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/version.png" data-fancybox="group" data-caption="version" class="fancybox"><img alt="version" title="version" data-src="/images/version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="version" class="fancybox"><img alt="version" data-src="/images/version.png" src="/img/loading.gif" class="lazyload" title="version"></a></p>
 <p>2、在其它Module下相应修改</p>
 <p><strong>App模块:</strong></p>
-<p><a href="/images/app_version.png" data-fancybox="group" data-caption="app_version" class="fancybox"><img alt="app_version" title="app_version" data-src="/images/app_version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="app_version" class="fancybox"><img alt="app_version" data-src="/images/app_version.png" src="/img/loading.gif" class="lazyload" title="app_version"></a></p>
 <p><strong>Common模块:</strong></p>
-<p><a href="/images/common_version.png" data-fancybox="group" data-caption="common_version" class="fancybox"><img alt="common_version" title="common_version" data-src="/images/common_version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="common_version" class="fancybox"><img alt="common_version" data-src="/images/common_version.png" src="/img/loading.gif" class="lazyload" title="common_version"></a></p>
 <p><strong>Home模块:</strong></p>
-<p><a href="/images/home_version.png" data-fancybox="group" data-caption="home_version" class="fancybox"><img alt="home_version" title="home_version" data-src="/images/home_version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_version" class="fancybox"><img alt="home_version" data-src="/images/home_version.png" src="/img/loading.gif" class="lazyload" title="home_version"></a></p>
 <p><strong>Project模块:</strong></p>
-<p><a href="/images/project_version.png" data-fancybox="group" data-caption="project_version" class="fancybox"><img alt="project_version" title="project_version" data-src="/images/project_version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="project_version" class="fancybox"><img alt="project_version" data-src="/images/project_version.png" src="/img/loading.gif" class="lazyload" title="project_version"></a></p>
 <p><strong>User模块:</strong></p>
-<p><a href="/images/user_version.png" data-fancybox="group" data-caption="user_version" class="fancybox"><img alt="user_version" title="user_version" data-src="/images/user_version.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="user_version" class="fancybox"><img alt="user_version" data-src="/images/user_version.png" src="/img/loading.gif" class="lazyload" title="user_version"></a></p>
 <h2 id="四、各Module间通信"><a href="#四、各Module间通信" class="headerlink" title="四、各Module间通信"></a>四、各Module间通信</h2><p>为解决各Module间通信的问题，引入ARouter框架。GitHub地址：<a href="https://github.com/alibaba/ARouter" target="_blank" rel="noopener" title="ARouter">ARouter</a></p>
 <p>为避免各Module重复引用，在Common中引用一次，其它Module复用即可。</p>
-<p><a href="/images/common_arouter.png" data-fancybox="group" data-caption="common_arouter" class="fancybox"><img alt="common_arouter" title="common_arouter" data-src="/images/common_arouter.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="common_arouter" class="fancybox"><img alt="common_arouter" data-src="/images/common_arouter.png" src="/img/loading.gif" class="lazyload" title="common_arouter"></a></p>
 <p><strong>注意：由于其它依赖Common的Module也需要使用Arouter，因此在引入时，需要把implementation改为api。如果使用implementation,其它Module会无法使用Arouter。</strong></p>
 <p>其它Module中使用:</p>
 <p>不需要再次implementation,但是还是需要在dependencies增加</p>
@@ -2667,7 +2768,7 @@ Thread: 6 work finish</code></pre><p>前五个线程在核心线程中执行，�
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">javaCompileOptions &#123;</span><br><span class="line">           annotationProcessorOptions &#123;</span><br><span class="line">               arguments = [AROUTER_MODULE_NAME: <span class="keyword">project</span>.getName()]</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>注意：”AROUTER_MODULE_NAME”这个名称，不可以改为其它字符串，否则会编译报错。</p>
-<p><a href="/images/home_arouter.png" data-fancybox="group" data-caption="home_arouter" class="fancybox"><img alt="home_arouter" title="home_arouter" data-src="/images/home_arouter.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_arouter" class="fancybox"><img alt="home_arouter" data-src="/images/home_arouter.png" src="/img/loading.gif" class="lazyload" title="home_arouter"></a></p>
 <p>在Common模块下增加BaseApplication,对ARouter进行初始化。</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isDebugARouter = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (isDebugARouter) &#123;</span><br><span class="line">            ARouter.openLog();</span><br><span class="line">            ARouter.openDebug();</span><br><span class="line">        &#125;</span><br><span class="line">        ARouter.init(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -2677,25 +2778,25 @@ Thread: 6 work finish</code></pre><p>前五个线程在核心线程中执行，�
 </blockquote>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">xml</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">   <span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">package</span>=<span class="string">"com.wangyz.modules"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">".App"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:appComponentFactory</span>=<span class="string">"whateverString"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:roundIcon</span>=<span class="string">"@mipmap/ic_launcher_round"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">"@style/AppTheme"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">tools:replace</span>=<span class="string">"android:appComponentFactory"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.MAIN"</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.LAUNCHER"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
 <p>对于需要被调用的Activity或者Fragment增加注解：</p>
-<p><a href="/images/home_route.png" data-fancybox="group" data-caption="home_route" class="fancybox"><img alt="home_route" title="home_route" data-src="/images/home_route.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_route" class="fancybox"><img alt="home_route" data-src="/images/home_route.png" src="/img/loading.gif" class="lazyload" title="home_route"></a></p>
 <p><strong>可以新建一个常量类，用来保存这些路由地址。这里出于简化，没有再定义这个常量类。</strong></p>
 <h3 id="调用方使用ARouter："><a href="#调用方使用ARouter：" class="headerlink" title="调用方使用ARouter："></a>调用方使用ARouter：</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Fragment fragment = (Fragment) ARouter.getInstance().build(<span class="string">"/home/fragment"</span>).navigation();</span><br><span class="line">mFragmentManager.beginTransaction().replace(R.id.container, fragment).commit();</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/app_arouter.png" data-fancybox="group" data-caption="app_arouter" class="fancybox"><img alt="app_arouter" title="app_arouter" data-src="/images/app_arouter.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="app_arouter" class="fancybox"><img alt="app_arouter" data-src="/images/app_arouter.png" src="/img/loading.gif" class="lazyload" title="app_arouter"></a></p>
 <h2 id="五、ButterKnife的引入"><a href="#五、ButterKnife的引入" class="headerlink" title="五、ButterKnife的引入"></a>五、ButterKnife的引入</h2><p>ButterKnife在单Module中使用时，比较简单，当在多Module下使用时，还是有些需要注意的事项。具体引用步骤如下:</p>
 <p><strong>1、在项目根目录的build.gradle中引入依赖:</strong></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:3.1.4'</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.jakewharton:butterknife-gradle-plugin:9.0.0'</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/root_gradle.png" data-fancybox="group" data-caption="root_gradle" class="fancybox"><img alt="root_gradle" title="root_gradle" data-src="/images/root_gradle.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="root_gradle" class="fancybox"><img alt="root_gradle" data-src="/images/root_gradle.png" src="/img/loading.gif" class="lazyload" title="root_gradle"></a></p>
 <p>在common中引入依赖:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">api <span class="string">'com.jakewharton:butterknife:9.0.0'</span></span><br><span class="line">annotationProcessor <span class="string">'com.jakewharton:butterknife-compiler:9.0.0'</span></span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/common_butterknife.png" data-fancybox="group" data-caption="common_butterknife" class="fancybox"><img alt="common_butterknife" title="common_butterknife" data-src="/images/common_butterknife.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="common_butterknife" class="fancybox"><img alt="common_butterknife" data-src="/images/common_butterknife.png" src="/img/loading.gif" class="lazyload" title="common_butterknife"></a></p>
 <p>在具体使用ButterKnife的Module中引入依赖:</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   apply plugin: <span class="string">'com.jakewharton.butterknife'</span></span><br><span class="line"></span><br><span class="line">annotationProcessor <span class="string">'com.jakewharton:butterknife-compiler:9.0.0'</span></span><br></pre></td></tr></table></figure></div>
 
-<p><a href="/images/home_butterknife_1.png" data-fancybox="group" data-caption="home_butterknife_1" class="fancybox"><img alt="home_butterknife_1" title="home_butterknife_1" data-src="/images/home_butterknife_1.png" src="/img/loading.gif" class="lazyload"></a></p>
-<p><a href="/images/home_butterknife_2.png" data-fancybox="group" data-caption="home_butterknife_2" class="fancybox"><img alt="home_butterknife_2" title="home_butterknife_2" data-src="/images/home_butterknife_2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_butterknife_1" class="fancybox"><img alt="home_butterknife_1" data-src="/images/home_butterknife_1.png" src="/img/loading.gif" class="lazyload" title="home_butterknife_1"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="home_butterknife_2" class="fancybox"><img alt="home_butterknife_2" data-src="/images/home_butterknife_2.png" src="/img/loading.gif" class="lazyload" title="home_butterknife_2"></a></p>
 <p>和ARouter一样，使用ButterKnife的Module虽然不用重复引用butterknife本身这个库，但是注解相关的库还是需要引用。</p>
 <p>具体使用：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@BindView</span>(R2.id.click)</span><br><span class="line">TextView mText;</span><br></pre></td></tr></table></figure></div>
@@ -2784,10 +2885,10 @@ Thread: 6 work finish</code></pre><p>前五个线程在核心线程中执行，�
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">   apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line">apply plugin: <span class="string">'com.didi.virtualapk.plugin'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">28</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.wangyz.virtualapk.plugin"</span></span><br><span class="line">        minSdkVersion <span class="number">21</span></span><br><span class="line">        targetSdkVersion <span class="number">28</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">"1.0"</span></span><br><span class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">    &#125;</span><br><span class="line">    signingConfigs&#123;</span><br><span class="line">        release&#123;</span><br><span class="line">            storeFile <span class="keyword">file</span>(<span class="string">'../../android.keystore'</span>)</span><br><span class="line">            storePassword <span class="string">"android"</span></span><br><span class="line">            keyAlias <span class="string">"android"</span></span><br><span class="line">            keyPassword <span class="string">"android"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">            signingConfig signingConfigs.release</span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">'com.android.support:appcompat-v7:28.+'</span></span><br><span class="line">    implementation <span class="string">'com.android.support.constraint:constraint-layout:1.0.2'</span></span><br><span class="line">    testImplementation <span class="string">'junit:junit:4.12'</span></span><br><span class="line">    androidTestImplementation <span class="string">'com.android.support.test:runner:1.0.1'</span></span><br><span class="line">    androidTestImplementation <span class="string">'com.android.support.test.espresso:espresso-core:3.0.1'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtualApk&#123;</span><br><span class="line">    packageId = <span class="number">0</span>x6f</span><br><span class="line">    targetHost = <span class="string">'../../VirtualAPKHost/app'</span></span><br><span class="line">    applyHostMapping = <span class="keyword">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p><strong>注意：Plugin应用的资源文件不能和宿主的资源文件重名，否则在生成插件APK时会报错:</strong></p>
-<p><a href="/images/error.png" data-fancybox="group" data-caption="error" class="fancybox"><img alt="error" title="error" data-src="/images/error.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="error" class="fancybox"><img alt="error" data-src="/images/error.png" src="/img/loading.gif" class="lazyload" title="error"></a></p>
 <p><strong>建议各模块资源命名以模块名开头。</strong></p>
 <h3 id="4、生成插件APK"><a href="#4、生成插件APK" class="headerlink" title="4、生成插件APK"></a>4、生成插件APK</h3><p>打开gradle窗口，双击assemblePlugin，生成APK</p>
-<p><a href="/images/build.png" data-fancybox="group" data-caption="build" class="fancybox"><img alt="build" title="build" data-src="/images/build.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="build" class="fancybox"><img alt="build" data-src="/images/build.png" src="/img/loading.gif" class="lazyload" title="build"></a></p>
 <p>文件生成目录：app/build/outputs/plugin/release/</p>
 <h2 id="三、在宿主应用中加载插件APK"><a href="#三、在宿主应用中加载插件APK" class="headerlink" title="三、在宿主应用中加载插件APK"></a>三、在宿主应用中加载插件APK</h2><h3 id="1、将生成的插件APK推送-通过网络或者adb等-到手机指定路径，如-sdcard-Plugin-apk。"><a href="#1、将生成的插件APK推送-通过网络或者adb等-到手机指定路径，如-sdcard-Plugin-apk。" class="headerlink" title="1、将生成的插件APK推送(通过网络或者adb等)到手机指定路径，如/sdcard/Plugin.apk。"></a>1、将生成的插件APK推送(通过网络或者adb等)到手机指定路径，如/sdcard/Plugin.apk。</h3><h3 id="2、在宿主应用中加载APK"><a href="#2、在宿主应用中加载APK" class="headerlink" title="2、在宿主应用中加载APK"></a>2、在宿主应用中加载APK</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PLUGIN_PACKAGE_NAME = <span class="string">"com.wangyz.virtualapk.plugin"</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PLUGIN_NAME = <span class="string">"com.wangyz.virtualapk.plugin.MainActivity"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadPlugin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           String pluginPath = Environment.getExternalStorageDirectory().getAbsolutePath().concat(<span class="string">"/Plugin.apk"</span>);</span><br><span class="line">           File plugin = <span class="keyword">new</span> File(pluginPath);</span><br><span class="line">           PluginManager.getInstance(<span class="keyword">this</span>).loadPlugin(plugin);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></div>
 
