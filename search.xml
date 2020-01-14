@@ -1,13 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>AOP之AspectJ的简单使用</title>
-    <url>/2020/01/13/Android/AOP%E4%B9%8BAspectJ%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
+    <title>工厂方法模式</title>
+    <url>/2020/01/14/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客</p>
 <p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="AOP之AspectJ的简单使用"><a href="#AOP之AspectJ的简单使用" class="headerlink" title="AOP之AspectJ的简单使用"></a>AOP之AspectJ的简单使用</h1><h2 id="AOP的定义"><a href="#AOP的定义" class="headerlink" title="AOP的定义"></a>AOP的定义</h2><blockquote>
+<h1 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>工厂方法模式是创建型设计模式之一。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>定义一个用于创建对象的接口，让子类决定实例化哪个类。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>在任何需要生成复杂对象的地方，都可以使用工厂方法模式。用new就可以完成创建的对象无需使用工厂方法模式。</p>
+<h2 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h2><p>定义抽象类Product</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 抽象方法，具体由子类实现</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类ProductA,ProductB</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductA</span> <span class="keyword">extends</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"productA:method"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductB</span> <span class="keyword">extends</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"productB:method"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义抽象工厂Factory</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 抽象工厂方法，具体由子类实现</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Product <span class="title">createProduct</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类FactoryA,FactoryB</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryA</span> <span class="keyword">extends</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Product <span class="title">createProduct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ProductA();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryB</span> <span class="keyword">extends</span> <span class="title">Factory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Product <span class="title">createProduct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ProductB();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Factory factory = <span class="keyword">new</span> FactoryA();</span><br><span class="line">		Product product = factory.createProduct();</span><br><span class="line">		product.method();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">productA:method</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Factory factory = <span class="keyword">new</span> FactoryB();</span><br><span class="line">		Product product = factory.createProduct();</span><br><span class="line">		product.method();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">productB:method</span><br></pre></td></tr></table></figure></div>
+
+<p>这种方式，在Product的子类增加的时候，需要增加Product的实现以及Factory的实现。可以利用反射的方式更简洁地扩展,增加Product的子类时，不需要再增加Factory的子类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractFactory</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 抽象工厂方法，具体由子类实现</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> clz</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">abstract</span> &lt;T extends Product&gt; <span class="function">T <span class="title">createProduct</span><span class="params">(Class&lt;T&gt; clz)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryImpl</span> <span class="keyword">extends</span> <span class="title">AbstractFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> &lt;T extends Product&gt; <span class="function">T <span class="title">createProduct</span><span class="params">(Class&lt;T&gt; clz)</span> </span>&#123;</span><br><span class="line">		Product product = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			product = (Product) Class.forName(clz.getName()).newInstance();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> (T) product;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		AbstractFactory factory = <span class="keyword">new</span> FactoryImpl();</span><br><span class="line">		Product product = factory.createProduct(ProductA<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		product.method();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">productA:method</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		AbstractFactory factory = <span class="keyword">new</span> FactoryImpl();</span><br><span class="line">		Product product = factory.createProduct(ProductB<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		product.method();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">productB:method</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>总的来说，工厂方法模式是一个很好的设计模式，但是缺点也是难以避免的，每次我们为工厂方法模式添加新的产品时就要编写一个新的产品类，同时还要引入抽象层，这必然会导致类结构的复杂化，所以在某些情况比较简单时，是否要使用工厂方法 模式，需要设计者权衡利弊。</p>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>原型模式</title>
+    <url>/2020/01/14/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>原型模式是一个创建型的模式。多用于创建复杂的或者构造耗时的实例，因为这种情况下，复制一个已经存在的实例，可使程序运行更高效。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>用原型实例指定创建对象的种类，并通过复制这些原型创建新的对象。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>类初始化需要消耗非常多的资源</p>
+</li>
+<li><p>通过new产生一个对象需要非常繁琐的数据准备或访问权限</p>
+</li>
+<li><p>一个对象需要提供给其它对象访问，而且各个调用者可能都需要修改值</p>
+</li>
+</ol>
+<blockquote>
+<p>通过实现Cloneable接口的原型模式在调用clone函数构造实例时，并不一定比通过new操作速度快，只有当通过new构造函数对象较为耗时或成本较高时，通过clone方法才能够获得效率上的提升。</p>
+</blockquote>
+<h2 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h2><p>以简单的文档拷贝为例演示简单的原型模式。</p>
+<p>先来演示浅拷贝</p>
+<p>文档定义</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Document</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String mText;</span><br><span class="line">	<span class="keyword">private</span> ArrayList&lt;String&gt; mImages = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getmText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> mText;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setmText</span><span class="params">(String mText)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mText = mText;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getmImages</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> mImages;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addImage</span><span class="params">(String image)</span> </span>&#123;</span><br><span class="line">		mImages.add(image);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showDocument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">		Document doc = (Document) <span class="keyword">super</span>.clone();</span><br><span class="line">		doc.mText = <span class="keyword">this</span>.mText;</span><br><span class="line">		doc.mImages = <span class="keyword">this</span>.mImages;</span><br><span class="line">		<span class="keyword">return</span> doc;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"Document [mText="</span> + mText + <span class="string">", mImages="</span> + mImages + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Document doc1 = <span class="keyword">new</span> Document();</span><br><span class="line">		doc1.setmText(<span class="string">"文档1"</span>);</span><br><span class="line">		doc1.addImage(<span class="string">"图片1"</span>);</span><br><span class="line">		doc1.showDocument();</span><br><span class="line">		Document doc2;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			doc2 = (Document) doc1.clone();</span><br><span class="line">			doc2.setmText(<span class="string">"文档2"</span>);</span><br><span class="line">			doc2.addImage(<span class="string">"图片2"</span>);</span><br><span class="line">			doc2.showDocument();</span><br><span class="line">			doc.showDocument();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>创建文档1，然后显示文档1的内容。然后拷贝了文档1，修改了文档1的内容，然后依次显示文档2，文档1</p>
+<p>输出结果</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Document [mText&#x3D;文档1, mImages&#x3D;[图片1]]</span><br><span class="line">Document [mText&#x3D;文档2, mImages&#x3D;[图片1, 图片2]]</span><br><span class="line">Document [mText&#x3D;文档1, mImages&#x3D;[图片1, 图片2]]</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到,修改拷贝后的文档2的Text，文档1没有受影响，但是修改文档2的Images，文档1也被修改了。</p>
+<p>下面演示深拷贝</p>
+<p>只需要修改clone方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">		Document doc = (Document) <span class="keyword">super</span>.clone();</span><br><span class="line">		doc.mText = <span class="keyword">this</span>.mText;</span><br><span class="line">		<span class="comment">//doc.mImages = this.mImages;</span></span><br><span class="line">		doc.mImages = (ArrayList&lt;String&gt;) <span class="keyword">this</span>.mImages.clone();</span><br><span class="line">		<span class="keyword">return</span> doc;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>再次运行后的输出结果：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Document [mText&#x3D;文档1, mImages&#x3D;[图片1]]</span><br><span class="line">Document [mText&#x3D;文档2, mImages&#x3D;[图片1, 图片2]]</span><br><span class="line">Document [mText&#x3D;文档1, mImages&#x3D;[图片1]]</span><br></pre></td></tr></table></figure></div>
+
+<p>修改文档2的Images并没有影响到文档1。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>原型模式本质上就是对象拷贝，容易出现的问题是深拷贝、浅拷贝。使用原型模式可以解决构建复杂对象的资源消耗问题，能够在某些场景下提升创建对象的效率。还有一个重要用途是保护性拷贝，也就是某个对象对外可能是只读的，为了防止外部对这个只读对象修改，可以通过返回一个对象拷贝的形式来实现只读的限制。</p>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Builder模式</title>
+    <url>/2020/01/14/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Builder%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Builder模式"><a href="#Builder模式" class="headerlink" title="Builder模式"></a>Builder模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>Builder模式是一步一步创建一个复杂对象的创建型模式，它允许用户在不知道内部构建细节的情况下，可以更精细地控制对象的构建流程。该模式是为了将构建复杂对象的过程和它的部件解耦，使得构建过程和部件的表示隔离开来。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>将一个复杂对象的构建与它的表示分离，使得同样的构建可以创建不同的表示。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>相同的方法，不同的执行顺序，产生不同的事件结果时。</p>
+</li>
+<li><p>多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时。</p>
+</li>
+<li><p>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的作用。</p>
+</li>
+<li><p>当初始化一个对象特别复杂，如参数多，且很多参数都具有默认值时。</p>
+</li>
+</ol>
+<h2 id="模式的简单实现"><a href="#模式的简单实现" class="headerlink" title="模式的简单实现"></a>模式的简单实现</h2><p>Computer类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String mCpu;</span><br><span class="line">	<span class="keyword">private</span> String mScreen;</span><br><span class="line">	<span class="keyword">private</span> String mHd;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Computer</span><span class="params">(String cpu, String screen, String hd)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mCpu = cpu;</span><br><span class="line">		<span class="keyword">this</span>.mScreen = screen;</span><br><span class="line">		<span class="keyword">this</span>.mHd = hd;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"Computer [mCpu="</span> + mCpu + <span class="string">", mScreen="</span> + mScreen + <span class="string">", mHd="</span> + mHd + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>ComputerBuilder类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ComputerBuilder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> String mCpu = <span class="string">"cpu"</span>;</span><br><span class="line">		<span class="keyword">private</span> String mScreen = <span class="string">"screen"</span>;</span><br><span class="line">		<span class="keyword">private</span> String mHd = <span class="string">"hd"</span>;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Builder <span class="title">cpu</span><span class="params">(String cpu)</span> </span>&#123;</span><br><span class="line">			mCpu = cpu;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Builder <span class="title">screen</span><span class="params">(String screen)</span> </span>&#123;</span><br><span class="line">			mScreen = screen;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Builder <span class="title">hd</span><span class="params">(String hd)</span> </span>&#123;</span><br><span class="line">			mHd = hd;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Computer <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">new</span> Computer(mCpu, mScreen, mHd);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>默认使用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Computer computer = <span class="keyword">new</span> ComputerBuilder.Builder().build();</span><br><span class="line">		System.out.println(computer);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出日志</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Computer [mCpu&#x3D;cpu, mScreen&#x3D;screen, mHd&#x3D;hd]</span><br></pre></td></tr></table></figure></div>
+
+<p>自定义参数</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Computer computer = <span class="keyword">new</span> ComputerBuilder.Builder().cpu(<span class="string">"CPU"</span>).screen(<span class="string">"SCREEN"</span>).hd(<span class="string">"HD"</span>).build();</span><br><span class="line">		System.out.println(computer);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出日志</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Computer [mCpu&#x3D;CPU, mScreen&#x3D;SCREEN, mHd&#x3D;HD]</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Builder模式在Android开发中较为常用，通常作为配置类的构建器，将配置的构建和表示分离开来，同时也是将配置从目标类中隔离出来，避免过多的setter方法。Builder模式比较常见的实现形式是通过调用链实现，使得代码更简洁、易懂。</p>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android埋点方案的简单实现-AOP之AspectJ</title>
+    <url>/2020/01/13/Android/Android%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0-AOP%E4%B9%8BAspectJ/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android埋点方案的简单实现-AOP之AspectJ"><a href="#Android埋点方案的简单实现-AOP之AspectJ" class="headerlink" title="Android埋点方案的简单实现-AOP之AspectJ"></a>Android埋点方案的简单实现-AOP之AspectJ</h1><h2 id="AOP的定义"><a href="#AOP的定义" class="headerlink" title="AOP的定义"></a>AOP的定义</h2><blockquote>
 <p>AOP为Aspect Oriented Programming的缩写，意为:面向切面编程，通过预编译方式和运行期间动态代理实现程序功能的统一维护的一种技术。</p>
 <p>以上关于AOP的定义引用自百度百科。</p>
 </blockquote>
@@ -80,6 +233,7 @@
       <tags>
         <tag>AOP</tag>
         <tag>AspectJ</tag>
+        <tag>埋点</tag>
       </tags>
   </entry>
   <entry>
@@ -1182,59 +1336,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Drawable</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java Gradle 插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC6%E7%AB%A0-Java_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -1300,6 +1401,140 @@
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
+</blockquote>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
+</blockquote>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
+</blockquote>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
+<ul>
+<li>FLAG_ONE_SHOT:</li>
+</ul>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
+<ul>
+<li>FLAG_NO_CREATE:</li>
+</ul>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
+<ul>
+<li>FLAG_CANCEL_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
+<ul>
+<li>FLAG_UPDATE_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -1383,87 +1618,6 @@
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -1649,58 +1803,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Gradle构建脚本基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
-<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
-<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
-<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
-<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
-<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
-<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>创建任务的另一种方式:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
-<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>另外，一个任务可以依赖多个任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
-<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
-<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>View的事件体系</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BD%93%E7%B3%BB/</url>
     <content><![CDATA[<blockquote>
@@ -1853,6 +1955,58 @@
       <tags>
         <tag>View</tag>
         <tag>事件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Gradle构建脚本基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
+<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
+<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
+<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
+<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
+<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
+<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>创建任务的另一种方式:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
+<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>另外，一个任务可以依赖多个任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
+<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
+<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
@@ -2307,8 +2461,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android Studio</tag>
         <tag>NDK</tag>
+        <tag>Android Studio</tag>
       </tags>
   </entry>
   <entry>
@@ -2354,8 +2508,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android Studio</tag>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
