@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>JVM内存模型 | milovetingting</title><meta name="description" content="JVM内存模型"><meta name="keywords" content="JVM,内存模型"><meta name="author" content="milovetingting,milovetingting@gmail.com"><meta name="copyright" content="milovetingting"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="JVM内存模型"><meta name="twitter:description" content="JVM内存模型"><meta name="twitter:image" content="http://www.milovetingting.cn/images/cover_java.jpg"><meta property="og:type" content="article"><meta property="og:title" content="JVM内存模型"><meta property="og:url" content="http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"><meta property="og:site_name" content="milovetingting"><meta property="og:description" content="JVM内存模型"><meta property="og:image" content="http://www.milovetingting.cn/images/cover_java.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"><link rel="prev" title="JVM垃圾回收与算法" href="http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E7%AE%97%E6%B3%95/"><link rel="next" title="备忘录模式" href="http://www.milovetingting.cn/2020/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8ba6d970b7b738df6e65e31041f9ba3e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: milovetingting","link":"链接: http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/","source":"来源: milovetingting","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"title":"Snackbar.bookmark.title","message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">milovetingting</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">51</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">47</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">6</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#JVM内存模型"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">JVM内存模型</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#前言"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">前言</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">线程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#JVM内存区域"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">JVM内存区域</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#程序计数器-线程私有"><span class="toc_mobile_items-number">1.3.1.</span> <span class="toc_mobile_items-text">程序计数器(线程私有)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#虚拟机栈-线程私有"><span class="toc_mobile_items-number">1.3.2.</span> <span class="toc_mobile_items-text">虚拟机栈(线程私有)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#本地方法区-线程私有"><span class="toc_mobile_items-number">1.3.3.</span> <span class="toc_mobile_items-text">本地方法区(线程私有)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#堆（Heap-线程共享）-运行时数据区"><span class="toc_mobile_items-number">1.3.4.</span> <span class="toc_mobile_items-text">堆（Heap-线程共享）-运行时数据区</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#方法区-永久代（线程共享）"><span class="toc_mobile_items-number">1.3.5.</span> <span class="toc_mobile_items-text">方法区&#x2F;永久代（线程共享）</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#JVM-运行时内存"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">JVM 运行时内存</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#新生代"><span class="toc_mobile_items-number">1.4.1.</span> <span class="toc_mobile_items-text">新生代</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#Eden-区"><span class="toc_mobile_items-number">1.4.1.1.</span> <span class="toc_mobile_items-text">Eden 区</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#ServivorFrom"><span class="toc_mobile_items-number">1.4.1.2.</span> <span class="toc_mobile_items-text">ServivorFrom</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#ServivorTo"><span class="toc_mobile_items-number">1.4.1.3.</span> <span class="toc_mobile_items-text">ServivorTo</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#MinorGC-的过程（复制-gt-清空-gt-互换）"><span class="toc_mobile_items-number">1.4.1.4.</span> <span class="toc_mobile_items-text">MinorGC 的过程（复制-&gt;清空-&gt;互换）</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#老年代"><span class="toc_mobile_items-number">1.4.2.</span> <span class="toc_mobile_items-text">老年代</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#永久代"><span class="toc_mobile_items-number">1.4.3.</span> <span class="toc_mobile_items-text">永久代</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#JAVA8-与元数据"><span class="toc_mobile_items-number">1.4.3.1.</span> <span class="toc_mobile_items-text">JAVA8 与元数据</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JVM内存模型"><span class="toc-number">1.</span> <span class="toc-text">JVM内存模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程"><span class="toc-number">1.2.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM内存区域"><span class="toc-number">1.3.</span> <span class="toc-text">JVM内存区域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#程序计数器-线程私有"><span class="toc-number">1.3.1.</span> <span class="toc-text">程序计数器(线程私有)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#虚拟机栈-线程私有"><span class="toc-number">1.3.2.</span> <span class="toc-text">虚拟机栈(线程私有)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地方法区-线程私有"><span class="toc-number">1.3.3.</span> <span class="toc-text">本地方法区(线程私有)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆（Heap-线程共享）-运行时数据区"><span class="toc-number">1.3.4.</span> <span class="toc-text">堆（Heap-线程共享）-运行时数据区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法区-永久代（线程共享）"><span class="toc-number">1.3.5.</span> <span class="toc-text">方法区&#x2F;永久代（线程共享）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-运行时内存"><span class="toc-number">1.4.</span> <span class="toc-text">JVM 运行时内存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新生代"><span class="toc-number">1.4.1.</span> <span class="toc-text">新生代</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Eden-区"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">Eden 区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ServivorFrom"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">ServivorFrom</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ServivorTo"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">ServivorTo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MinorGC-的过程（复制-gt-清空-gt-互换）"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">MinorGC 的过程（复制-&gt;清空-&gt;互换）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#老年代"><span class="toc-number">1.4.2.</span> <span class="toc-text">老年代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#永久代"><span class="toc-number">1.4.3.</span> <span class="toc-text">永久代</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JAVA8-与元数据"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">JAVA8 与元数据</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(/images/cover_java.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">JVM内存模型</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-02-09<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-02-09</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Java/">Java</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">2.7k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 8 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>本文为学习Java相关知识所作笔记，参考以下资料:<a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide</a> ,感谢原作者的分享!</p>
+</blockquote>
+<p>基本概念</p>
+<blockquote>
+<p>JVM是可运行Java代码的虚拟计算机，包括一套字节码指令集、一组寄存器、一个栈、一个垃圾回收器、堆和一个存储方法域。JVM运行在操作系统之上，它与硬件没有直接交互。</p>
+</blockquote>
+<p>Java源文件，通过编译器，能够生产相应的class文件，也就是字节码文件，字节码文件通过Java虚拟机中的解释器，编译成特定机器上的机器码。</p>
+<p>Java源文件–&gt;编译器–&gt;字节码文件</p>
+<p>字节码文件–&gt;JVM–&gt;机器码</p>
+<p>每一种平台的解释器是不同的，但是实现的虚拟机是相同的，这也就是 Java 为什么能够跨平台的原因了 ，当一个程序从开始运行，这时虚拟机就开始实例化了，多个程序启动就会存在多个虚拟机实例。程序退出或者关闭，则虚拟机实例消亡，多个虚拟机实例之间数据不能共享。</p>
+<p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>这里所说的线程指程序执行过程中的一个线程实体。JVM 允许一个应用并发执行多个线程。Hotspot JVM 中的 Java 线程与原生操作系统线程有直接的映射关系。当线程本地存储、缓冲区分配、同步对象、栈、程序计数器等准备好以后，就会创建一个操作系统原生线程。Java 线程结束，原生线程随之被回收。操作系统负责调度所有线程，并把它们分配到任何可用的 CPU 上。当原生线程初始化完毕，就会调用 Java 线程的 run() 方法。当线程结束时，会释放原生线程和 Java 线程的所有资源。</p>
+<p>Hotspot JVM 后台运行的系统线程主要有下面几个：</p>
+<ol>
+<li><p>虚拟机线程（VM thread）:<br>这个线程等待 JVM 到达安全点操作出现。这些操作必须要在独立的线程里执行，因为当堆修改无法进行时，线程都需要 JVM 位于安全点。这些操作的类型有：stop-the-world 垃圾回收、线程栈 dump、线程暂停、线程偏向锁（biased locking）解除。</p>
+</li>
+<li><p>周期性任务线程: 这线程负责定时器事件（也就是中断），用来调度周期性操作的执行。</p>
+</li>
+<li><p>GC 线程: 这些线程支持 JVM 中不同的垃圾回收活动。</p>
+</li>
+<li><p>编译器线程: 这些线程在运行时将字节码动态编译成本地平台相关的机器码。</p>
+</li>
+<li><p>信号分发线程: 这个线程接收发送到 JVM 的信号并调用适当的 JVM 方法处理。</p>
+</li>
+</ol>
+<h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</p>
+<ol>
+<li><p>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束 而 创建/销毁(在 Hotspot VM 内, 每个线程都与操作系统的本地线程直接映射, 因此这部分内存区域的存/否跟随本地线程的生/死对应)。</p>
+</li>
+<li><p>线程共享区域随虚拟机的启动/关闭而创建/销毁。</p>
+</li>
+<li><p>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用: 在 JDK 1.4 引入的 NIO 提供了基于 Channel 与 Buffer 的 IO 方式, 它可以使用 Native 函数库直接分配堆外内存, 然后使用DirectByteBuffer 对象作为这块内存的引用进行操作(详见: Java I/O 扩展), 这样就避免了在 Java堆和 Native 堆中来回复制数据, 因此在一些场景中可以显著提高性能。</p>
+</li>
+</ol>
+<p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-3.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h3><p>一块较小的内存空间, 是当前线程所执行的字节码的行号指示器，每条线程都要有一个独立的程序计数器，这类内存也称为“线程私有”的内存。</p>
+<p>正在执行 java 方法的话，计数器记录的是虚拟机字节码指令的地址（当前指令的地址）。如果还是 Native 方法，则为空。</p>
+<p>这个内存区域是唯一一个在虚拟机中没有规定任何 OutOfMemoryError 情况的区域。</p>
+<h3 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h3><p>是描述java方法执行的内存模型，每个方法在执行的同时都会创建一个栈帧（Stack Frame）用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
+<p>栈帧（ Frame）是用来存储数据和部分过程结果的数据结构，同时也被用来处理动态链接(Dynamic Linking)、 方法返回值和异常分派（ Dispatch Exception）。栈帧随着方法调用而创建，随着方法结束而销毁——无论方法是正常完成还是异常完成（抛出了在方法内未被捕获的异常）都算作方法结束。</p>
+<h3 id="本地方法区-线程私有"><a href="#本地方法区-线程私有" class="headerlink" title="本地方法区(线程私有)"></a>本地方法区(线程私有)</h3><p>本地方法区和 Java Stack 作用类似, 区别是虚拟机栈为执行 Java 方法服务, 而本地方法栈则为Native 方法服务, 如果一个 VM 实现使用 C-linkage 模型来支持 Native 调用, 那么该栈将会是一个C 栈，但 HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。</p>
+<h3 id="堆（Heap-线程共享）-运行时数据区"><a href="#堆（Heap-线程共享）-运行时数据区" class="headerlink" title="堆（Heap-线程共享）-运行时数据区"></a>堆（Heap-线程共享）-运行时数据区</h3><p>是被线程共享的一块内存区域，创建的对象和数组都保存在 Java 堆内存中，也是垃圾收集器进行垃圾收集的最重要的内存区域。由于现代 VM 采用分代收集算法, 因此 Java 堆从 GC 的角度还可以细分为: 新生代(Eden 区、From Survivor 区和 To Survivor 区)和老年代</p>
+<h3 id="方法区-永久代（线程共享）"><a href="#方法区-永久代（线程共享）" class="headerlink" title="方法区/永久代（线程共享）"></a>方法区/永久代（线程共享）</h3><p>即我们常说的永久代(Permanent Generation), 用于存储被 JVM 加载的类信息、常量、静态变量、即时编译器编译后的代码等数据. HotSpot VM把GC分代收集扩展至方法区, 即使用Java堆的永久代来实现方法区, 这样 HotSpot 的垃圾收集器就可以像管理 Java 堆一样管理这部分内存, 而不必为方法区开发专门的内存管理器(永久带的内存回收的主要目标是针对常量池的回收和类型<br>的卸载, 因此收益一般很小)。</p>
+<p>运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述等信息外，还有一项信息是常量池（Constant Pool Table），用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。 Java 虚拟机对 Class 文件的每一部分（自然也包括常量池）的格式都有严格的规定，每一个字节用于存储哪种数据都必须符合规范上的要求，这样才会<br>被虚拟机认可、装载和执行。</p>
+<h2 id="JVM-运行时内存"><a href="#JVM-运行时内存" class="headerlink" title="JVM 运行时内存"></a>JVM 运行时内存</h2><p>Java 堆从 GC 的角度还可以细分为: 新生代(Eden 区、From Survivor 区和 To Survivor 区)和老年代。</p>
+<p><a href="/images/java%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><p>是用来存放新生的对象。一般占据堆的 1/3 空间。由于频繁创建对象，所以新生代会频繁触发MinorGC 进行垃圾回收。新生代又分为 Eden 区ServivorFrom、ServivorTo 三个区。</p>
+<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java 新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老<br>年代）。当 Eden 区内存不够的时候就会触发 MinorGC，对新生代区进行<br>一次垃圾回收。</p>
+<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><p>MinorGC 采用复制算法。</p>
+<ol>
+<li>eden、servicorFrom 复制到 ServicorTo，年龄+1</li>
+</ol>
+<blockquote>
+<p>首先，把 Eden 和 ServivorFrom 区域中存活的对象复制到 ServicorTo 区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</p>
+</blockquote>
+<ol start="2">
+<li>清空 eden、servicorFrom</li>
+</ol>
+<blockquote>
+<p>然后，清空 Eden 和 ServicorFrom 中的对象；</p>
+</blockquote>
+<ol start="3">
+<li>ServicorTo 和 ServicorFrom 互换</li>
+</ol>
+<blockquote>
+<p>最后，ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC 时的 ServicorFrom区。</p>
+</blockquote>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><p>主要存放应用程序中生命周期长的内存对象。</p>
+<p>老年代的对象比较稳定，所以 MajorGC 不会频繁执行。在进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</p>
+<p> MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</p>
+<h3 id="永久代"><a href="#永久代" class="headerlink" title="永久代"></a>永久代</h3><p> 指内存的永久保存区域，主要存放 Class 和 Meta（元数据）的信息,Class 在被加载的时候被放入永久区域，它和和存放实例的区域不同,GC 不会在主程序运行期对永久区域进行清理。所以这也导致了永久代的区域会随着加载的 Class 的增多而胀满，最终抛出 OOM 异常。</p>
+<h4 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h4><p> 在 Java8 中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制。类的元数据放入 native memory, 字符串池和类的静态变量放入 java 堆中，这样可以加载多少类的元数据就不再由MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:milovetingting@gmail.com">milovetingting</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">http://www.milovetingting.cn/2020/02/09/Java/JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.milovetingting.cn">milovetingting</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM/">JVM    </a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">内存模型    </a></div><div class="post_share"><div class="social-share" data-image="/images/cover_java.jpg" data-sites="facebook,twitter,wechat,weibo"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/02/09/Java/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E7%AE%97%E6%B3%95/"><img class="prev_cover lazyload" data-src="/images/cover_java.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>JVM垃圾回收与算法</span></div></a></div><div class="next-post pull_right"><a href="/2020/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/"><img class="next_cover lazyload" data-src="/images/cover_design.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>备忘录模式</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/02/09/Java/JVM 类加载机制/" title="JVM类加载机制"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-09</div><div class="relatedPosts_title">JVM类加载机制</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/09/Java/JVM垃圾回收与算法/" title="JVM垃圾回收与算法"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-09</div><div class="relatedPosts_title">JVM垃圾回收与算法</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'ae38b55ae64dd8d9df5a',
+  clientSecret: '684ea96fb1acf523a5f8a2a84eb751c33ca645a4',
+  repo: 'milovetingting.github.io',
+  owner: 'milovetingting',
+  admin: 'milovetingting',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN# en , zh-CN , zh-TW',
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+}</script></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By milovetingting</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
