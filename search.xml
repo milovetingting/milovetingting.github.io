@@ -1,6 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Java多线程(二)</title>
+    <url>/2020/02/11/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%BA%8C)/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Java多线程-二"><a href="#Java多线程-二" class="headerlink" title="Java多线程(二)"></a>Java多线程(二)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>本文为学习Java相关知识所作笔记，参考以下资料:<a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide</a> ,感谢原作者的分享!</p>
+</blockquote>
+<h2 id="JAVA-锁"><a href="#JAVA-锁" class="headerlink" title="JAVA 锁"></a>JAVA 锁</h2><h3 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h3><p>乐观锁是一种乐观思想，即认为读多写少，遇到并发写的可能性低，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，采取在写时先读出当前版本号，然后加锁操作（比较跟上一次的版本号，如果一样则更新），如果失败则要重复读-比较-写的操作。</p>
+<p>java 中的乐观锁基本都是通过 CAS 操作实现的，CAS 是一种更新的原子操作，比较当前值跟传入值是否一样，一样则更新，否则失败。</p>
+<h3 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h3><p>悲观锁是就是悲观思想，即认为写多，遇到并发写的可能性高，每次去拿数据的时候都认为别人会修改，所以每次在读写数据的时候都会上锁，这样别人想读写这个数据就会 block 直到拿到锁。java中的悲观锁就是Synchronized,AQS框架下的锁则是先尝试cas乐观锁去获取锁，获取不到，才会转换为悲观锁，如 RetreenLock。</p>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>自旋锁原理非常简单，如果持有锁的线程能在很短时间内释放锁资源，那么那些等待竞争锁的线程就不需要做内核态和用户态之间的切换进入阻塞挂起状态，它们只需要等一等（自旋），等持有锁的线程释放锁后即可立即获取锁，这样就避免用户线程和内核的切换的消耗</p>
+<p>线程自旋是需要消耗 cup 的，说白了就是让 cup 在做无用功，如果一直获取不到锁，那线程也不能一直占用 cup 自旋做无用功，所以需要设定一个自旋等待的最大时间</p>
+<p>如果持有锁的线程执行的时间超过自旋等待的最大时间扔没有释放锁，就会导致其它争用锁的线程在最大等待时间内还是获取不到锁，这时争用线程会停止自旋进入阻塞状态</p>
+<h4 id="自旋锁的优缺点"><a href="#自旋锁的优缺点" class="headerlink" title="自旋锁的优缺点"></a>自旋锁的优缺点</h4><p>自旋锁尽可能的减少线程的阻塞，这对于锁的竞争不激烈，且占用锁时间非常短的代码块来说性能能大幅度的提升，因为自旋的消耗会小于线程阻塞挂起再唤醒的操作的消耗，这些操作会导致线程发生两次上下文切换</p>
+<p>但是如果锁的竞争激烈，或者持有锁的线程需要长时间占用锁执行同步块，这时候就不适合使用自旋锁了，因为自旋锁在获取锁前一直都是占用 cpu 做无用功，占着 XX 不 XX，同时有大量线程在竞争一个锁，会导致获取锁的时间很长，线程自旋的消耗大于线程阻塞挂起操作的消耗，其它需要 cup 的线程又不能获取到 cpu，造成 cpu 的浪费。所以这种情况下我们要关闭自旋锁；</p>
+<h4 id="自旋锁时间阈值（1-6-引入了适应性自旋锁）"><a href="#自旋锁时间阈值（1-6-引入了适应性自旋锁）" class="headerlink" title="自旋锁时间阈值（1.6 引入了适应性自旋锁）"></a>自旋锁时间阈值（1.6 引入了适应性自旋锁）</h4><p>自旋锁的目的是为了占着 CPU 的资源不释放，等到获取到锁立即进行处理。但是如何去选择自旋的执行时间呢？如果自旋执行时间太长，会有大量的线程处于自旋状态占用 CPU 资源，进而会影响整体系统的性能。因此自旋的周期选的额外重要！</p>
+<p>JVM 对于自旋周期的选择，jdk1.5 这个限度是一定的写死的，在 1.6 引入了适应性自旋锁，适应性自旋锁意味着自旋的时间不在是固定的了，而是由前一次在同一个锁上的自旋时间以及锁的拥有者的状态来决定，基本认为一个线程上下文切换的时间是最佳的一个时间，同时 JVM 还针对当前 CPU 的负荷情况做了较多的优化，如果平均负载小于 CPUs 则一直自旋，如果有超过(CPUs/2)个线程正在自旋，则后来线程直接阻塞，如果正在自旋的线程发现 Owner 发生了变化则延迟自旋时间（自旋计数）或进入阻塞，如果 CPU 处于节电模式则停止自旋，自旋时间的最坏情况是 CPU的存储延迟（CPU A 存储了一个数据，到 CPU B 得知这个数据直接的时间差），自旋时会适当放弃线程优先级之间的差异。</p>
+<h4 id="自旋锁的开启"><a href="#自旋锁的开启" class="headerlink" title="自旋锁的开启"></a>自旋锁的开启</h4><p>JDK1.6 中-XX:+UseSpinning 开启；</p>
+<p>-XX:PreBlockSpin=10 为自旋次数；</p>
+<p>JDK1.7 后，去掉此参数，由 jvm 控制；</p>
+<h3 id="Synchronized-同步锁"><a href="#Synchronized-同步锁" class="headerlink" title="Synchronized 同步锁"></a>Synchronized 同步锁</h3><p>synchronized 它可以把任意一个非 NULL 的对象当作锁。他属于独占式的悲观锁，同时属于可重入锁</p>
+<h4 id="Synchronized-作用范围"><a href="#Synchronized-作用范围" class="headerlink" title="Synchronized 作用范围"></a>Synchronized 作用范围</h4><ol>
+<li><p>作用于方法时，锁住的是对象的实例(this)；</p>
+</li>
+<li><p>当作用于静态方法时，锁住的是Class实例，又因为Class的相关数据存储在永久带PermGen（jdk1.8 则是 metaspace），永久带是全局共享的，因此静态方法锁相当于类的一个全局锁，会锁所有调用该方法的线程；</p>
+</li>
+<li><p>synchronized 作用于一个对象实例时，锁住的是所有以该对象为锁的代码块。它有多个队列，当多个线程一起访问某个对象监视器的时候，对象监视器会将这些线程存储在不同的容器中。</p>
+</li>
+</ol>
+<h3 id="Synchronized-核心组件"><a href="#Synchronized-核心组件" class="headerlink" title="Synchronized 核心组件"></a>Synchronized 核心组件</h3><ol>
+<li><p>Wait Set：哪些调用 wait 方法被阻塞的线程被放置在这里；</p>
+</li>
+<li><p>Contention List：竞争队列，所有请求锁的线程首先被放在这个竞争队列中；</p>
+</li>
+<li><p>Entry List：Contention List 中那些有资格成为候选资源的线程被移动到 Entry List 中；</p>
+</li>
+<li><p>OnDeck：任意时刻，最多只有一个线程正在竞争锁资源，该线程被成为 OnDeck；</p>
+</li>
+<li><p>Owner：当前已经获取到所资源的线程被称为 Owner；</p>
+</li>
+<li><p>!Owner：当前释放锁的线程。</p>
+</li>
+</ol>
+<h3 id="Synchronized-实现"><a href="#Synchronized-实现" class="headerlink" title="Synchronized 实现"></a>Synchronized 实现</h3><p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B4.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol>
+<li><p>JVM 每次从队列的尾部取出一个数据用于锁竞争候选者（OnDeck），但是并发情况下，ContentionList 会被大量的并发线程进行 CAS 访问，为了降低对尾部元素的竞争，JVM 会将一部分线程移动到 EntryList 中作为候选竞争线程</p>
+</li>
+<li><p>Owner 线程会在 unlock 时，将 ContentionList 中的部分线程迁移到 EntryList 中，并指定EntryList 中的某个线程为 OnDeck 线程（一般是最先进去的那个线程）</p>
+</li>
+<li><p>Owner 线程并不直接把锁传递给 OnDeck 线程，而是把锁竞争的权利交给 OnDeck，OnDeck 需要重新竞争锁。这样虽然牺牲了一些公平性，但是能极大的提升系统的吞吐量，在JVM 中，也把这种选择行为称之为“竞争切换”。</p>
+</li>
+<li><p>OnDeck 线程获取到锁资源后会变为 Owner 线程，而没有得到锁资源的仍然停留在 EntryList中。如果 Owner 线程被 wait 方法阻塞，则转移到WaitSet 队列中，直到某个时刻通过 notify或者 notifyAll 唤醒，会重新进去 EntryList 中</p>
+</li>
+<li><p>处于 ContentionList、EntryList、WaitSet 中的线程都处于阻塞状态，该阻塞是由操作系统来完成的（Linux 内核下采用 pthread_mutex_lock 内核函数实现的）</p>
+</li>
+<li><p>Synchronized 是非公平锁。 Synchronized 在线程进入ContentionList 时，等待的线程会先尝试自旋获取锁，如果获取不到就进入 ContentionList，这明显对于已经进入队列的线程是不公平的，还有一个不公平的事情就是自旋获取锁的线程还可能直接抢占 OnDeck 线程的锁资源</p>
+</li>
+<li><p>每个对象都有个 monitor 对象，加锁就是在竞争 monitor 对象，代码块加锁是在前后分别加上 monitorenter 和 monitorexit 指令来实现的，方法加锁是通过一个标记位来判断的</p>
+</li>
+<li><p>synchronized 是一个重量级操作，需要调用操作系统相关接口，性能是低效的，有可能给线程加锁消耗的时间比有用操作消耗的时间更多</p>
+</li>
+<li><p>Java1.6，synchronized 进行了很多的优化，有适应自旋、锁消除、锁粗化、轻量级锁及偏向锁等，效率有了本质上的提高。在之后推出的 Java1.7 与 1.8 中，均对该关键字的实现机理做了优化。引入了偏向锁和轻量级锁。都是在对象头中有标记位，不需要经过操作系统加锁</p>
+</li>
+<li><p>锁可以从偏向锁升级到轻量级锁，再升级到重量级锁。这种升级过程叫做锁膨胀；</p>
+</li>
+<li><p>JDK 1.6 中默认是开启偏向锁和轻量级锁，可以通过-XX:-UseBiasedLocking 来禁用偏向锁</p>
+</li>
+</ol>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p>ReentantLock 继承接口 Lock 并实现了接口中定义的方法，他是一种可重入锁，除了能完成 synchronized 所能完成的所有工作外，还提供了诸如可响应中断锁、可轮询锁请求、定时锁等避免多线程死锁的方法。</p>
+<h4 id="Lock-接口的主要方法"><a href="#Lock-接口的主要方法" class="headerlink" title="Lock 接口的主要方法"></a>Lock 接口的主要方法</h4><ol>
+<li><p>void lock(): 执行此方法时, 如果锁处于空闲状态, 当前线程将获取到锁. 相反, 如果锁已经被其他线程持有, 将禁用当前线程, 直到当前线程获取到锁.</p>
+</li>
+<li><p>boolean tryLock()：如果锁可用, 则获取锁, 并立即返回 true, 否则返回 false. 该方法和lock()的区别在于, tryLock()只是”试图”获取锁, 如果锁不可用, 不会导致当前线程被禁用, 当前线程仍然继续往下执行代码. 而 lock()方法则是一定要获取到锁, 如果锁不可用, 就一直等待, 在未获得锁之前,当前线程并不继续向下执行. </p>
+</li>
+<li><p>void unlock()：执行此方法时, 当前线程将释放持有的锁. 锁只能由持有者释放, 如果线程并不持有锁, 却执行该方法, 可能导致异常的发生.</p>
+</li>
+<li><p>Condition newCondition()：条件对象，获取等待通知组件。该组件和当前的锁绑定，当前线程只有获取了锁，才能调用该组件的 await()方法，而调用后，当前线程将释放锁。</p>
+</li>
+<li><p>getHoldCount() ：查询当前线程保持此锁的次数，也就是执行此线程执行 lock 方法的次数。</p>
+</li>
+<li><p>getQueueLength（）：返回正等待获取此锁的线程估计数，比如启动 10 个线程，1 个线程获得锁，此时返回的是 9</p>
+</li>
+<li><p>getWaitQueueLength：（Condition condition）返回等待与此锁相关的给定条件的线程估计数。比如 10 个线程，用同一个 condition 对象，并且此时这 10 个线程都执行了condition 对象的 await 方法，那么此时执行此方法返回 10</p>
+</li>
+<li><p>hasWaiters(Condition condition)：查询是否有线程等待与此锁有关的给定条件(condition)，对于指定 contidion 对象，有多少线程执行了 condition.await 方法</p>
+</li>
+<li><p>hasQueuedThread(Thread thread)：查询给定线程是否等待获取此锁</p>
+</li>
+<li><p>hasQueuedThreads()：是否有线程等待此锁</p>
+</li>
+<li><p>isFair()：该锁是否公平锁</p>
+</li>
+<li><p>isHeldByCurrentThread()： 当前线程是否保持锁锁定，线程的执行 lock 方法的前后分别是 false 和 true</p>
+</li>
+<li><p>isLock()：此锁是否有任意线程占用</p>
+</li>
+<li><p>lockInterruptibly（）：如果当前线程未被中断，获取锁</p>
+</li>
+<li><p>tryLock（）：尝试获得锁，仅在调用时锁未被线程占用，获得锁</p>
+</li>
+<li><p>tryLock(long timeout TimeUnit unit)：如果锁在给定等待时间内没有被另一个线程保持，则获取该锁。</p>
+</li>
+</ol>
+<h4 id="非公平锁"><a href="#非公平锁" class="headerlink" title="非公平锁"></a>非公平锁</h4><p>JVM 按随机、就近原则分配锁的机制则称为不公平锁，ReentrantLock 在构造函数中提供了是否公平锁的初始化方式，默认为非公平锁。非公平锁实际执行的效率要远远超出公平锁，除非程序有特殊需要，否则最常用非公平锁的分配机制。</p>
+<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><p>公平锁指的是锁的分配机制是公平的，通常先对锁提出获取请求的线程会先被分配到锁，ReentrantLock 在构造函数中提供了是否公平锁的初始化方式来定义公平锁</p>
+<h4 id="ReentrantLock-与-synchronized"><a href="#ReentrantLock-与-synchronized" class="headerlink" title="ReentrantLock 与 synchronized"></a>ReentrantLock 与 synchronized</h4><ol>
+<li><p>ReentrantLock 通过方法 lock()与 unlock()来进行加锁与解锁操作，与 synchronized 会 被 JVM 自动解锁机制不同，ReentrantLock 加锁后需要手动进行解锁。为了避免程序出现异常而无法正常解锁的情况，使用 ReentrantLock 必须在 finally 控制块中进行解锁操<br>作。</p>
+</li>
+<li><p>ReentrantLock 相比 synchronized 的优势是可中断、公平锁、多个锁。这种情况下需要使用 ReentrantLock。</p>
+</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    <span class="comment">//Lock lock=new ReentrantLock(true);//公平锁</span></span><br><span class="line">    <span class="comment">//Lock lock=new ReentrantLock(false);//非公平锁</span></span><br><span class="line">    <span class="keyword">private</span> Condition condition=lock.newCondition();<span class="comment">//创建 Condition</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">        lock.lock();<span class="comment">//lock 加锁</span></span><br><span class="line">        <span class="comment">//1：wait 方法等待：</span></span><br><span class="line">        <span class="comment">//System.out.println("开始 wait");</span></span><br><span class="line">        condition.await();</span><br><span class="line">        <span class="comment">//通过创建 Condition 对象来使线程 wait，必须先执行 lock.lock 方法获得锁</span></span><br><span class="line">        <span class="comment">//:2：signal 方法唤醒</span></span><br><span class="line">        condition.signal();<span class="comment">//condition 对象的 signal 方法可以唤醒 wait 线程</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">"ThreadName="</span> + Thread.currentThread().getName()+ (<span class="string">" "</span> + (i + <span class="number">1</span>)));</span><br><span class="line">        &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="Condition-类和-Object-类锁方法区别区别"><a href="#Condition-类和-Object-类锁方法区别区别" class="headerlink" title="Condition 类和 Object 类锁方法区别区别"></a>Condition 类和 Object 类锁方法区别区别</h4><ol>
+<li><p>Condition 类的 awiat 方法和 Object 类的 wait 方法等效</p>
+</li>
+<li><p>Condition 类的 signal 方法和 Object 类的 notify 方法等效</p>
+</li>
+<li><p>Condition 类的 signalAll 方法和 Object 类的 notifyAll 方法等效</p>
+</li>
+<li><p>ReentrantLock 类可以唤醒指定条件的线程，而 object 的唤醒是随机的</p>
+</li>
+</ol>
+<h4 id="tryLock-和-lock-和-lockInterruptibly-的区别"><a href="#tryLock-和-lock-和-lockInterruptibly-的区别" class="headerlink" title="tryLock 和 lock 和 lockInterruptibly 的区别"></a>tryLock 和 lock 和 lockInterruptibly 的区别</h4><ol>
+<li><p>tryLock 能获得锁就返回 true，不能就立即返回 false，tryLock(long timeout,TimeUnit unit)，可以增加时间限制，如果超过该时间段还没获得锁，返回 false</p>
+</li>
+<li><p>lock 能获得锁就返回 true，不能的话一直等待获得锁</p>
+</li>
+<li><p>lock 和 lockInterruptibly，如果两个线程分别执行这两个方法，但此时中断这两个线程，lock 不会抛出异常，而 lockInterruptibly 会抛出异常。</p>
+</li>
+</ol>
+<h3 id="Semaphore-信号量"><a href="#Semaphore-信号量" class="headerlink" title="Semaphore 信号量"></a>Semaphore 信号量</h3><p>Semaphore 是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore 可以用来构建一些对象池，资源池之类的，比如数据库连接池</p>
+<h4 id="实现互斥锁（计数器为-1）"><a href="#实现互斥锁（计数器为-1）" class="headerlink" title="实现互斥锁（计数器为 1）"></a>实现互斥锁（计数器为 1）</h4><p>我们也可以创建计数为 1 的 Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为 5 的信号量对象</span></span><br><span class="line"><span class="comment">// 只能 5 个线程同时访问</span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">try</span> &#123; <span class="comment">// 申请许可</span></span><br><span class="line">    semp.acquire();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 业务逻辑</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 释放许可</span></span><br><span class="line">        semp.release();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="Semaphore-与-ReentrantLock"><a href="#Semaphore-与-ReentrantLock" class="headerlink" title="Semaphore 与 ReentrantLock"></a>Semaphore 与 ReentrantLock</h4><p>Semaphore 基本能完成 ReentrantLock 的所有工作，使用方法也与之类似，通过 acquire()与release()方法来获得和释放临界资源。经实测，Semaphone.acquire()方法默认为可响应中断锁，与 ReentrantLock.lockInterruptibly()作用效果一致，也就是说在等待临界资源的过程中可以被<br>Thread.interrupt()方法中断</p>
+<p>此外，Semaphore 也实现了可轮询的锁请求与定时锁的功能，除了方法名 tryAcquire 与 tryLock不同，其使用方法与 ReentrantLock 几乎一致。Semaphore 也提供了公平与非公平锁的机制，也可在构造函数中进行设定</p>
+<p>Semaphore 的锁释放操作也由手动进行，因此与 ReentrantLock 一样，为避免线程因抛出异常而无法正常释放锁的情况发生，释放锁的操作也必须在 finally 代码块中完成。</p>
+<h3 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h3><p>首先说明，此处 AtomicInteger ，一个提供原子操作的 Integer 的类，常见的还有AtomicBoolean、AtomicInteger、AtomicLong、AtomicReference 等，他们的实现原理相同，区别在与运算对象类型的不同。令人兴奋地，还可以通过 AtomicReference<v>将一个对象的所有操作转化成原子操作。</v></p>
+<p>我们知道，在多线程程序中，诸如++i 或 i++等运算不具有原子性，是不安全的线程操作之一。通常我们会使用 synchronized 将该操作变成一个原子操作，但 JVM 为此类操作特意提供了一些同步类，使得使用更方便，且使程序运行效率变得更高。通过相关资料显示，通常AtomicInteger的性能是ReentantLock 的好几倍。</p>
+<h3 id="可重入锁（递归锁）"><a href="#可重入锁（递归锁）" class="headerlink" title="可重入锁（递归锁）"></a>可重入锁（递归锁）</h3><p>本文里面讲的是广义上的可重入锁，而不是单指 JAVA 下的 ReentrantLock。可重入锁，也叫做递归锁，指的是同一线程 外层函数获得锁之后 ，内层递归函数仍然有获取该锁的代码，但不受影响。在 JAVA 环境下 ReentrantLock 和 synchronized 都是 可重入锁。</p>
+<h3 id="公平锁与非公平锁"><a href="#公平锁与非公平锁" class="headerlink" title="公平锁与非公平锁"></a>公平锁与非公平锁</h3><h4 id="公平锁（Fair）"><a href="#公平锁（Fair）" class="headerlink" title="公平锁（Fair）"></a>公平锁（Fair）</h4><p>加锁前检查是否有排队等待的线程，优先排队等待的线程，先来先得</p>
+<h4 id="非公平锁（Nonfair）"><a href="#非公平锁（Nonfair）" class="headerlink" title="非公平锁（Nonfair）"></a>非公平锁（Nonfair）</h4><p>加锁时不考虑排队等待问题，直接尝试获取锁，获取不到自动到队尾等待</p>
+<ol>
+<li><p>非公平锁性能比公平锁高 5~10 倍，因为公平锁需要在多核的情况下维护一个队列</p>
+</li>
+<li><p>Java 中的 synchronized 是非公平锁，ReentrantLock 默认的 lock()方法采用的是非公平锁。</p>
+</li>
+</ol>
+<h3 id="ReadWriteLock-读写锁"><a href="#ReadWriteLock-读写锁" class="headerlink" title="ReadWriteLock 读写锁"></a>ReadWriteLock 读写锁</h3><p>为了提高性能，Java 提供了读写锁，在读的地方使用读锁，在写的地方使用写锁，灵活控制，如果没有写锁的情况下，读是无阻塞的,在一定程度上提高了程序的执行效率。读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，这是由 jvm 自己控制的，你只要上好相应的锁即可</p>
+<h4 id="读锁"><a href="#读锁" class="headerlink" title="读锁"></a>读锁</h4><p>如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁</p>
+<h4 id="写锁"><a href="#写锁" class="headerlink" title="写锁"></a>写锁</h4><p>如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！</p>
+<p>Java 中读写锁有个接口 java.util.concurrent.locks.ReadWriteLock ，也有具体的实现ReentrantReadWriteLock</p>
+<h3 id="共享锁和独占锁"><a href="#共享锁和独占锁" class="headerlink" title="共享锁和独占锁"></a>共享锁和独占锁</h3><p>java 并发包提供的加锁模式分为独占锁和共享锁。</p>
+<h4 id="独占锁"><a href="#独占锁" class="headerlink" title="独占锁"></a>独占锁</h4><p>独占锁模式下，每次只能有一个线程能持有锁，ReentrantLock 就是以独占方式实现的互斥锁。独占锁是一种悲观保守的加锁策略，它避免了读/读冲突，如果某个只读线程获取锁，则其他读线程都只能等待，这种情况下就限制了不必要的并发性，因为读操作并不会影响数据的一致性</p>
+<h4 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h4><p>共享锁则允许多个线程同时获取锁，并发访问 共享资源，如：ReadWriteLock。共享锁则是一种乐观锁，它放宽了加锁策略，允许多个执行读操作的线程同时访问共享资源</p>
+<ol>
+<li><p>AQS 的内部类 Node 定义了两个常量 SHARED 和 EXCLUSIVE，他们分别标识 AQS 队列中等待线程的锁获取模式。</p>
+</li>
+<li><p>java 的并发包中提供了 ReadWriteLock，读-写锁。它允许一个资源可以被多个读操作访问，或者被一个 写操作访问，但两者不能同时进行。</p>
+</li>
+</ol>
+<h3 id="重量级锁（Mutex-Lock）"><a href="#重量级锁（Mutex-Lock）" class="headerlink" title="重量级锁（Mutex Lock）"></a>重量级锁（Mutex Lock）</h3><p>Synchronized 是通过对象内部的一个叫做监视器锁（monitor）来实现的。但是监视器锁本质又是依赖于底层的操作系统的 Mutex Lock 来实现的。而操作系统实现线程之间的切换这就需要从用户态转换到核心态，这个成本非常高，状态之间的转换需要相对比较长的时间，这就是为什么Synchronized 效率低的原因。因此，这种依赖于操作系统 Mutex Lock 所实现的锁我们称之为“重量级锁”。JDK 中对 Synchronized 做的种种优化，其核心都是为了减少这种重量级锁的使用。JDK1.6 以后，为了减少获得锁和释放锁所带来的性能消耗，提高性能，引入了“轻量级锁”和“偏向锁”</p>
+<h3 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h3><p>锁的状态总共有四种：无锁状态、偏向锁、轻量级锁和重量级锁。</p>
+<h4 id="锁升级"><a href="#锁升级" class="headerlink" title="锁升级"></a>锁升级</h4><p>随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是锁的升级是单向的，也就是说只能从低到高升级，不会出现锁的降级）</p>
+<p>“轻量级”是相对于使用操作系统互斥量来实现的传统锁而言的。但是，首先需要强调一点的是，轻量级锁并不是用来代替重量级锁的，它的本意是在没有多线程竞争的前提下，减少传统的重量级锁使用产生的性能消耗。在解释轻量级锁的执行过程之前，先明白一点，轻量级锁所适应的场景是线程交替执行同步块的情况，如果存在同一时间访问同一锁的情况，就会导致轻量级锁膨胀为重量级锁。</p>
+<h3 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h3><p>Hotspot 的作者经过以往的研究发现大多数情况下锁不仅不存在多线程竞争，而且总是由同一线程多次获得。偏向锁的目的是在某个线程获得锁之后，消除这个线程锁重入（CAS）的开销，看起来让这个线程得到了偏护。引入偏向锁是为了在无多线程竞争的情况下尽量减少不必要的轻量级锁执行路径，因为轻量级锁的获取及释放依赖多次 CAS 原子指令，而偏向锁只需要在置换ThreadID 的时候依赖一次 CAS 原子指令（由于一旦出现多线程竞争的情况就必须撤销偏向锁，所<br>以偏向锁的撤销操作的性能损耗必须小于节省下来的 CAS 原子指令的性能消耗）。上面说过，轻量级锁是为了在线程交替执行同步块时提高性能，而偏向锁则是在只有一个线程执行同步块时进一步提高性能。</p>
+<h3 id="分段锁"><a href="#分段锁" class="headerlink" title="分段锁"></a>分段锁</h3><p>分段锁也并非一种实际的锁，而是一种思想 ConcurrentHashMap 是学习分段锁的最好实践</p>
+<h3 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h3><h4 id="减少锁持有时间"><a href="#减少锁持有时间" class="headerlink" title="减少锁持有时间"></a>减少锁持有时间</h4><p>只用在有线程安全要求的程序上加锁</p>
+<h4 id="减小锁粒度"><a href="#减小锁粒度" class="headerlink" title="减小锁粒度"></a>减小锁粒度</h4><p>将大对象（这个对象可能会被很多线程访问），拆成小对象，大大增加并行度，降低锁竞争。降低了锁的竞争，偏向锁，轻量级锁成功率才会提高。最最典型的减小锁粒度的案例就是ConcurrentHashMap</p>
+<h4 id="锁分离"><a href="#锁分离" class="headerlink" title="锁分离"></a>锁分离</h4><p>最常见的锁分离就是读写锁 ReadWriteLock，根据功能进行分离成读锁和写锁，这样读读不互斥，读写互斥，写写互斥，即保证了线程安全，又提高了性能，具体也请查看[高并发 Java 五] JDK 并发包 1。读写分离思想可以延伸，只要操作互不影响，锁就可以分离。比如LinkedBlockingQueue 从头部取出，从尾部放数据</p>
+<h4 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h4><p>通常情况下，为了保证多线程间的有效并发，会要求每个线程持有锁的时间尽量短，即在使用完公共资源后，应该立即释放锁。但是，凡事都有一个度，如果对同一个锁不停的进行请求、同步和释放，其本身也会消耗系统宝贵的资源，反而不利于性能的优化</p>
+<h4 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h4><p>锁消除是在编译器级别的事情。在即时编译器时，如果发现不可能被共享的对象，则可以消除这些对象的锁操作，多数是因为程序员编码不规范引起</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>多线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java多线程(一)</title>
+    <url>/2020/02/11/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%80)/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Java多线程-一"><a href="#Java多线程-一" class="headerlink" title="Java多线程(一)"></a>Java多线程(一)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>本文为学习Java相关知识所作笔记，参考以下资料:<a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide</a> ,感谢原作者的分享!</p>
+</blockquote>
+<h2 id="JAVA-并发知识库"><a href="#JAVA-并发知识库" class="headerlink" title="JAVA 并发知识库"></a>JAVA 并发知识库</h2><p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="JAVA-线程实现-创建方式"><a href="#JAVA-线程实现-创建方式" class="headerlink" title="JAVA 线程实现/创建方式"></a>JAVA 线程实现/创建方式</h2><h3 id="继承-Thread-类"><a href="#继承-Thread-类" class="headerlink" title="继承 Thread 类"></a>继承 Thread 类</h3><p>Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程，并执行 run()方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        System.out.println(<span class="string">"MyThread.run()"</span>); </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line">MyThread myThread1 = <span class="keyword">new</span> MyThread(); </span><br><span class="line">myThread1.start();</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="实现-Runnable-接口"><a href="#实现-Runnable-接口" class="headerlink" title="实现 Runnable 接口"></a>实现 Runnable 接口</h3><p>如果自己的类已经 extends 另一个类，就无法直接 extends Thread，此时，可以实现一个Runnable 接口。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">OtherClass</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        System.out.println(<span class="string">"MyThread.run()"</span>); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//启动 MyThread，需要首先实例化一个 Thread，并传入自己的 MyThread 实例：</span></span><br><span class="line">MyThread myThread = <span class="keyword">new</span> MyThread(); </span><br><span class="line">Thread thread = <span class="keyword">new</span> Thread(myThread); </span><br><span class="line">thread.start(); </span><br><span class="line"><span class="comment">//事实上，当传入一个 Runnable target 参数给 Thread 后，Thread 的 run()方法就会调用</span></span><br><span class="line">target.run()</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123; </span><br><span class="line">        target.run(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="ExecutorService、Callable、Future-有返回值线程"><a href="#ExecutorService、Callable、Future-有返回值线程" class="headerlink" title="ExecutorService、Callable、Future 有返回值线程"></a>ExecutorService、Callable<class>、Future 有返回值线程</class></h3><p>有返回值的任务必须实现 Callable 接口，类似的，无返回值的任务必须 Runnable 接口。执行Callable 任务后，可以获取一个 Future 的对象，在该对象上调用 get 就可以获取到 Callable 任务返回的 Object 了，再结合线程池接口 ExecutorService 就可以实现传说中有返回结果的多线程了。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建一个线程池</span></span><br><span class="line">ExecutorService pool = Executors.newFixedThreadPool(taskSize);</span><br><span class="line"><span class="comment">// 创建多个有返回值的任务</span></span><br><span class="line">List&lt;Future&gt; list = <span class="keyword">new</span> ArrayList&lt;Future&gt;(); </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; taskSize; i++) &#123; </span><br><span class="line">    Callable c = <span class="keyword">new</span> MyCallable(i + <span class="string">" "</span>); </span><br><span class="line">    <span class="comment">// 执行任务并获取 Future 对象</span></span><br><span class="line">    Future f = pool.submit(c); </span><br><span class="line">    list.add(f); </span><br><span class="line">&#125; </span><br><span class="line"><span class="comment">// 关闭线程池</span></span><br><span class="line">pool.shutdown(); </span><br><span class="line"><span class="comment">// 获取所有并发任务的运行结果</span></span><br><span class="line"><span class="keyword">for</span> (Future f : list) &#123; </span><br><span class="line">    <span class="comment">// 从 Future 对象上获取任务的返回值，并输出到控制台</span></span><br><span class="line">    System.out.println(<span class="string">"res："</span> + f.get().toString()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="基于线程池的方式"><a href="#基于线程池的方式" class="headerlink" title="基于线程池的方式"></a>基于线程池的方式</h3><p>线程和数据库连接这些资源都是非常宝贵的资源。那么每次需要的时候创建，不需要的时候销毁，是非常浪费资源的。那么我们就可以使用缓存的策略，也就是使用线程池</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建线程池</span></span><br><span class="line"> ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"> <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">    threadPool.execute(<span class="keyword">new</span> Runnable() &#123; <span class="comment">// 提交多个线程任务，并执行</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">" is running .."</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"> &#125; &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="4种线程池"><a href="#4种线程池" class="headerlink" title="4种线程池"></a>4种线程池</h2><p>Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Executor 并不是一个线程池，而只是一个执行线程的工具。真正的线程池接口是 ExecutorService。</p>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h3><p>创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行很多短期异步任务的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。因此，长时间保持空闲的线程池不会使用任何资源。</p>
+<h3 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h3><p>创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程。在任意点，在大多数 nThreads 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之前，池中的线程将一直存在。</p>
+<h3 id="newScheduledThreadPool"><a href="#newScheduledThreadPool" class="headerlink" title="newScheduledThreadPool"></a>newScheduledThreadPool</h3><p>创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> ScheduledExecutorService scheduledThreadPool= Executors.newScheduledThreadPool(<span class="number">3</span>); </span><br><span class="line"> scheduledThreadPool.schedule(newRunnable()&#123; </span><br><span class="line"> <span class="meta">@Override</span> </span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"延迟三秒"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;, <span class="number">3</span>, TimeUnit.SECONDS);</span><br><span class="line">scheduledThreadPool.scheduleAtFixedRate(newRunnable()&#123; </span><br><span class="line"> <span class="meta">@Override</span> </span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"延迟 1 秒后每三秒执行一次"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;,<span class="number">1</span>,<span class="number">3</span>,TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="newSingleThreadExecutor"><a href="#newSingleThreadExecutor" class="headerlink" title="newSingleThreadExecutor"></a>newSingleThreadExecutor</h3><p>Executors.newSingleThreadExecutor()返回一个线程池（这个线程池只有一个线程）,这个线程池可以在线程死后（或发生异常时）重新启动一个线程来替代原来的线程继续执行下去！</p>
+<h2 id="线程生命周期-状态"><a href="#线程生命周期-状态" class="headerlink" title="线程生命周期(状态)"></a>线程生命周期(状态)</h2><p>当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。在线程的生命周期中，它要经过新建(New)、就绪（Runnable）、运行（Running）、阻塞(Blocked)和死亡(Dead)5 种状态。尤其是当线程启动以后，它不可能一直”霸占”着 CPU 独自运行，所以 CPU 需要在多条线程之间切换，于是线程状态也会多次在运行、阻塞之间切换</p>
+<h3 id="新建状态（NEW）"><a href="#新建状态（NEW）" class="headerlink" title="新建状态（NEW）"></a>新建状态（NEW）</h3><p>当程序使用 new 关键字创建了一个线程之后，该线程就处于新建状态，此时仅由 JVM 为其分配内存，并初始化其成员变量的值</p>
+<h3 id="就绪状态（RUNNABLE）"><a href="#就绪状态（RUNNABLE）" class="headerlink" title="就绪状态（RUNNABLE）"></a>就绪状态（RUNNABLE）</h3><p>当线程对象调用了 start()方法之后，该线程处于就绪状态。Java 虚拟机会为其创建方法调用栈和程序计数器，等待调度运行。</p>
+<h3 id="运行状态（RUNNING）"><a href="#运行状态（RUNNING）" class="headerlink" title="运行状态（RUNNING）"></a>运行状态（RUNNING）</h3><p>如果处于就绪状态的线程获得了 CPU，开始执行 run()方法的线程执行体，则该线程处于运行状态</p>
+<h3 id="阻塞状态（BLOCKED）"><a href="#阻塞状态（BLOCKED）" class="headerlink" title="阻塞状态（BLOCKED）"></a>阻塞状态（BLOCKED）</h3><p>阻塞状态是指线程因为某种原因放弃了 cpu 使用权，也即让出了 cpu timeslice，暂时停止运行。直到线程进入可运行(runnable)状态，才有机会再次获得 cpu timeslice 转到运行(running)状态。阻塞的情况分三种：</p>
+<p>等待阻塞（o.wait-&gt;等待对列）：<br>运行(running)的线程执行 o.wait()方法，JVM 会把该线程放入等待队列(waitting queue)中。</p>
+<p>同步阻塞(lock-&gt;锁池):<br>运行(running)的线程在获取对象的同步锁时，若该同步锁被别的线程占用，则 JVM 会把该线程放入锁池(lock pool)中</p>
+<p>其他阻塞(sleep/join):<br>运行(running)的线程执行 Thread.sleep(long ms)或 t.join()方法，或者发出了 I/O 请求时，JVM 会把该线程置为阻塞状态。当 sleep()状态超时、join()等待线程终止或者超时、或者 I/O处理完毕时，线程重新转入可运行(runnable)状态。</p>
+<h3 id="线程死亡（DEAD）"><a href="#线程死亡（DEAD）" class="headerlink" title="线程死亡（DEAD）"></a>线程死亡（DEAD）</h3><p>线程会以下面三种方式结束，结束后就是死亡状态。</p>
+<p>正常结束</p>
+<p>run()或 call()方法执行完成，线程正常结束。</p>
+<p>异常结束</p>
+<p>线程抛出一个未捕获的 Exception 或 Error。</p>
+<p>调用 stop</p>
+<p>直接调用该线程的 stop()方法来结束该线程—该方法通常容易导致死锁，不推荐使用。</p>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B3.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="终止线程-4-种方式"><a href="#终止线程-4-种方式" class="headerlink" title="终止线程 4 种方式"></a>终止线程 4 种方式</h2><h3 id="正常运行结束"><a href="#正常运行结束" class="headerlink" title="正常运行结束"></a>正常运行结束</h3><p>程序运行结束，线程自动结束。</p>
+<h3 id="使用退出标志退出线程"><a href="#使用退出标志退出线程" class="headerlink" title="使用退出标志退出线程"></a>使用退出标志退出线程</h3><p>一般 run()方法执行完，线程就会正常结束，然而，常常有些线程是伺服线程。它们需要长时间的运行，只有在外部某些条件满足的情况下，才能关闭这些线程。使用一个变量来控制循环，例如：最直接的方法就是设一个 boolean 类型的标志，并通过设置这个标志为 true 或 false 来控制 while循环是否退出，代码示例：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadSafe</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> exit = <span class="keyword">false</span>; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">while</span> (!exit)&#123;</span><br><span class="line">            <span class="comment">//do something</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义了一个退出标志 exit，当 exit 为 true 时，while 循环退出，exit 的默认值为 false.在定义 exit时，使用了一个 Java 关键字 volatile，这个关键字的目的是使 exit 同步，也就是说在同一时刻只能由一个线程来修改 exit 的值</p>
+<h3 id="Interrupt-方法结束线程"><a href="#Interrupt-方法结束线程" class="headerlink" title="Interrupt 方法结束线程"></a>Interrupt 方法结束线程</h3><p>使用 interrupt()方法来中断线程有两种情况：</p>
+<ol>
+<li><p>线程处于阻塞状态：如使用了 sleep,同步锁的 wait,socket 中的 receiver,accept 等方法时，会使线程处于阻塞状态。当调用线程的 interrupt()方法时，会抛出 InterruptException 异常。阻塞中的那个方法抛出这个异常，通过代码捕获该异常，然后 break 跳出循环状态，从而让<br>我们有机会结束这个线程的执行。通常很多人认为只要调用 interrupt 方法线程就会结束，实际上是错的， 一定要先捕获 InterruptedException 异常之后通过 break 来跳出循环，才能正常结束 run 方法。</p>
+</li>
+<li><p>线程未处于阻塞状态：使用 isInterrupted()判断线程的中断标志来退出循环。当使用interrupt()方法时，中断标志就会置 true，和使用自定义的标志来控制循环是一样的道理。</p>
+</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadSafe</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">while</span> (!isInterrupted())&#123; <span class="comment">//非阻塞过程中通过判断中断标志来退出</span></span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                Thread.sleep(<span class="number">5</span>*<span class="number">1000</span>);<span class="comment">//阻塞过程捕获中断异常来退出</span></span><br><span class="line">            &#125;<span class="keyword">catch</span>(InterruptedException e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">                <span class="keyword">break</span>;<span class="comment">//捕获到异常之后，执行 break 跳出循环</span></span><br><span class="line">            &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="stop-方法终止线程（线程不安全）"><a href="#stop-方法终止线程（线程不安全）" class="headerlink" title="stop 方法终止线程（线程不安全）"></a>stop 方法终止线程（线程不安全）</h3><p>程序中可以直接使用 thread.stop()来强行终止线程，但是 stop 方法是很危险的，就象突然关闭计算机电源，而不是按正常程序关机一样，可能会产生不可预料的结果，不安全主要是：thread.stop()调用之后，创建子线程的线程就会抛出 ThreadDeatherror 的错误，并且会释放子线程所持有的所有锁。一般任何进行加锁的代码块，都是为了保护数据的一致性，如果在调用thread.stop()后导致了该线程所持有的所有锁的突然释放(不可控制)，那么被保护数据就有可能呈现不一致性，其他线程在使用这些被破坏的数据时，有可能导致一些很奇怪的应用程序错误。因此，并不推荐使用 stop 方法来终止线程。</p>
+<h2 id="sleep-与-wait-区别"><a href="#sleep-与-wait-区别" class="headerlink" title="sleep 与 wait 区别"></a>sleep 与 wait 区别</h2><ol>
+<li><p>对于 sleep()方法，我们首先要知道该方法是属于 Thread 类中的。而 wait()方法，则是属于Object 类中的。</p>
+</li>
+<li><p>sleep()方法导致了程序暂停执行指定的时间，让出 cpu 该其他线程，但是他的监控状态依然保持者，当指定的时间到了又会自动恢复运行状态。</p>
+</li>
+<li><p>在调用 sleep()方法的过程中，线程不会释放对象锁</p>
+</li>
+<li><p>而当调用 wait()方法的时候，线程会放弃对象锁，进入等待此对象的等待锁定池，只有针对此对象调用 notify()方法后本线程才进入对象锁定池准备获取对象锁进入运行状态。</p>
+</li>
+</ol>
+<h2 id="start-与-run-区别"><a href="#start-与-run-区别" class="headerlink" title="start 与 run 区别"></a>start 与 run 区别</h2><ol>
+<li>start（）方法来启动线程，真正实现了多线程运行。这时无需等待 run 方法体代码执行完毕，可以直接继续执行下面的代码。</li>
+<li>通过调用 Thread 类的 start()方法来启动一个线程， 这时此线程是处于就绪状态， 并没有运行。</li>
+<li>方法 run()称为线程体，它包含了要执行的这个线程的内容，线程就进入运行状态，开始运行 run 函数当中的代码。 Run 方法运行结束， 此线程终止。然后 CPU 再调度其它线程。</li>
+</ol>
+<h2 id="JAVA-后台线程"><a href="#JAVA-后台线程" class="headerlink" title="JAVA 后台线程"></a>JAVA 后台线程</h2><ol>
+<li><p>定义：守护线程–也称“服务线程”，他是后台线程，它有一个特性，即为用户线程 提供公共服务，在没有用户线程可服务时会自动离开。</p>
+</li>
+<li><p>优先级：守护线程的优先级比较低，用于为系统中的其它对象和线程提供服务。</p>
+</li>
+<li><p>设置：通过 setDaemon(true)来设置线程为“守护线程”；将一个用户线程设置为守护线程的方式是在 线程对象创建 之前 用线程对象的 setDaemon 方法。</p>
+</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">thread = <span class="keyword">new</span> Thread(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">thread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">thread.start();</span><br></pre></td></tr></table></figure></div>
+
+<ol start="4">
+<li><p>在 Daemon 线程中产生的新线程也是 Daemon 的。</p>
+</li>
+<li><p>线程则是 JVM 级别的，以 Tomcat 为例，如果你在 Web 应用中启动一个线程，这个线程的生命周期并不会和 Web 应用程序保持同步。也就是说，即使你停止了 Web 应用，这个线程依旧是活跃的。</p>
+</li>
+<li><p>example: 垃圾回收线程就是一个经典的守护线程，当我们的程序中不再有任何运行的Thread,程序就不会再产生垃圾，垃圾回收器也就无事可做，所以当垃圾回收线程是 JVM 上仅剩的线程时，垃圾回收线程会自动离开。它始终在低级别的状态中运行，用于实时监控和管理系统中的可回收资源。</p>
+</li>
+<li><p>生命周期：守护进程（Daemon）是运行在后台的一种特殊进程。它独立于控制终端并且周期性地执行某种任务或等待处理某些发生的事件。也就是说守护线程不依赖于终端，但是依赖于系统，与系统“同生共死”。当 JVM 中所有的线程都是守护线程的时候，JVM 就可以退出了；如果还有一个或以上的非守护线程则 JVM 不会退出。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>多线程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JAVA集合</title>
     <url>/2020/02/11/Java/Java%E9%9B%86%E5%90%88/</url>
     <content><![CDATA[<blockquote>
@@ -573,6 +864,45 @@
       </tags>
   </entry>
   <entry>
+    <title>状态模式</title>
+    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
+</li>
+<li><p>代码中包含大量与对象状态有关的条件语句。</p>
+</li>
+</ol>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类的实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>位运算的简单应用-权限管理</title>
     <url>/2020/01/16/Android/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -610,45 +940,6 @@
       </categories>
       <tags>
         <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>状态模式</title>
-    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客</p>
-<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
-<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
-<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
-</li>
-<li><p>代码中包含大量与对象状态有关的条件语句。</p>
-</li>
-</ol>
-<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类的实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>调用</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式</tag>
       </tags>
   </entry>
   <entry>
@@ -1981,35 +2272,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Android Gradle 插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
-<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
-<p>App插件id: com.android.application</p>
-<p>Library插件id: com.android.library</p>
-<p>Test插件id: com.android.test</p>
-<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置好后，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
-<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
-<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
-<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android动画</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Android%E5%8A%A8%E7%94%BB/</url>
     <content><![CDATA[<blockquote>
@@ -2065,6 +2327,35 @@
       </categories>
       <tags>
         <tag>动画</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android Gradle 插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
+<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
+<p>App插件id: com.android.application</p>
+<p>Library插件id: com.android.library</p>
+<p>Test插件id: com.android.test</p>
+<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
+<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
+<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
+<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
