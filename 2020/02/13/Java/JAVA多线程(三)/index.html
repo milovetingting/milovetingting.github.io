@@ -1,0 +1,302 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Java多线程(三) | milovetingting</title><meta name="description" content="Java多线程(三)"><meta name="keywords" content="Java,多线程"><meta name="author" content="milovetingting,milovetingting@gmail.com"><meta name="copyright" content="milovetingting"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Java多线程(三)"><meta name="twitter:description" content="Java多线程(三)"><meta name="twitter:image" content="http://www.milovetingting.cn/images/cover_java.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Java多线程(三)"><meta property="og:url" content="http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/"><meta property="og:site_name" content="milovetingting"><meta property="og:description" content="Java多线程(三)"><meta property="og:image" content="http://www.milovetingting.cn/images/cover_java.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/"><link rel="prev" title="Java多线程(四)" href="http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E5%9B%9B)/"><link rel="next" title="Java多线程(二)" href="http://www.milovetingting.cn/2020/02/11/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%BA%8C)/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8ba6d970b7b738df6e65e31041f9ba3e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: milovetingting","link":"链接: http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/","source":"来源: milovetingting","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"title":"Snackbar.bookmark.title","message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">milovetingting</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">58</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">56</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">6</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Java多线程-三"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">Java多线程(三)</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#前言"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">前言</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程基本方法"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">线程基本方法</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程等待（wait）"><span class="toc_mobile_items-number">1.2.1.</span> <span class="toc_mobile_items-text">线程等待（wait）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程睡眠（sleep）"><span class="toc_mobile_items-number">1.2.2.</span> <span class="toc_mobile_items-text">线程睡眠（sleep）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程让步（yield）"><span class="toc_mobile_items-number">1.2.3.</span> <span class="toc_mobile_items-text">线程让步（yield）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程中断（interrupt）"><span class="toc_mobile_items-number">1.2.4.</span> <span class="toc_mobile_items-text">线程中断（interrupt）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Join-等待其他线程终止"><span class="toc_mobile_items-number">1.2.5.</span> <span class="toc_mobile_items-text">Join 等待其他线程终止</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#为什么要用-join-方法"><span class="toc_mobile_items-number">1.2.6.</span> <span class="toc_mobile_items-text">为什么要用 join()方法</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程唤醒（notify）"><span class="toc_mobile_items-number">1.2.7.</span> <span class="toc_mobile_items-text">线程唤醒（notify）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#其他方法"><span class="toc_mobile_items-number">1.2.8.</span> <span class="toc_mobile_items-text">其他方法</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程上下文切换"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">线程上下文切换</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#进程"><span class="toc_mobile_items-number">1.3.1.</span> <span class="toc_mobile_items-text">进程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#上下文"><span class="toc_mobile_items-number">1.3.2.</span> <span class="toc_mobile_items-text">上下文</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#寄存器"><span class="toc_mobile_items-number">1.3.3.</span> <span class="toc_mobile_items-text">寄存器</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#程序计数器"><span class="toc_mobile_items-number">1.3.4.</span> <span class="toc_mobile_items-text">程序计数器</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#PCB-“切换桢”"><span class="toc_mobile_items-number">1.3.5.</span> <span class="toc_mobile_items-text">PCB-“切换桢”</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#上下文切换的活动"><span class="toc_mobile_items-number">1.3.6.</span> <span class="toc_mobile_items-text">上下文切换的活动</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#引起线程上下文切换的原因"><span class="toc_mobile_items-number">1.3.7.</span> <span class="toc_mobile_items-text">引起线程上下文切换的原因</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#同步锁与死锁"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">同步锁与死锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#同步锁"><span class="toc_mobile_items-number">1.4.1.</span> <span class="toc_mobile_items-text">同步锁</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#死锁"><span class="toc_mobile_items-number">1.4.2.</span> <span class="toc_mobile_items-text">死锁</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程池原理"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">线程池原理</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程复用"><span class="toc_mobile_items-number">1.5.1.</span> <span class="toc_mobile_items-text">线程复用</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程池的组成"><span class="toc_mobile_items-number">1.5.2.</span> <span class="toc_mobile_items-text">线程池的组成</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#拒绝策略"><span class="toc_mobile_items-number">1.5.3.</span> <span class="toc_mobile_items-text">拒绝策略</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Java-线程池工作过程"><span class="toc_mobile_items-number">1.5.4.</span> <span class="toc_mobile_items-text">Java 线程池工作过程</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#JAVA-阻塞队列原理"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">JAVA 阻塞队列原理</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#阻塞队列的主要方法"><span class="toc_mobile_items-number">1.6.1.</span> <span class="toc_mobile_items-text">阻塞队列的主要方法</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#插入操作"><span class="toc_mobile_items-number">1.6.1.1.</span> <span class="toc_mobile_items-text">插入操作</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#获取数据操作"><span class="toc_mobile_items-number">1.6.1.2.</span> <span class="toc_mobile_items-text">获取数据操作</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Java-中的阻塞队列"><span class="toc_mobile_items-number">1.6.2.</span> <span class="toc_mobile_items-text">Java 中的阻塞队列</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayBlockingQueue（公平、非公平）"><span class="toc_mobile_items-number">1.6.3.</span> <span class="toc_mobile_items-text">ArrayBlockingQueue（公平、非公平）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedBlockingQueue（两个独立锁提高并发）"><span class="toc_mobile_items-number">1.6.4.</span> <span class="toc_mobile_items-text">LinkedBlockingQueue（两个独立锁提高并发）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#PriorityBlockingQueue（compareTo-排序实现优先）"><span class="toc_mobile_items-number">1.6.5.</span> <span class="toc_mobile_items-text">PriorityBlockingQueue（compareTo 排序实现优先）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#DelayQueue（缓存失效、定时任务-）"><span class="toc_mobile_items-number">1.6.6.</span> <span class="toc_mobile_items-text">DelayQueue（缓存失效、定时任务 ）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#SynchronousQueue（不存储数据、可用于传递数据）"><span class="toc_mobile_items-number">1.6.7.</span> <span class="toc_mobile_items-text">SynchronousQueue（不存储数据、可用于传递数据）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedTransferQueue"><span class="toc_mobile_items-number">1.6.8.</span> <span class="toc_mobile_items-text">LinkedTransferQueue</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedBlockingDeque"><span class="toc_mobile_items-number">1.6.9.</span> <span class="toc_mobile_items-text">LinkedBlockingDeque</span></a></li></ol></li></ol></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java多线程-三"><span class="toc-number">1.</span> <span class="toc-text">Java多线程(三)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程基本方法"><span class="toc-number">1.2.</span> <span class="toc-text">线程基本方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#线程等待（wait）"><span class="toc-number">1.2.1.</span> <span class="toc-text">线程等待（wait）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程睡眠（sleep）"><span class="toc-number">1.2.2.</span> <span class="toc-text">线程睡眠（sleep）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程让步（yield）"><span class="toc-number">1.2.3.</span> <span class="toc-text">线程让步（yield）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程中断（interrupt）"><span class="toc-number">1.2.4.</span> <span class="toc-text">线程中断（interrupt）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Join-等待其他线程终止"><span class="toc-number">1.2.5.</span> <span class="toc-text">Join 等待其他线程终止</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要用-join-方法"><span class="toc-number">1.2.6.</span> <span class="toc-text">为什么要用 join()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程唤醒（notify）"><span class="toc-number">1.2.7.</span> <span class="toc-text">线程唤醒（notify）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他方法"><span class="toc-number">1.2.8.</span> <span class="toc-text">其他方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程上下文切换"><span class="toc-number">1.3.</span> <span class="toc-text">线程上下文切换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程"><span class="toc-number">1.3.1.</span> <span class="toc-text">进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文"><span class="toc-number">1.3.2.</span> <span class="toc-text">上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寄存器"><span class="toc-number">1.3.3.</span> <span class="toc-text">寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序计数器"><span class="toc-number">1.3.4.</span> <span class="toc-text">程序计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PCB-“切换桢”"><span class="toc-number">1.3.5.</span> <span class="toc-text">PCB-“切换桢”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文切换的活动"><span class="toc-number">1.3.6.</span> <span class="toc-text">上下文切换的活动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#引起线程上下文切换的原因"><span class="toc-number">1.3.7.</span> <span class="toc-text">引起线程上下文切换的原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同步锁与死锁"><span class="toc-number">1.4.</span> <span class="toc-text">同步锁与死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步锁"><span class="toc-number">1.4.1.</span> <span class="toc-text">同步锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁"><span class="toc-number">1.4.2.</span> <span class="toc-text">死锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池原理"><span class="toc-number">1.5.</span> <span class="toc-text">线程池原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#线程复用"><span class="toc-number">1.5.1.</span> <span class="toc-text">线程复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程池的组成"><span class="toc-number">1.5.2.</span> <span class="toc-text">线程池的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拒绝策略"><span class="toc-number">1.5.3.</span> <span class="toc-text">拒绝策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-线程池工作过程"><span class="toc-number">1.5.4.</span> <span class="toc-text">Java 线程池工作过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JAVA-阻塞队列原理"><span class="toc-number">1.6.</span> <span class="toc-text">JAVA 阻塞队列原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#阻塞队列的主要方法"><span class="toc-number">1.6.1.</span> <span class="toc-text">阻塞队列的主要方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#插入操作"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">插入操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#获取数据操作"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">获取数据操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-中的阻塞队列"><span class="toc-number">1.6.2.</span> <span class="toc-text">Java 中的阻塞队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayBlockingQueue（公平、非公平）"><span class="toc-number">1.6.3.</span> <span class="toc-text">ArrayBlockingQueue（公平、非公平）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedBlockingQueue（两个独立锁提高并发）"><span class="toc-number">1.6.4.</span> <span class="toc-text">LinkedBlockingQueue（两个独立锁提高并发）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PriorityBlockingQueue（compareTo-排序实现优先）"><span class="toc-number">1.6.5.</span> <span class="toc-text">PriorityBlockingQueue（compareTo 排序实现优先）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DelayQueue（缓存失效、定时任务-）"><span class="toc-number">1.6.6.</span> <span class="toc-text">DelayQueue（缓存失效、定时任务 ）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SynchronousQueue（不存储数据、可用于传递数据）"><span class="toc-number">1.6.7.</span> <span class="toc-text">SynchronousQueue（不存储数据、可用于传递数据）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedTransferQueue"><span class="toc-number">1.6.8.</span> <span class="toc-text">LinkedTransferQueue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedBlockingDeque"><span class="toc-number">1.6.9.</span> <span class="toc-text">LinkedBlockingDeque</span></a></li></ol></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(/images/cover_java.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">Java多线程(三)</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-02-13<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-02-13</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Java/">Java</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">5.1k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 15 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Java多线程-三"><a href="#Java多线程-三" class="headerlink" title="Java多线程(三)"></a>Java多线程(三)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>本文为学习Java相关知识所作笔记，参考以下资料:<a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide</a> ,感谢原作者的分享!</p>
+</blockquote>
+<h2 id="线程基本方法"><a href="#线程基本方法" class="headerlink" title="线程基本方法"></a>线程基本方法</h2><p>线程相关的基本方法有 wait，notify，notifyAll，sleep，join，yield 等。</p>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B5.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="线程等待（wait）"><a href="#线程等待（wait）" class="headerlink" title="线程等待（wait）"></a>线程等待（wait）</h3><p>调用该方法的线程进入 WAITING 状态，只有等待另外线程的通知或被中断才会返回，需要注意的是调用 wait()方法后，会释放对象的锁。因此，wait 方法一般用在同步方法或同步代码块中。</p>
+<h3 id="线程睡眠（sleep）"><a href="#线程睡眠（sleep）" class="headerlink" title="线程睡眠（sleep）"></a>线程睡眠（sleep）</h3><p>sleep 导致当前线程休眠，与 wait 方法不同的是 sleep 不会释放当前占有的锁,sleep(long)会导致线程进入 TIMED-WATING 状态，而 wait()方法会导致当前线程进入 WATING 状态</p>
+<h3 id="线程让步（yield）"><a href="#线程让步（yield）" class="headerlink" title="线程让步（yield）"></a>线程让步（yield）</h3><p>yield 会使当前线程让出 CPU 执行时间片，与其他线程一起重新竞争 CPU 时间片。一般情况下，优先级高的线程有更大的可能性成功竞争得到 CPU 时间片，但这又不是绝对的，有的操作系统对线程优先级并不敏感。</p>
+<h3 id="线程中断（interrupt）"><a href="#线程中断（interrupt）" class="headerlink" title="线程中断（interrupt）"></a>线程中断（interrupt）</h3><p>中断一个线程，其本意是给这个线程一个通知信号，会影响这个线程内部的一个中断标识位。这个线程本身并不会因此而改变状态(如阻塞，终止等)。</p>
+<ol>
+<li><p>调用 interrupt()方法并不会中断一个正在运行的线程。也就是说处于 Running 状态的线程并不会因为被中断而被终止，仅仅改变了内部维护的中断标识位而已。</p>
+</li>
+<li><p>若调用 sleep()而使线程处于 TIMED-WATING 状态，这时调用 interrupt()方法，会抛出InterruptedException,从而使线程提前结束 TIMED-WATING 状态。</p>
+</li>
+<li><p>许多声明抛出 InterruptedException 的方法(如 Thread.sleep(long mills 方法))，抛出异常前，都会清除中断标识位，所以抛出异常后，调用 isInterrupted()方法将会返回 false。</p>
+</li>
+<li><p>中断状态是线程固有的一个标识位，可以通过此标识位安全的终止线程。比如,你想终止一个线程 thread 的时候，可以调用 thread.interrupt()方法，在线程的 run 方法内部可以根据 thread.isInterrupted()的值来优雅的终止线程。</p>
+</li>
+</ol>
+<h3 id="Join-等待其他线程终止"><a href="#Join-等待其他线程终止" class="headerlink" title="Join 等待其他线程终止"></a>Join 等待其他线程终止</h3><p>join() 方法，等待其他线程终止，在当前线程中调用一个线程的 join() 方法，则当前线程转为阻塞状态，回到另一个线程结束，当前线程再由阻塞状态变为就绪状态，等待 cpu 的宠幸。</p>
+<h3 id="为什么要用-join-方法"><a href="#为什么要用-join-方法" class="headerlink" title="为什么要用 join()方法"></a>为什么要用 join()方法</h3><p>很多情况下，主线程生成并启动了子线程，需要用到子线程返回的结果，也就是需要主线程需要在子线程结束后再结束，这时候就要用到 join() 方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(Thread.currentThread().getName() + <span class="string">"线程运行开始!"</span>);</span><br><span class="line">Thread6 thread1 = <span class="keyword">new</span> Thread6();</span><br><span class="line">thread1.setName(<span class="string">"线程 B"</span>);</span><br><span class="line">thread1.join();</span><br><span class="line">System.out.println(<span class="string">"这时 thread1 执行完毕之后才能执行主线程"</span>);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="线程唤醒（notify）"><a href="#线程唤醒（notify）" class="headerlink" title="线程唤醒（notify）"></a>线程唤醒（notify）</h3><p>Object 类中的 notify() 方法，唤醒在此对象监视器上等待的单个线程，如果所有线程都在此对象上等待，则会选择唤醒其中一个线程，选择是任意的，并在对实现做出决定时发生，线程通过调用其中一个 wait() 方法，在对象的监视器上等待，直到当前的线程放弃此对象上的锁定，才能继续执行被唤醒的线程，被唤醒的线程将以常规方式与在该对象上主动同步的其他所有线程进行竞<br>争。类似的方法还有 notifyAll() ，唤醒再次监视器上等待的所有线程</p>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><ol>
+<li><p>sleep()：强迫一个线程睡眠Ｎ毫秒。</p>
+</li>
+<li><p>isAlive()： 判断一个线程是否存活。</p>
+</li>
+<li><p>join()： 等待线程终止。</p>
+</li>
+<li><p>activeCount()： 程序中活跃的线程数。</p>
+</li>
+<li><p>enumerate()： 枚举程序中的线程。</p>
+</li>
+<li><p>currentThread()： 得到当前线程。</p>
+</li>
+<li><p>isDaemon()： 一个线程是否为守护线程。</p>
+</li>
+<li><p>setDaemon()： 设置一个线程为守护线程。(用户线程和守护线程的区别在于，是否等待主线程依赖于主线程结束而结束) </p>
+</li>
+<li><p>setName()： 为线程设置一个名称。</p>
+</li>
+<li><p>wait()： 强迫一个线程等待</p>
+</li>
+<li><p>notify()： 通知一个线程继续运行。</p>
+</li>
+<li><p>setPriority()： 设置一个线程的优先级。</p>
+</li>
+<li><p>getPriority():：获得一个线程的优先级</p>
+</li>
+</ol>
+<h2 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h2><p>巧妙地利用了时间片轮转的方式, CPU 给每个任务都服务一定的时间，然后把当前任务的状态保存下来，在加载下一任务的状态后，继续服务下一任务，任务的状态保存及再加载, 这段过程就叫做上下文切换。时间片轮转的方式使多个任务在同一颗 CPU 上执行变成了可能。</p>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B6.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>（有时候也称做任务）是指一个程序运行的实例。在 Linux 系统中，线程就是能并行运行并且与他们的父进程（创建他们的进程）共享同一地址空间（一段内存区域）和其他资源的轻量级的进程</p>
+<h3 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h3><p>是指某一时间点 CPU 寄存器和程序计数器的内容。</p>
+<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>是 CPU 内部的数量较少但是速度很快的内存（与之对应的是 CPU 外部相对较慢的 RAM 主内存）。寄存器通过对常用值（通常是运算的中间值）的快速访问来提高计算机程序运行的速度</p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>是一个专用的寄存器， 用于表明指令序列中 CPU 正在执行的位置，存的值为正在执行的指令的位置或者下一个将要被执行的指令的位置，具体依赖于特定的系统</p>
+<h3 id="PCB-“切换桢”"><a href="#PCB-“切换桢”" class="headerlink" title="PCB-“切换桢”"></a>PCB-“切换桢”</h3><p>上下文切换可以认为是内核（操作系统的核心）在 CPU 上对于进程（包括线程）进行切换，上下文切换过程中的信息是保存在进程控制块（PCB, process control block）中的。 PCB 还经常被称作“切换桢”（switchframe）。 信息会一直保存到 CPU 的内存中，直到他们被再次使用。</p>
+<h3 id="上下文切换的活动"><a href="#上下文切换的活动" class="headerlink" title="上下文切换的活动"></a>上下文切换的活动</h3><ol>
+<li><p>挂起一个进程，将这个进程在 CPU 中的状态（上下文）存储于内存中的某处。</p>
+</li>
+<li><p>在内存中检索下一个进程的上下文并将其在 CPU 的寄存器中恢复。</p>
+</li>
+<li><p>跳转到程序计数器所指向的位置（即跳转到进程被中断时的代码行），以恢复该进程在程序中。</p>
+</li>
+</ol>
+<h3 id="引起线程上下文切换的原因"><a href="#引起线程上下文切换的原因" class="headerlink" title="引起线程上下文切换的原因"></a>引起线程上下文切换的原因</h3><ol>
+<li><p>当前执行任务的时间片用完之后，系统 CPU 正常调度下一个任务；</p>
+</li>
+<li><p>当前执行任务碰到 IO 阻塞，调度器将此任务挂起，继续下一任务；</p>
+</li>
+<li><p>多个任务抢占锁资源，当前任务没有抢到锁资源，被调度器挂起，继续下一任务；</p>
+</li>
+<li><p>用户代码挂起当前任务，让出 CPU 时间；</p>
+</li>
+<li><p>硬件中断；</p>
+</li>
+</ol>
+<h2 id="同步锁与死锁"><a href="#同步锁与死锁" class="headerlink" title="同步锁与死锁"></a>同步锁与死锁</h2><h3 id="同步锁"><a href="#同步锁" class="headerlink" title="同步锁"></a>同步锁</h3><p>当多个线程同时访问同一个数据时，很容易出现问题。为了避免这种情况出现，我们要保证线程同步互斥，就是指并发执行的多个线程，在同一时间内只允许一个线程访问共享数据。 Java 中可以使用 synchronized 关键字来取得一个对象的同步锁。</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>何为死锁，就是多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。</p>
+<h2 id="线程池原理"><a href="#线程池原理" class="headerlink" title="线程池原理"></a>线程池原理</h2><p>线程池做的工作主要是控制运行的线程的数量，处理过程中将任务放入队列，然后在线程创建后启动这些任务，如果线程数量超过了最大数量超出数量的线程排队等候，等其它线程执行完毕，再从队列中取出任务来执行。 他的主要特点为： 线程复用； 控制最大并发数； 管理线程。</p>
+<h3 id="线程复用"><a href="#线程复用" class="headerlink" title="线程复用"></a>线程复用</h3><p>每一个 Thread 的类都有一个 start 方法。 当调用 start 启动线程时 Java 虚拟机会调用该类的 run方法。 那么该类的 run() 方法中就是调用了 Runnable 对象的 run() 方法。 我们可以继承重写Thread 类，在其 start 方法中添加不断循环调用传递过来的 Runnable 对象。 这就是线程池的实现原理。 循环方法中不断获取 Runnable 是用 Queue 实现的，在获取下一个 Runnable 之前可以是阻塞的。</p>
+<h3 id="线程池的组成"><a href="#线程池的组成" class="headerlink" title="线程池的组成"></a>线程池的组成</h3><p>一般的线程池主要分为以下 4 个组成部分：</p>
+<ol>
+<li><p>线程池管理器：用于创建并管理线程池</p>
+</li>
+<li><p>工作线程：线程池中的线程</p>
+</li>
+<li><p>任务接口：每个任务必须实现的接口，用于工作线程调度其运行</p>
+</li>
+<li><p>任务队列：用于存放待处理的任务，提供一种缓冲机制</p>
+</li>
+</ol>
+<p>Java 中的线程池是通过 Executor 框架实现的，该框架中用到了 Executor， Executors，ExecutorService， ThreadPoolExecutor ， Callable 和 Future、 FutureTask 这几个类。</p>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B7.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B7.png" src="/img/loading.gif" class="lazyload"></a></p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">TimeUnit unit, BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">    Executors.defaultThreadFactory(), defaultHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ol>
+<li><p>corePoolSize：指定了线程池中的线程数量。</p>
+</li>
+<li><p>maximumPoolSize：指定了线程池中的最大线程数量。</p>
+</li>
+<li><p>keepAliveTime：当前线程池数量超过 corePoolSize 时，多余的空闲线程的存活时间，即多长时间内会被销毁。</p>
+</li>
+<li><p>unit： keepAliveTime 的单位。</p>
+</li>
+<li><p>workQueue：任务队列，被提交但尚未被执行的任务。</p>
+</li>
+<li><p>threadFactory：线程工厂，用于创建线程，一般用默认的即可。</p>
+</li>
+<li><p>handler：拒绝策略，当任务太多来不及处理，如何拒绝任务。</p>
+</li>
+</ol>
+<h3 id="拒绝策略"><a href="#拒绝策略" class="headerlink" title="拒绝策略"></a>拒绝策略</h3><p>线程池中的线程已经用完了，无法继续为新任务服务，同时，等待队列也已经排满了，再也塞不下新任务了。这时候我们就需要拒绝策略机制合理的处理这个问题。</p>
+<p>JDK 内置的拒绝策略如下：</p>
+<ol>
+<li><p>AbortPolicy ： 直接抛出异常，阻止系统正常运行。</p>
+</li>
+<li><p>CallerRunsPolicy ： 只要线程池未关闭，该策略直接在调用者线程中，运行当前被丢弃的任务。显然这样做不会真的丢弃任务，但是，任务提交线程的性能极有可能会急剧下降。</p>
+</li>
+<li><p>DiscardOldestPolicy ： 丢弃最老的一个请求，也就是即将被执行的一个任务，并尝试再次提交当前任务。</p>
+</li>
+<li><p>DiscardPolicy ： 该策略默默地丢弃无法处理的任务，不予任何处理。如果允许任务丢失，这是最好的一种方案。</p>
+</li>
+</ol>
+<p>以上内置拒绝策略均实现了 RejectedExecutionHandler 接口，若以上策略仍无法满足实际需要，完全可以自己扩展 RejectedExecutionHandler 接口。</p>
+<h3 id="Java-线程池工作过程"><a href="#Java-线程池工作过程" class="headerlink" title="Java 线程池工作过程"></a>Java 线程池工作过程</h3><ol>
+<li><p>线程池刚创建时，里面没有一个线程。任务队列是作为参数传进来的。不过，就算队列里面有任务，线程池也不会马上执行它们。</p>
+</li>
+<li><p>当调用 execute() 方法添加一个任务时，线程池会做如下判断：</p>
+<p> a) 如果正在运行的线程数量小于 corePoolSize，那么马上创建线程运行这个任务；</p>
+<p> b) 如果正在运行的线程数量大于或等于 corePoolSize，那么将这个任务放入队列；</p>
+<p> c) 如果这时候队列满了，而且正在运行的线程数量小于 maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；</p>
+<p> d) 如果队列满了，而且正在运行的线程数量大于或等于 maximumPoolSize，那么线程池会抛出异常 RejectExecutionException。</p>
+</li>
+<li><p>当一个线程完成任务时，它会从队列中取下一个任务来执行。</p>
+</li>
+<li><p>当一个线程无事可做，超过一定的时间（keepAliveTime）时，线程池会判断，如果当前运行的线程数大于 corePoolSize，那么这个线程就被停掉。所以线程池的所有任务完成后，它<br>最终会收缩到 corePoolSize 的大小</p>
+</li>
+</ol>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B8.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="JAVA-阻塞队列原理"><a href="#JAVA-阻塞队列原理" class="headerlink" title="JAVA 阻塞队列原理"></a>JAVA 阻塞队列原理</h2><p>阻塞队列，关键字是阻塞，先理解阻塞的含义，在阻塞队列中，线程阻塞有这样的两种情况：</p>
+<ol>
+<li><p>当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。</p>
+</li>
+<li><p>当队列中填满数据的情况下，生产者端的所有线程都会被自动阻塞（挂起），直到队列中有空的位置，线程被自动唤醒。</p>
+</li>
+</ol>
+<h3 id="阻塞队列的主要方法"><a href="#阻塞队列的主要方法" class="headerlink" title="阻塞队列的主要方法"></a>阻塞队列的主要方法</h3><p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B9.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B9.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>抛出异常：抛出一个异常；</p>
+<p>特殊值：返回一个特殊值（null 或 false,视情况而定）</p>
+<p>阻塞：在成功操作之前，一直阻塞线程</p>
+<p>超时：放弃前只在最大的时间内阻塞</p>
+<h4 id="插入操作"><a href="#插入操作" class="headerlink" title="插入操作"></a>插入操作</h4><p>1： public abstract boolean add(E paramE)： 将指定元素插入此队列中（如果立即可行且不会违反容量限制），成功时返回 true，如果当前没有可用的空间，则抛出 IllegalStateException。如果该元素是 NULL，则会抛出 NullPointerException 异常。</p>
+<p>2： public abstract boolean offer(E paramE)： 将指定元素插入此队列中（如果立即可行且不会违反容量限制），成功时返回 true，如果当前没有可用的空间，则返回 false。</p>
+<p>3： public abstract void put(E paramE) throws InterruptedException： 将指定元素插入此队列中，将等待可用的空间（如果有必要）</p>
+<p>4： offer(E o, long timeout, TimeUnit unit)： 可以设定等待的时间， 如果在指定的时间内， 还不能往队列中加入 BlockingQueue， 则返回失败。</p>
+<h4 id="获取数据操作"><a href="#获取数据操作" class="headerlink" title="获取数据操作"></a>获取数据操作</h4><p>1： poll(time):取走 BlockingQueue 里排在首位的对象,若不能立即取出,则可以等 time 参数规定的时间,取不到时返回 null;</p>
+<p>2： poll(long timeout, TimeUnit unit)： 从 BlockingQueue 取出一个队首的对象， 如果在指定时间内， 队列一旦有数据可取， 则立即返回队列中的数据。否则直到时间超时还没有数据可取，返回失败。</p>
+<p>3： take():取走 BlockingQueue 里排在首位的对象,若 BlockingQueue 为空,阻断进入等待状态直到 BlockingQueue 有新的数据被加入。</p>
+<p>4.drainTo():一次性从 BlockingQueue 获取所有可用的数据对象（还可以指定获取数据的个数），通过该方法，可以提升获取数据效率；不需要多次分批加锁或释放锁</p>
+<h3 id="Java-中的阻塞队列"><a href="#Java-中的阻塞队列" class="headerlink" title="Java 中的阻塞队列"></a>Java 中的阻塞队列</h3><ol>
+<li><p>ArrayBlockingQueue ：由数组结构组成的有界阻塞队列。</p>
+</li>
+<li><p>LinkedBlockingQueue ：由链表结构组成的有界阻塞队列。</p>
+</li>
+<li><p>PriorityBlockingQueue ：支持优先级排序的无界阻塞队列。</p>
+</li>
+<li><p>DelayQueue：使用优先级队列实现的无界阻塞队列。</p>
+</li>
+<li><p>SynchronousQueue：不存储元素的阻塞队列。</p>
+</li>
+<li><p>LinkedTransferQueue：由链表结构组成的无界阻塞队列。</p>
+</li>
+<li><p>LinkedBlockingDeque：由链表结构组成的双向阻塞队列</p>
+</li>
+</ol>
+<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B10.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B10.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="ArrayBlockingQueue（公平、非公平）"><a href="#ArrayBlockingQueue（公平、非公平）" class="headerlink" title="ArrayBlockingQueue（公平、非公平）"></a>ArrayBlockingQueue（公平、非公平）</h3><p>用数组实现的有界阻塞队列。此队列按照先进先出（FIFO）的原则对元素进行排序。 默认情况下不保证访问者公平的访问队列，所谓公平访问队列是指阻塞的所有生产者线程或消费者线程，当队列可用时，可以按照阻塞的先后顺序访问队列，即先阻塞的生产者线程，可以先往队列里插入元素，先阻塞的消费者线程，可以先从队列里获取元素。通常情况下为了保证公平性会降低吞吐量。我们可以使用以下代码创建一个公平的阻塞队列：</p>
+<p>ArrayBlockingQueue fairQueue = new ArrayBlockingQueue(1000,true);</p>
+<h3 id="LinkedBlockingQueue（两个独立锁提高并发）"><a href="#LinkedBlockingQueue（两个独立锁提高并发）" class="headerlink" title="LinkedBlockingQueue（两个独立锁提高并发）"></a>LinkedBlockingQueue（两个独立锁提高并发）</h3><p>基于链表的阻塞队列，同 ArrayListBlockingQueue 类似，此队列按照先进先出（FIFO）的原则对元素进行排序。而 LinkedBlockingQueue 之所以能够高效的处理并发数据，还因为其对于生产者端和消费者端分别采用了独立的锁来控制数据同步，这也意味着在高并发的情况下生产者和消费者可以并行地操作队列中的数据，以此来提高整个队列的并发性能。</p>
+<p>LinkedBlockingQueue 会默认一个类似无限大小的容量（Integer.MAX_VALUE）。</p>
+<h3 id="PriorityBlockingQueue（compareTo-排序实现优先）"><a href="#PriorityBlockingQueue（compareTo-排序实现优先）" class="headerlink" title="PriorityBlockingQueue（compareTo 排序实现优先）"></a>PriorityBlockingQueue（compareTo 排序实现优先）</h3><p>是一个支持优先级的无界队列。默认情况下元素采取自然顺序升序排列。 可以自定义实现compareTo()方法来指定元素进行排序规则，或者初始化 PriorityBlockingQueue 时，指定构造参数 Comparator 来对元素进行排序。需要注意的是不能保证同优先级元素的顺序。</p>
+<h3 id="DelayQueue（缓存失效、定时任务-）"><a href="#DelayQueue（缓存失效、定时任务-）" class="headerlink" title="DelayQueue（缓存失效、定时任务 ）"></a>DelayQueue（缓存失效、定时任务 ）</h3><p>是一个支持延时获取元素的无界阻塞队列。队列使用 PriorityQueue 来实现。队列中的元素必须实现 Delayed 接口，在创建元素时可以指定多久才能从队列中获取当前元素。只有在延迟期满时才能从队列中提取元素。我们可以将 DelayQueue 运用在以下应用场景：</p>
+<ol>
+<li><p>缓存系统的设计：可以用 DelayQueue 保存缓存元素的有效期，使用一个线程循环查询DelayQueue，一旦能从 DelayQueue 中获取元素时，表示缓存有效期到了。</p>
+</li>
+<li><p>定 时 任 务 调 度 ： 使 用 DelayQueue 保 存 当 天 将 会 执 行 的 任 务 和 执 行 时 间 ， 一 旦 从DelayQueue 中获取到任务就开始执行，从比如 TimerQueue 就是使用 DelayQueue 实现的。</p>
+</li>
+</ol>
+<h3 id="SynchronousQueue（不存储数据、可用于传递数据）"><a href="#SynchronousQueue（不存储数据、可用于传递数据）" class="headerlink" title="SynchronousQueue（不存储数据、可用于传递数据）"></a>SynchronousQueue（不存储数据、可用于传递数据）</h3><p>是一个不存储元素的阻塞队列。每一个 put 操作必须等待一个 take 操作，否则不能继续添加元素。SynchronousQueue 可以看成是一个传球手，负责把生产者线程处理的数据直接传递给消费者线程。队列本身并不存储任何元素，非常适合于传递性场景,比如在一个线程中使用的数据，传递给另 外 一 个 线 程 使 用 ， SynchronousQueue 的 吞 吐 量 高 于 LinkedBlockingQueue 和ArrayBlockingQueue</p>
+<h3 id="LinkedTransferQueue"><a href="#LinkedTransferQueue" class="headerlink" title="LinkedTransferQueue"></a>LinkedTransferQueue</h3><p>是 一 个 由 链 表 结 构 组 成 的 无 界 阻 塞 TransferQueue 队 列 。 相 对 于 其 他 阻 塞 队 列 ，LinkedTransferQueue 多了 tryTransfer 和 transfer 方法。</p>
+<ol>
+<li><p>transfer 方法： 如果当前有消费者正在等待接收元素（消费者使用 take()方法或带时间限制的poll()方法时）， transfer 方法可以把生产者传入的元素立刻 transfer（传输）给消费者。如果没有消费者在等待接收元素， transfer 方法会将元素存放在队列的 tail 节点，并等到该元素被消费者消费了才返回。</p>
+</li>
+<li><p>tryTransfer 方法。则是用来试探下生产者传入的元素是否能直接传给消费者。如果没有消费者等待接收元素，则返回 false。和 transfer 方法的区别是 tryTransfer 方法无论消费者是否<br>接收，方法立即返回。而 transfer 方法是必须等到消费者消费了才返回。对于带有时间限制的 tryTransfer(E e, long timeout, TimeUnit unit)方法，则是试图把生产者传入的元素直接传给消费者，但是如果没有消费者消费该元素则等待指定的时间再返回，如果超时还没消费元素，则返回 false，如果在超时时间内消费了元素，则返回 true。</p>
+</li>
+</ol>
+<h3 id="LinkedBlockingDeque"><a href="#LinkedBlockingDeque" class="headerlink" title="LinkedBlockingDeque"></a>LinkedBlockingDeque</h3><p>是一个由链表结构组成的双向阻塞队列。所谓双向队列指的你可以从队列的两端插入和移出元素。双端队列因为多了一个操作队列的入口，在多线程同时入队时，也就减少了一半的竞争。相比其他的阻塞队列， LinkedBlockingDeque 多了 addFirst， addLast， offerFirst， offerLast，peekFirst， peekLast 等方法，以 First 单词结尾的方法，表示插入，获取（peek）或移除双端队列的第一个元素。以 Last 单词结尾的方法，表示插入，获取或移除双端队列的最后一个元素。另外插入方法 add 等同于 addLast，移除方法 remove 等效于 removeFirst。但是 take 方法却等同于 takeFirst，不知道是不是 Jdk 的 bug，使用时还是用带有 First 和 Last 后缀的方法更清楚。</p>
+<p>在初始化 LinkedBlockingDeque 时可以设置容量防止其过渡膨胀。另外双向阻塞队列可以运用在“工作窃取”模式中。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:milovetingting@gmail.com">milovetingting</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/">http://www.milovetingting.cn/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%B8%89)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.milovetingting.cn">milovetingting</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java    </a><a class="post-meta__tags" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程    </a></div><div class="post_share"><div class="social-share" data-image="/images/cover_java.jpg" data-sites="facebook,twitter,wechat,weibo"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/02/13/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E5%9B%9B)/"><img class="prev_cover lazyload" data-src="/images/cover_java.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Java多线程(四)</span></div></a></div><div class="next-post pull_right"><a href="/2020/02/11/Java/JAVA%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E4%BA%8C)/"><img class="next_cover lazyload" data-src="/images/cover_java.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>Java多线程(二)</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/02/13/Java/JAVA多线程(四)/" title="Java多线程(四)"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">Java多线程(四)</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/11/Java/JAVA多线程(二)/" title="Java多线程(二)"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">Java多线程(二)</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/11/Java/JAVA多线程(一)/" title="Java多线程(一)"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">Java多线程(一)</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/13/Java/网络/" title="网络"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">网络</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/13/Java/JAVA基础/" title="Java基础"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">Java基础</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/11/Java/JAVA集合/" title="JAVA集合"><img class="relatedPosts_cover lazyload"data-src="/images/cover_java.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-02-13</div><div class="relatedPosts_title">JAVA集合</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'ae38b55ae64dd8d9df5a',
+  clientSecret: '684ea96fb1acf523a5f8a2a84eb751c33ca645a4',
+  repo: 'milovetingting.github.io',
+  owner: 'milovetingting',
+  admin: 'milovetingting',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN# en , zh-CN , zh-TW',
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+}</script></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By milovetingting</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
