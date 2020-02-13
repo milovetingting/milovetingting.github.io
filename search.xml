@@ -62,7 +62,7 @@
 <li><p>数据： TCP 报文段中的数据部分是可选的。在一个连接建立和一个连接终止时，双方交换的报文段仅有 TCP 首部。如果一方没有数据要发送，也使用没有任何数据的首部来确认收到的数据。在处理超时的许多情况中，也会发送不带任何数据的报文段。</p>
 </li>
 </ol>
-<p><a href="/images/%E7%BD%91%E7%BB%9C2.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/%E7%BD%91%E7%BB%9C2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/images/%E7%BD%91%E7%BB%9C3.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/%E7%BD%91%E7%BB%9C3.png" src="/img/loading.gif" class="lazyload"></a></p>
 <h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p>第一次握手：主机 A 发送位码为 syn＝1,随机产生 seq number=1234567 的数据包到服务器，主机 B由 SYN=1 知道， A 要求建立联机；</p>
 <p>第 二 次 握 手 ： 主 机 B 收 到 请 求 后 要 确 认 联 机 信 息 ， 向 A 发 送 ack number=( 主 机 A 的seq+1),syn=1,ack=1,随机产生 seq=7654321 的包</p>
 <p>第三次握手： 主机 A 收到后检查 ack number 是否正确，即第一次发送的 seq number+1,以及位码ack 是否为 1，若正确， 主机 A 会再发送 ack number=(主机 B 的 seq+1),ack=1，主机 B 收到后确认seq 值与 ack=1 则连接建立成功</p>
@@ -1557,6 +1557,45 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>状态模式</title>
+    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
+</li>
+<li><p>代码中包含大量与对象状态有关的条件语句。</p>
+</li>
+</ol>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类的实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>位运算的简单应用-权限管理</title>
     <url>/2020/01/16/Android/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -1594,45 +1633,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>状态模式</title>
-    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客</p>
-<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
-<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
-<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
-</li>
-<li><p>代码中包含大量与对象状态有关的条件语句。</p>
-</li>
-</ol>
-<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类的实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>调用</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式</tag>
       </tags>
   </entry>
   <entry>
@@ -2739,8 +2739,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>多渠道</tag>
         <tag>构建</tag>
+        <tag>多渠道</tag>
       </tags>
   </entry>
   <entry>
@@ -2783,8 +2783,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>构建</tag>
         <tag>多项目</tag>
+        <tag>构建</tag>
       </tags>
   </entry>
   <entry>
@@ -3052,59 +3052,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Drawable</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java Gradle 插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC6%E7%AB%A0-Java_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -3170,6 +3117,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
       </tags>
   </entry>
   <entry>
@@ -3519,6 +3519,58 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Gradle构建脚本基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
+<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
+<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
+<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
+<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
+<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
+<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>创建任务的另一种方式:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
+<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>另外，一个任务可以依赖多个任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
+<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
+<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>View的事件体系</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BD%93%E7%B3%BB/</url>
     <content><![CDATA[<blockquote>
@@ -3671,58 +3723,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>View</tag>
         <tag>事件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Gradle构建脚本基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
-<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
-<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
-<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
-<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
-<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
-<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>创建任务的另一种方式:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
-<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>另外，一个任务可以依赖多个任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
-<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
-<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
@@ -4224,8 +4224,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android Studio</tag>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
