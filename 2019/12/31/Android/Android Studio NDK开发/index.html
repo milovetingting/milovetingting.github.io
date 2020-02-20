@@ -84,17 +84,17 @@ function activateLightMode(){
 <h2 id="配置NDK"><a href="#配置NDK" class="headerlink" title="配置NDK"></a>配置NDK</h2><h3 id="下载NDK"><a href="#下载NDK" class="headerlink" title="下载NDK"></a>下载NDK</h3><p>一般在SDK下已经有自带的ndk文件夹，如sdk目录下的ndk-bundle文件夹。</p>
 <a id="more"></a>
 
-<p><a href="/images/ndk.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>如果没有，可以在SDK Manager中下载</p>
-<p><a href="/images/ndk2.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk2.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>下载LLDB、NDK两项</p>
 <p>下载完成后，可以在sdk目录下看到ndk的文件夹</p>
-<p><a href="/images/ndk3.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk3.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>我的电脑-属性-高级系统设置-环境变量</p>
 <p>新建一个ANDROID_NDK变量，配置上ndk文件夹的位置(在这个文件夹下可以看ndk-build.cmd等文件)</p>
-<p><a href="/images/ndk4.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk4.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>然后将这个变量加入到path变量中</p>
-<p><a href="/images/ndk5.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk5.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <h2 id="生成SO库"><a href="#生成SO库" class="headerlink" title="生成SO库"></a>生成SO库</h2><p>新建一个Hello.java文件，里面增加一个本地方法</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">hi</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure></div>
 
@@ -117,7 +117,7 @@ function activateLightMode(){
 
 <p>执行后生成所需的so文件。</p>
 <h2 id="引用SO库"><a href="#引用SO库" class="headerlink" title="引用SO库"></a>引用SO库</h2><p>在app/src/main目录下新建目录jniLibs,将对应的so复制到该目录下:</p>
-<p><a href="/images/ndk6.png" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" title="ndk" data-src="/images/ndk6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="ndk" class="fancybox"><img alt="ndk" data-src="/images/ndk6.png" src="/img/loading.gif" class="lazyload" title="ndk"></a></p>
 <p>在Activity中引入：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"Hello"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 

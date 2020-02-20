@@ -119,7 +119,7 @@ function activateLightMode(){
 <li><p>!Owner：当前释放锁的线程。</p>
 </li>
 </ol>
-<h3 id="Synchronized-实现"><a href="#Synchronized-实现" class="headerlink" title="Synchronized 实现"></a>Synchronized 实现</h3><p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B4.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="Synchronized-实现"><a href="#Synchronized-实现" class="headerlink" title="Synchronized 实现"></a>Synchronized 实现</h3><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B4.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <ol>
 <li><p>JVM 每次从队列的尾部取出一个数据用于锁竞争候选者（OnDeck），但是并发情况下，ContentionList 会被大量的并发线程进行 CAS 访问，为了降低对尾部元素的竞争，JVM 会将一部分线程移动到 EntryList 中作为候选竞争线程</p>
 </li>

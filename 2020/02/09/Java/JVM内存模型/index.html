@@ -91,7 +91,7 @@ function activateLightMode(){
 <p>Java源文件–&gt;编译器–&gt;字节码文件</p>
 <p>字节码文件–&gt;JVM–&gt;机器码</p>
 <p>每一种平台的解释器是不同的，但是实现的虚拟机是相同的，这也就是 Java 为什么能够跨平台的原因了 ，当一个程序从开始运行，这时虚拟机就开始实例化了，多个程序启动就会存在多个虚拟机实例。程序退出或者关闭，则虚拟机实例消亡，多个虚拟机实例之间数据不能共享。</p>
-<p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>这里所说的线程指程序执行过程中的一个线程实体。JVM 允许一个应用并发执行多个线程。Hotspot JVM 中的 Java 线程与原生操作系统线程有直接的映射关系。当线程本地存储、缓冲区分配、同步对象、栈、程序计数器等准备好以后，就会创建一个操作系统原生线程。Java 线程结束，原生线程随之被回收。操作系统负责调度所有线程，并把它们分配到任何可用的 CPU 上。当原生线程初始化完毕，就会调用 Java 线程的 run() 方法。当线程结束时，会释放原生线程和 Java 线程的所有资源。</p>
 <p>Hotspot JVM 后台运行的系统线程主要有下面几个：</p>
 <ol>
@@ -106,7 +106,7 @@ function activateLightMode(){
 <li><p>信号分发线程: 这个线程接收发送到 JVM 的信号并调用适当的 JVM 方法处理。</p>
 </li>
 </ol>
-<h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-2.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-2.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <p>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</p>
 <ol>
 <li><p>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束 而 创建/销毁(在 Hotspot VM 内, 每个线程都与操作系统的本地线程直接映射, 因此这部分内存区域的存/否跟随本地线程的生/死对应)。</p>
@@ -116,7 +116,7 @@ function activateLightMode(){
 <li><p>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用: 在 JDK 1.4 引入的 NIO 提供了基于 Channel 与 Buffer 的 IO 方式, 它可以使用 Native 函数库直接分配堆外内存, 然后使用DirectByteBuffer 对象作为这块内存的引用进行操作(详见: Java I/O 扩展), 这样就避免了在 Java堆和 Native 堆中来回复制数据, 因此在一些场景中可以显著提高性能。</p>
 </li>
 </ol>
-<p><a href="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-3.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F-3.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h3><p>一块较小的内存空间, 是当前线程所执行的字节码的行号指示器，每条线程都要有一个独立的程序计数器，这类内存也称为“线程私有”的内存。</p>
 <p>正在执行 java 方法的话，计数器记录的是虚拟机字节码指令的地址（当前指令的地址）。如果还是 Native 方法，则为空。</p>
 <p>这个内存区域是唯一一个在虚拟机中没有规定任何 OutOfMemoryError 情况的区域。</p>
@@ -127,7 +127,7 @@ function activateLightMode(){
 <h3 id="方法区-永久代（线程共享）"><a href="#方法区-永久代（线程共享）" class="headerlink" title="方法区/永久代（线程共享）"></a>方法区/永久代（线程共享）</h3><p>即我们常说的永久代(Permanent Generation), 用于存储被 JVM 加载的类信息、常量、静态变量、即时编译器编译后的代码等数据. HotSpot VM把GC分代收集扩展至方法区, 即使用Java堆的永久代来实现方法区, 这样 HotSpot 的垃圾收集器就可以像管理 Java 堆一样管理这部分内存, 而不必为方法区开发专门的内存管理器(永久带的内存回收的主要目标是针对常量池的回收和类型<br>的卸载, 因此收益一般很小)。</p>
 <p>运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述等信息外，还有一项信息是常量池（Constant Pool Table），用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。 Java 虚拟机对 Class 文件的每一部分（自然也包括常量池）的格式都有严格的规定，每一个字节用于存储哪种数据都必须符合规范上的要求，这样才会<br>被虚拟机认可、装载和执行。</p>
 <h2 id="JVM-运行时内存"><a href="#JVM-运行时内存" class="headerlink" title="JVM 运行时内存"></a>JVM 运行时内存</h2><p>Java 堆从 GC 的角度还可以细分为: 新生代(Eden 区、From Survivor 区和 To Survivor 区)和老年代。</p>
-<p><a href="/images/java%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><p>是用来存放新生的对象。一般占据堆的 1/3 空间。由于频繁创建对象，所以新生代会频繁触发MinorGC 进行垃圾回收。新生代又分为 Eden 区ServivorFrom、ServivorTo 三个区。</p>
 <h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java 新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老<br>年代）。当 Eden 区内存不够的时候就会触发 MinorGC，对新生代区进行<br>一次垃圾回收。</p>
 <h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>

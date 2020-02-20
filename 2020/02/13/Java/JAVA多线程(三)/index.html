@@ -84,7 +84,7 @@ function activateLightMode(){
 <p>本文为学习Java相关知识所作笔记，参考以下资料:<a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide</a> ,感谢原作者的分享!</p>
 </blockquote>
 <h2 id="线程基本方法"><a href="#线程基本方法" class="headerlink" title="线程基本方法"></a>线程基本方法</h2><p>线程相关的基本方法有 wait，notify，notifyAll，sleep，join，yield 等。</p>
-<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B5.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B5.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="线程等待（wait）"><a href="#线程等待（wait）" class="headerlink" title="线程等待（wait）"></a>线程等待（wait）</h3><p>调用该方法的线程进入 WAITING 状态，只有等待另外线程的通知或被中断才会返回，需要注意的是调用 wait()方法后，会释放对象的锁。因此，wait 方法一般用在同步方法或同步代码块中。</p>
 <h3 id="线程睡眠（sleep）"><a href="#线程睡眠（sleep）" class="headerlink" title="线程睡眠（sleep）"></a>线程睡眠（sleep）</h3><p>sleep 导致当前线程休眠，与 wait 方法不同的是 sleep 不会释放当前占有的锁,sleep(long)会导致线程进入 TIMED-WATING 状态，而 wait()方法会导致当前线程进入 WATING 状态</p>
 <h3 id="线程让步（yield）"><a href="#线程让步（yield）" class="headerlink" title="线程让步（yield）"></a>线程让步（yield）</h3><p>yield 会使当前线程让出 CPU 执行时间片，与其他线程一起重新竞争 CPU 时间片。一般情况下，优先级高的线程有更大的可能性成功竞争得到 CPU 时间片，但这又不是绝对的，有的操作系统对线程优先级并不敏感。</p>
@@ -133,7 +133,7 @@ function activateLightMode(){
 </li>
 </ol>
 <h2 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h2><p>巧妙地利用了时间片轮转的方式, CPU 给每个任务都服务一定的时间，然后把当前任务的状态保存下来，在加载下一任务的状态后，继续服务下一任务，任务的状态保存及再加载, 这段过程就叫做上下文切换。时间片轮转的方式使多个任务在同一颗 CPU 上执行变成了可能。</p>
-<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B6.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B6.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>（有时候也称做任务）是指一个程序运行的实例。在 Linux 系统中，线程就是能并行运行并且与他们的父进程（创建他们的进程）共享同一地址空间（一段内存区域）和其他资源的轻量级的进程</p>
 <h3 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h3><p>是指某一时间点 CPU 寄存器和程序计数器的内容。</p>
 <h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>是 CPU 内部的数量较少但是速度很快的内存（与之对应的是 CPU 外部相对较慢的 RAM 主内存）。寄存器通过对常用值（通常是运算的中间值）的快速访问来提高计算机程序运行的速度</p>
@@ -175,7 +175,7 @@ function activateLightMode(){
 </li>
 </ol>
 <p>Java 中的线程池是通过 Executor 框架实现的，该框架中用到了 Executor， Executors，ExecutorService， ThreadPoolExecutor ， Callable 和 Future、 FutureTask 这几个类。</p>
-<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B7.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B7.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B7.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">TimeUnit unit, BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">    Executors.defaultThreadFactory(), defaultHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol>
@@ -221,7 +221,7 @@ function activateLightMode(){
 <li><p>当一个线程无事可做，超过一定的时间（keepAliveTime）时，线程池会判断，如果当前运行的线程数大于 corePoolSize，那么这个线程就被停掉。所以线程池的所有任务完成后，它<br>最终会收缩到 corePoolSize 的大小</p>
 </li>
 </ol>
-<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B8.png" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" title="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="avartar" class="fancybox"><img alt="avartar" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B8.png" src="/img/loading.gif" class="lazyload" title="avartar"></a></p>
 <h2 id="JAVA-阻塞队列原理"><a href="#JAVA-阻塞队列原理" class="headerlink" title="JAVA 阻塞队列原理"></a>JAVA 阻塞队列原理</h2><p>阻塞队列，关键字是阻塞，先理解阻塞的含义，在阻塞队列中，线程阻塞有这样的两种情况：</p>
 <ol>
 <li><p>当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。</p>
@@ -229,7 +229,7 @@ function activateLightMode(){
 <li><p>当队列中填满数据的情况下，生产者端的所有线程都会被自动阻塞（挂起），直到队列中有空的位置，线程被自动唤醒。</p>
 </li>
 </ol>
-<h3 id="阻塞队列的主要方法"><a href="#阻塞队列的主要方法" class="headerlink" title="阻塞队列的主要方法"></a>阻塞队列的主要方法</h3><p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B9.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B9.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="阻塞队列的主要方法"><a href="#阻塞队列的主要方法" class="headerlink" title="阻塞队列的主要方法"></a>阻塞队列的主要方法</h3><p><a href="/img/loading.gif" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B9.png" src="/img/loading.gif" class="lazyload" title="pic"></a></p>
 <p>抛出异常：抛出一个异常；</p>
 <p>特殊值：返回一个特殊值（null 或 false,视情况而定）</p>
 <p>阻塞：在成功操作之前，一直阻塞线程</p>
@@ -258,7 +258,7 @@ function activateLightMode(){
 <li><p>LinkedBlockingDeque：由链表结构组成的双向阻塞队列</p>
 </li>
 </ol>
-<p><a href="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B10.png" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" title="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B10.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="/img/loading.gif" data-fancybox="group" data-caption="pic" class="fancybox"><img alt="pic" data-src="/images/java%E5%A4%9A%E7%BA%BF%E7%A8%8B10.png" src="/img/loading.gif" class="lazyload" title="pic"></a></p>
 <h3 id="ArrayBlockingQueue（公平、非公平）"><a href="#ArrayBlockingQueue（公平、非公平）" class="headerlink" title="ArrayBlockingQueue（公平、非公平）"></a>ArrayBlockingQueue（公平、非公平）</h3><p>用数组实现的有界阻塞队列。此队列按照先进先出（FIFO）的原则对元素进行排序。 默认情况下不保证访问者公平的访问队列，所谓公平访问队列是指阻塞的所有生产者线程或消费者线程，当队列可用时，可以按照阻塞的先后顺序访问队列，即先阻塞的生产者线程，可以先往队列里插入元素，先阻塞的消费者线程，可以先从队列里获取元素。通常情况下为了保证公平性会降低吞吐量。我们可以使用以下代码创建一个公平的阻塞队列：</p>
 <p>ArrayBlockingQueue fairQueue = new ArrayBlockingQueue(1000,true);</p>
 <h3 id="LinkedBlockingQueue（两个独立锁提高并发）"><a href="#LinkedBlockingQueue（两个独立锁提高并发）" class="headerlink" title="LinkedBlockingQueue（两个独立锁提高并发）"></a>LinkedBlockingQueue（两个独立锁提高并发）</h3><p>基于链表的阻塞队列，同 ArrayListBlockingQueue 类似，此队列按照先进先出（FIFO）的原则对元素进行排序。而 LinkedBlockingQueue 之所以能够高效的处理并发数据，还因为其对于生产者端和消费者端分别采用了独立的锁来控制数据同步，这也意味着在高并发的情况下生产者和消费者可以并行地操作队列中的数据，以此来提高整个队列的并发性能。</p>
