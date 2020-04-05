@@ -1,20 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Gradle自定义插件发布到Maven</title>
+    <url>/2020/04/05/Android/Gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%8F%91%E5%B8%83%E5%88%B0Maven/</url>
+    <content><![CDATA[<h1 id="Gradle自定义插件发布到Maven"><a href="#Gradle自定义插件发布到Maven" class="headerlink" title="Gradle自定义插件发布到Maven"></a>Gradle自定义插件发布到Maven</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>日常开发中，我们可能会用到一些别人开发的插件，通常我们是这样引入插件:</p>
+<p>在项目根目录下的build.gradle增加配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在需要应用插件的模块的build.gradle中增加配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.wangyz.plugins.ShellPlugin'</span></span><br></pre></td></tr></table></figure></div>
+
+<p>sync工程后，就可以愉快地应用插件了。</p>
+<p>那么，如果我们自己有开发好的插件，也想提供给别人使用，要怎样操作呢？这里就需要把开发的插件上传到公共的仓库中，别人才可以引用到。本文以Maven为例，介绍自定义插件发布到Maven的流程。</p>
+<h2 id="注册帐号"><a href="#注册帐号" class="headerlink" title="注册帐号"></a>注册帐号</h2><p>可以通过bintray来发布插件到Maven仓库。首先需要注册帐号，注册地址：<a href="https://bintray.com/signup/oss" target="_blank" rel="noopener">https://bintray.com/signup/oss</a> </p>
+<p>可以直接注册或者通过Github帐号注册。</p>
+<p>需要注意的一点，邮箱地址不能为QQ邮箱，否则注册无法成功。</p>
+<p><a href="/images/%E6%B3%A8%E5%86%8C.png" data-fancybox="group" data-caption="注册" class="fancybox"><img alt="注册" title="注册" data-src="/images/%E6%B3%A8%E5%86%8C.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="新建仓库"><a href="#新建仓库" class="headerlink" title="新建仓库"></a>新建仓库</h2><p>注册成功后，登录进去bintray，开始创建仓库</p>
+<p><a href="/images/%E6%96%B0%E5%BB%BA%E4%BB%93%E5%BA%93.png" data-fancybox="group" data-caption="新建仓库" class="fancybox"><img alt="新建仓库" title="新建仓库" data-src="/images/%E6%96%B0%E5%BB%BA%E4%BB%93%E5%BA%93.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击Add New Repository，进入新建仓库配置页面</p>
+<p><a href="/images/%E6%96%B0%E5%BB%BA%E4%BB%93%E5%BA%932.png" data-fancybox="group" data-caption="新建仓库2" class="fancybox"><img alt="新建仓库2" title="新建仓库2" data-src="/images/%E6%96%B0%E5%BB%BA%E4%BB%93%E5%BA%932.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>Name项可以输入maven，Type选择Maven。</p>
+<h2 id="插件发布"><a href="#插件发布" class="headerlink" title="插件发布"></a>插件发布</h2><p>新建好仓库后，就可以配置Android Studio项目，以便发布插件到远程仓库。</p>
+<p>在要发布的library模块下的build.gradle中，增加以下配置</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.novoda.bintray-release'</span></span><br><span class="line"></span><br><span class="line">publish &#123;</span><br><span class="line">    <span class="comment">//注册bintray时的用户名</span></span><br><span class="line">    userOrg = <span class="string">'milovetingting'</span></span><br><span class="line">    <span class="comment">//要发布的插件的分组名，可以自己定义</span></span><br><span class="line">    groupId = <span class="string">'com.wangyz.plugins'</span></span><br><span class="line">    <span class="comment">//要发布的插件的标识</span></span><br><span class="line">    artifactId = <span class="string">'ShellPlugin'</span></span><br><span class="line">    <span class="comment">//要发布的插件版本</span></span><br><span class="line">    publishVersion = <span class="string">'1.0.0'</span></span><br><span class="line">    <span class="comment">//描述</span></span><br><span class="line">    desc = <span class="string">'a plugin to shell apk'</span></span><br><span class="line">    <span class="comment">//对应的网址，如果项目代码放在github上，可以填写github中的项目地址</span></span><br><span class="line">    website = <span class="string">'https://github.com/milovetingting/Shell'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，同步项目。</p>
+<p>在Android Studio中的Terminal面板中，输入以下命令开始发布：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gradlew clean build bintrayUpload -PbintrayUser&#x3D;UserName -PbintrayKey&#x3D;Key -PdryRun&#x3D;false</span><br></pre></td></tr></table></figure></div>
+
+<p>其中PbintrayUser为bintray中注册的用户名，PbintrayKey就是bintray为我们分配的key</p>
+<p>查看key的方法：</p>
+<p>点击Edit Profile</p>
+<p><a href="/images/%E6%9F%A5%E7%9C%8Bkey.png" data-fancybox="group" data-caption="查看key" class="fancybox"><img alt="查看key" title="查看key" data-src="/images/%E6%9F%A5%E7%9C%8Bkey.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击左侧的API Key，这里输入密码</p>
+<p><a href="/images/%E6%9F%A5%E7%9C%8Bkey2.png" data-fancybox="group" data-caption="查看key2" class="fancybox"><img alt="查看key2" title="查看key2" data-src="/images/%E6%9F%A5%E7%9C%8Bkey2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>可以点击show查看key或者直接点击右侧的复制按钮复制</p>
+<p><a href="/images/%E6%9F%A5%E7%9C%8Bkey3.png" data-fancybox="group" data-caption="查看key3" class="fancybox"><img alt="查看key3" title="查看key3" data-src="/images/%E6%9F%A5%E7%9C%8Bkey3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>正确执行上面的命令后，就可以在bintray中看到我们发布的插件</p>
+<p><a href="/images/%E6%9F%A5%E7%9C%8B%E6%8F%92%E4%BB%B6.png" data-fancybox="group" data-caption="查看插件" class="fancybox"><img alt="查看插件" title="查看插件" data-src="/images/%E6%9F%A5%E7%9C%8B%E6%8F%92%E4%BB%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击刚才创建的仓库maven，可以看到我们自己定义的插件已经发布了</p>
+<p><a href="/images/%E6%9F%A5%E7%9C%8B%E6%8F%92%E4%BB%B62.png" data-fancybox="group" data-caption="查看插件2" class="fancybox"><img alt="查看插件2" title="查看插件2" data-src="/images/%E6%9F%A5%E7%9C%8B%E6%8F%92%E4%BB%B62.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>这个时候，就可以像引用其它插件一样来引用我们自己发布的插件，只不过我们还需要指定maven的具体地址，因为我们还没有把自己的插件发布到jcenter</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="comment">//项目根目录下的build.gradle</span></span><br><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>其中的<a href="https://dl.bintray.com/milovetingting/maven" target="_blank" rel="noopener">https://dl.bintray.com/milovetingting/maven</a><br>格式为：<a href="https://dl.bintray.com/用户名/仓库名" target="_blank" rel="noopener">https://dl.bintray.com/用户名/仓库名</a> ,应用插件时就会从指定的仓库下载</p>
+<h2 id="发布到Jcenter"><a href="#发布到Jcenter" class="headerlink" title="发布到Jcenter"></a>发布到Jcenter</h2><p>如果想不使用具体的maven地址，那么就需要发布到jcenter。</p>
+<p>进入我们刚才发布的插件的详情页，点击右侧的Add to Jcenter，在弹出的窗口中点击确定后，就会提交发布的申请，在审核通过后，就可以不指定具体的maven地址，直接引用插件了。审核一般几个小时就会通过。</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>Android</tag>
+        <tag>Maven</tag>
+        <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android应用加固的简单实现方案(二)</title>
     <url>/2020/04/04/Android/Android%E5%BA%94%E7%94%A8%E5%8A%A0%E5%9B%BA%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88(%E4%BA%8C)/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客</p>
 <p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Android应用加固的简单实现方案-二"><a href="#Android应用加固的简单实现方案-二" class="headerlink" title="Android应用加固的简单实现方案(二)"></a>Android应用加固的简单实现方案(二)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇文章介绍了基于dex加固方案的两种具体实现。相对于手动加固，基于gradle实现的加固方案效率有了进一步提升。但是，还是需要在壳Module中增加util相关工具类的引用，为进一步减少代码侵入性，在前面方案的基础上，进一步完善插件的功能。</p>
+<h1 id="Android应用加固的简单实现方案-二"><a href="#Android应用加固的简单实现方案-二" class="headerlink" title="Android应用加固的简单实现方案(二)"></a>Android应用加固的简单实现方案(二)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇文章介绍了基于dex加固方案的两种具体实现。相对于手动加固，基于gradle实现的加固方案效率有了进一步提升。但是,还是需要在壳Module中增加util相关工具类的引用，为进一步减少代码侵入性，在前面方案的基础上，进一步完善插件的功能。</p>
 <h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>为了避免在壳Module中引入脱壳相关的工具类，可以在aar生成后，利用ASM生成需要的class文件，然后修改aar中的classes.jar文件，将我们生成的class文件加入到classes.jar中。而壳Module的启动Application也需要在编译后修改attachBaseContext方法，加入脱壳代码的引用。这块都可以通过修改class中的方法来实现。而脱壳后，实质上还是运行apk中的代码，因此，apk中也需要对应修改以上两处。</p>
 <p>基于以上思路，实现可以加固的一个简单插件。</p>
 <p>源码地址：<a href="https://github.com/milovetingting/Shell" target="_blank" rel="noopener">https://github.com/milovetingting/Shell</a></p>
 <h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><ol>
 <li>项目根目录下的build.gradle中引入插件:</li>
 </ol>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol start="2">
 <li>app模块下的build.gradle引入插件及配置插件</li>
@@ -4379,6 +4437,35 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Android Gradle 插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
+<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
+<p>App插件id: com.android.application</p>
+<p>Library插件id: com.android.library</p>
+<p>Test插件id: com.android.test</p>
+<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
+<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
+<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
+<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android动画</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Android%E5%8A%A8%E7%94%BB/</url>
     <content><![CDATA[<blockquote>
@@ -4434,35 +4521,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>动画</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android Gradle 插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
-<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
-<p>App插件id: com.android.application</p>
-<p>Library插件id: com.android.library</p>
-<p>Test插件id: com.android.test</p>
-<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置好后，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
-<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
-<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
-<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -4587,6 +4645,87 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
+</blockquote>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
+</blockquote>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
+</blockquote>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
+<ul>
+<li>FLAG_ONE_SHOT:</li>
+</ul>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
+<ul>
+<li>FLAG_NO_CREATE:</li>
+</ul>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
+<ul>
+<li>FLAG_CANCEL_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
+<ul>
+<li>FLAG_UPDATE_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>RemoteViews</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Gradle插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -4667,87 +4806,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -5140,6 +5198,62 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Groovy基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
+
+<p>而双引号可以做运算:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
+
+<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
+<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
+<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
+<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
+<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
+]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>Groovy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>IPC机制</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<blockquote>
@@ -5267,62 +5381,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>IPC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Groovy基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
-
-<p>而双引号可以做运算:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
-
-<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
-<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
-<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
-<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
-<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
-]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>Groovy</tag>
       </tags>
   </entry>
   <entry>
