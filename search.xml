@@ -7,7 +7,7 @@
 <p>个人博客</p>
 <p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Gradle自定义插件发布到Maven"><a href="#Gradle自定义插件发布到Maven" class="headerlink" title="Gradle自定义插件发布到Maven"></a>Gradle自定义插件发布到Maven</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>日常开发中，我们可能会用到一些别人开发的插件，通常我们是这样引入插件的:</p>
+<h1 id="Gradle自定义插件发布到Maven"><a href="#Gradle自定义插件发布到Maven" class="headerlink" title="Gradle自定义插件发布到Maven"></a>Gradle自定义插件发布到Maven</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>日常开发中，我们可能会用到一些别人开发的插件，通常我们是这样引入插件的</p>
 <p>在项目根目录下的build.gradle增加配置：</p>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        maven &#123; url <span class="string">'https://dl.bintray.com/milovetingting/maven'</span> &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -56,10 +56,10 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android</tag>
-        <tag>Maven</tag>
+        <tag>Gradle</tag>
         <tag>插件</tag>
+        <tag>Maven</tag>
       </tags>
   </entry>
   <entry>
@@ -74,21 +74,24 @@
 <p>基于以上思路，实现可以加固的一个简单插件。</p>
 <p>源码地址：<a href="https://github.com/milovetingting/Shell" target="_blank" rel="noopener">https://github.com/milovetingting/Shell</a></p>
 <h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><ol>
-<li>项目根目录下的build.gradle中引入插件:</li>
+<li>新建项目，再新建一个Android Library类型的Module作为壳Module，名称随意，以”shell”为例,在壳Module中新建继承自Application的类，以”ShellApplication”为例,在ShellApplication中重写attachBaseContext方法,这个方法需要调用super.attachBaseContext(base)方法：</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShellApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachBaseContext</span><span class="params">(Context base)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.attachBaseContext(base);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ol start="2">
+<li><p>主Module需要依赖刚才新建的壳Module,并指定主Module的启动Application为刚才新建的ShellApplication。</p>
+</li>
+<li><p>项目根目录下的build.gradle中引入插件:</p>
+</li>
 </ol>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:ShellPlugin:1.0.0'</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<ol start="2">
+<ol start="4">
 <li>app模块下的build.gradle引入插件及配置插件</li>
 </ol>
 <div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.wangyz.plugins.ShellPlugin'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//主要注意shellModuleName和shellApplication的配置</span></span><br><span class="line">shellConfig &#123;</span><br><span class="line">    <span class="comment">//壳Module的名称</span></span><br><span class="line">    shellModuleName = <span class="string">'shell'</span></span><br><span class="line">    <span class="comment">//壳Module中Application的全类名</span></span><br><span class="line">    shellApplication = <span class="string">'com.wangyz.shell.ShellApplication'</span></span><br><span class="line">    keyStore = <span class="string">'E:\\Code\\Android\\android.keystore'</span></span><br><span class="line">    keyStorePassword = <span class="string">'android'</span></span><br><span class="line">    keyPassword = <span class="string">'android'</span></span><br><span class="line">    alias = <span class="string">'android'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<ol start="3">
-<li>壳Module中增加继承自Application的自定义Application,如这里的ShellApplication,然后重写attachBaseContext方法</li>
-</ol>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShellApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachBaseContext</span><span class="params">(Context base)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.attachBaseContext(base);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<ol start="4">
+<ol start="5">
 <li><p>sync工程</p>
 </li>
 <li><p>在打包apk前，先执行Build-Clean Project,然后双击gradle面板的app/Tasks/build/assembleRelease，就会在项目根目录/壳Module名称-release/outputs/下生成signed.apk,这个apk就是加固过的apk.</p>
@@ -706,8 +709,8 @@
       </categories>
       <tags>
         <tag>Android</tag>
-        <tag>Artifactory</tag>
         <tag>Maven</tag>
+        <tag>Artifactory</tag>
         <tag>Repository</tag>
       </tags>
   </entry>
@@ -739,8 +742,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android Studio</tag>
         <tag>Android</tag>
+        <tag>Android Studio</tag>
       </tags>
   </entry>
   <entry>
@@ -793,8 +796,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android</tag>
+        <tag>Gradle</tag>
         <tag>字节码</tag>
         <tag>插桩</tag>
       </tags>
@@ -835,8 +838,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android</tag>
+        <tag>Gradle</tag>
         <tag>插件</tag>
         <tag>调试</tag>
       </tags>
@@ -929,8 +932,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android</tag>
+        <tag>Gradle</tag>
         <tag>插件</tag>
       </tags>
   </entry>
@@ -3796,8 +3799,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Service</tag>
-        <tag>Activity</tag>
         <tag>BroadcastReceiver</tag>
+        <tag>Activity</tag>
         <tag>四大组件</tag>
         <tag>ContentProvider</tag>
       </tags>
@@ -4528,6 +4531,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java Gradle 插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC6%E7%AB%A0-Java_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -4596,56 +4652,86 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <title>Gradle插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+<h1 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h1><h2 id="插件的作用"><a href="#插件的作用" class="headerlink" title="插件的作用"></a>插件的作用</h2><p>把插件应用到项目中，插件会扩展项目的功能，帮助在项目构建过程中做很多事情。</p>
+<p>1、可以添加任务到项目中，帮助完成测试、编译、打包等。</p>
+<p>2、可以添加依赖配置到项目中，可以通过它们配置项目在构建过程中需要的依赖，如编译时依赖的第三方库等。</p>
+<p>3、可以向项目中现有的对象类型添加新的扩展属性、方法等。</p>
+<p>4、可以对项目进行一些约定，如应用Java插件后，约定src/main/java目录是我们的源代码存在位置，在编译的时候也是编译这个目录下的Java源代码文件。</p>
+<h2 id="如何应用一个插件"><a href="#如何应用一个插件" class="headerlink" title="如何应用一个插件"></a>如何应用一个插件</h2><p>插件的应用都是通过Project.apply()方法完成的。</p>
+<h3 id="应用二进制插件"><a href="#应用二进制插件" class="headerlink" title="应用二进制插件"></a>应用二进制插件</h3><p>二进制插件就是实现了org.gradle.api.Plugin接口的插件，它们可以有Plugin id。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'java'</span></span><br></pre></td></tr></table></figure></div>
+
+<p>上面的语句，其中’java’就是Java插件的plugin id,它是唯一的。其实它对应的类型是org.gradle.api.plugins.JavaPlugin,所以通过该类型，我们也可以应用这个插件：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:org.gradle.api.plugins.JavaPlugin</span><br></pre></td></tr></table></figure></div>
+
+<p>又因为包org.gradle.api.plugins是默认导入的，所以可以去掉包名直接写成:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:JavaPlugin</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="应用脚本插件"><a href="#应用脚本插件" class="headerlink" title="应用脚本插件"></a>应用脚本插件</h3><p>build.gradle</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply <span class="keyword">from</span>:<span class="string">'version.gradle'</span></span><br><span class="line"><span class="keyword">task</span> task1&#123;</span><br><span class="line">    <span class="keyword">println</span> <span class="string">"版本是:$&#123;versionName&#125;,版本号是:$&#123;versionCode&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>version.gradle</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext&#123;</span><br><span class="line">    versionName = <span class="string">'1.0'</span></span><br><span class="line">    versionCode = <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="apply方法的其他用法"><a href="#apply方法的其他用法" class="headerlink" title="apply方法的其他用法"></a>apply方法的其他用法</h3><p>Project.apply()方法有三种使用方法：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span> apply(Map&lt;String,?&gt; <span class="keyword">options</span>);</span><br><span class="line"><span class="keyword">void</span> apply(Closure closure);</span><br><span class="line"><span class="keyword">void</span> apply(Action&lt;? <span class="keyword">super</span> ObjectConfigurationAction&gt; action);</span><br></pre></td></tr></table></figure></div>
+
+<p>闭包的方式如下：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply&#123;</span><br><span class="line">    plugin <span class="string">'java'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Action方式:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply (<span class="keyword">new</span> Action&lt;ObjectConfigurationAction&gt;)&#123;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">void</span> execute(ObjectConfigurationAction objectConfigurationAction)&#123;</span><br><span class="line">        objectConfigurationAction.plugin(<span class="string">'java'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="应用第三方发布的插件"><a href="#应用第三方发布的插件" class="headerlink" title="应用第三方发布的插件"></a>应用第三方发布的插件</h3><p>第三方发布的jar的二进制插件，我们在应用的时候，必须要先在buildscript{}里配置其classpath才能使用。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>buildscript{}是一个构建项目前，为项目进行前期准备和初始化相关配置依赖的地方，配置好所需的依赖，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br></pre></td></tr></table></figure></div>
+
+
+<h3 id="使用plugins-DSL应用插件"><a href="#使用plugins-DSL应用插件" class="headerlink" title="使用plugins DSL应用插件"></a>使用plugins DSL应用插件</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">plugins&#123;</span><br><span class="line">    id <span class="string">'java'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="更多好用的插件"><a href="#更多好用的插件" class="headerlink" title="更多好用的插件"></a>更多好用的插件</h3><p>可以在<a href="https://plugins.gradle.org/" target="_blank" rel="noopener">https://plugins.gradle.org/</a> 上找到，也可以在github上找。</p>
+<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><p>自定义插件必须实现Plugin接口，这个接口只有一个apply方法，该方法在插件被应用的时候执行。</p>
+<p>定义在build脚本文件里：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:CustomPlugin</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> CustomPlugin <span class="keyword">implements</span> Plugin&lt;<span class="keyword">Project</span>&gt;&#123;</span><br><span class="line">    <span class="keyword">void</span> apply(<span class="keyword">Project</span> <span class="keyword">project</span>)&#123;</span><br><span class="line">        <span class="keyword">project</span>.<span class="keyword">task</span>(<span class="string">'customTask'</span>).<span class="keyword">doLast</span>&#123;</span><br><span class="line">            <span class="keyword">println</span> <span class="string">'这是一个通过自定义插件方式创建的任务。'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这种只能在自己项目里用，如果想开发一个独立的插件给所有想用的人，则需要创建单独工程来开发自定义插件了。</p>
+<p>新建一个Android Module</p>
+<p>清空Module的build.gradle内容，添加以下内容,配置开发所需的依赖:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'groovy'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation gradleApi()</span><br><span class="line">    implementation localGroovy()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后实现依赖类:</p>
+<p>删除src/main目录下的所有文件，新建一个groovy文件夹,在这个文件夹新建包，如com.wangyz.plugins,然后在这个文件夹下，新建一个类，如:CustomPlugin.groovy,内容如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">groovy</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wangyz.plugins</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        project.task(<span class="string">'CustomTask'</span>).doLast &#123;</span><br><span class="line">            println(<span class="string">"这是一个通过自定义插件方式创建的任务"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在src/main文件夹下新建resources文件夹,然后在这个文件夹中新建META-INF文件夹，然后在这个文件夹下新建gradle-plugins文件夹,然后新建com.wangyz.plugins.customplugin.properties文件，文件名就是其它应用依赖的名。内容如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">implementation-<span class="keyword">class</span>=com.wangyz.plugins.CustomPlugin</span><br></pre></td></tr></table></figure></div>
+
+<p>写好后，我们配置发布：</p>
+<p>在Module的build.gradle文件中，添加以下内容:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'maven-publish'</span></span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        mavenJava(MavenPublication) &#123;</span><br><span class="line"></span><br><span class="line">            groupId <span class="string">'com.wangyz.plugins'</span></span><br><span class="line">            artifactId <span class="string">'customplugin'</span></span><br><span class="line">            version <span class="string">'1.0.0'</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">from</span> components.java</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">// change to point to your repo, e.g. http://my.org/repo</span></span><br><span class="line">            url uri(<span class="string">'/home/wangyz/repos'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后在控制台，输入以下指令:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">.<span class="regexp">/gradlew publish</span></span><br></pre></td></tr></table></figure></div>
+
+<p>发布成功后，配置引用：</p>
+<p>在需要引入依赖的工程根目录下的build.gradle添加以下内容:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">//local maven repo path</span></span><br><span class="line">            url uri(<span class="string">'/home/wangyz/repos'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//这里配置为发布时填写的:groupId:artifactId:version</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:customplugin:1.0.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在App的build.gradle下添加以下内容：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;这里的配置为:</span><br><span class="line">apply plugin: &#39;com.wangyz.plugins.customplugin&#39;</span><br></pre></td></tr></table></figure></div>]]></content>
       <categories>
-        <category>Android艺术探索</category>
+        <category>Gradle权威指南</category>
       </categories>
       <tags>
-        <tag>Drawable</tag>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -4730,86 +4816,82 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Gradle插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
+    <title>View的工作原理</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h1><h2 id="插件的作用"><a href="#插件的作用" class="headerlink" title="插件的作用"></a>插件的作用</h2><p>把插件应用到项目中，插件会扩展项目的功能，帮助在项目构建过程中做很多事情。</p>
-<p>1、可以添加任务到项目中，帮助完成测试、编译、打包等。</p>
-<p>2、可以添加依赖配置到项目中，可以通过它们配置项目在构建过程中需要的依赖，如编译时依赖的第三方库等。</p>
-<p>3、可以向项目中现有的对象类型添加新的扩展属性、方法等。</p>
-<p>4、可以对项目进行一些约定，如应用Java插件后，约定src/main/java目录是我们的源代码存在位置，在编译的时候也是编译这个目录下的Java源代码文件。</p>
-<h2 id="如何应用一个插件"><a href="#如何应用一个插件" class="headerlink" title="如何应用一个插件"></a>如何应用一个插件</h2><p>插件的应用都是通过Project.apply()方法完成的。</p>
-<h3 id="应用二进制插件"><a href="#应用二进制插件" class="headerlink" title="应用二进制插件"></a>应用二进制插件</h3><p>二进制插件就是实现了org.gradle.api.Plugin接口的插件，它们可以有Plugin id。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'java'</span></span><br></pre></td></tr></table></figure></div>
-
-<p>上面的语句，其中’java’就是Java插件的plugin id,它是唯一的。其实它对应的类型是org.gradle.api.plugins.JavaPlugin,所以通过该类型，我们也可以应用这个插件：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:org.gradle.api.plugins.JavaPlugin</span><br></pre></td></tr></table></figure></div>
-
-<p>又因为包org.gradle.api.plugins是默认导入的，所以可以去掉包名直接写成:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:JavaPlugin</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="应用脚本插件"><a href="#应用脚本插件" class="headerlink" title="应用脚本插件"></a>应用脚本插件</h3><p>build.gradle</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply <span class="keyword">from</span>:<span class="string">'version.gradle'</span></span><br><span class="line"><span class="keyword">task</span> task1&#123;</span><br><span class="line">    <span class="keyword">println</span> <span class="string">"版本是:$&#123;versionName&#125;,版本号是:$&#123;versionCode&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>version.gradle</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext&#123;</span><br><span class="line">    versionName = <span class="string">'1.0'</span></span><br><span class="line">    versionCode = <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="apply方法的其他用法"><a href="#apply方法的其他用法" class="headerlink" title="apply方法的其他用法"></a>apply方法的其他用法</h3><p>Project.apply()方法有三种使用方法：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span> apply(Map&lt;String,?&gt; <span class="keyword">options</span>);</span><br><span class="line"><span class="keyword">void</span> apply(Closure closure);</span><br><span class="line"><span class="keyword">void</span> apply(Action&lt;? <span class="keyword">super</span> ObjectConfigurationAction&gt; action);</span><br></pre></td></tr></table></figure></div>
-
-<p>闭包的方式如下：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply&#123;</span><br><span class="line">    plugin <span class="string">'java'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>Action方式:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply (<span class="keyword">new</span> Action&lt;ObjectConfigurationAction&gt;)&#123;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">void</span> execute(ObjectConfigurationAction objectConfigurationAction)&#123;</span><br><span class="line">        objectConfigurationAction.plugin(<span class="string">'java'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="应用第三方发布的插件"><a href="#应用第三方发布的插件" class="headerlink" title="应用第三方发布的插件"></a>应用第三方发布的插件</h3><p>第三方发布的jar的二进制插件，我们在应用的时候，必须要先在buildscript{}里配置其classpath才能使用。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>buildscript{}是一个构建项目前，为项目进行前期准备和初始化相关配置依赖的地方，配置好所需的依赖，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br></pre></td></tr></table></figure></div>
-
-
-<h3 id="使用plugins-DSL应用插件"><a href="#使用plugins-DSL应用插件" class="headerlink" title="使用plugins DSL应用插件"></a>使用plugins DSL应用插件</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">plugins&#123;</span><br><span class="line">    id <span class="string">'java'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="更多好用的插件"><a href="#更多好用的插件" class="headerlink" title="更多好用的插件"></a>更多好用的插件</h3><p>可以在<a href="https://plugins.gradle.org/" target="_blank" rel="noopener">https://plugins.gradle.org/</a> 上找到，也可以在github上找。</p>
-<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><p>自定义插件必须实现Plugin接口，这个接口只有一个apply方法，该方法在插件被应用的时候执行。</p>
-<p>定义在build脚本文件里：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:CustomPlugin</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> CustomPlugin <span class="keyword">implements</span> Plugin&lt;<span class="keyword">Project</span>&gt;&#123;</span><br><span class="line">    <span class="keyword">void</span> apply(<span class="keyword">Project</span> <span class="keyword">project</span>)&#123;</span><br><span class="line">        <span class="keyword">project</span>.<span class="keyword">task</span>(<span class="string">'customTask'</span>).<span class="keyword">doLast</span>&#123;</span><br><span class="line">            <span class="keyword">println</span> <span class="string">'这是一个通过自定义插件方式创建的任务。'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>这种只能在自己项目里用，如果想开发一个独立的插件给所有想用的人，则需要创建单独工程来开发自定义插件了。</p>
-<p>新建一个Android Module</p>
-<p>清空Module的build.gradle内容，添加以下内容,配置开发所需的依赖:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'groovy'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation gradleApi()</span><br><span class="line">    implementation localGroovy()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>然后实现依赖类:</p>
-<p>删除src/main目录下的所有文件，新建一个groovy文件夹,在这个文件夹新建包，如com.wangyz.plugins,然后在这个文件夹下，新建一个类，如:CustomPlugin.groovy,内容如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">groovy</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wangyz.plugins</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        project.task(<span class="string">'CustomTask'</span>).doLast &#123;</span><br><span class="line">            println(<span class="string">"这是一个通过自定义插件方式创建的任务"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在src/main文件夹下新建resources文件夹,然后在这个文件夹中新建META-INF文件夹，然后在这个文件夹下新建gradle-plugins文件夹,然后新建com.wangyz.plugins.customplugin.properties文件，文件名就是其它应用依赖的名。内容如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">implementation-<span class="keyword">class</span>=com.wangyz.plugins.CustomPlugin</span><br></pre></td></tr></table></figure></div>
-
-<p>写好后，我们配置发布：</p>
-<p>在Module的build.gradle文件中，添加以下内容:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin: <span class="string">'maven-publish'</span></span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    publications &#123;</span><br><span class="line">        mavenJava(MavenPublication) &#123;</span><br><span class="line"></span><br><span class="line">            groupId <span class="string">'com.wangyz.plugins'</span></span><br><span class="line">            artifactId <span class="string">'customplugin'</span></span><br><span class="line">            version <span class="string">'1.0.0'</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">from</span> components.java</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">publishing &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">// change to point to your repo, e.g. http://my.org/repo</span></span><br><span class="line">            url uri(<span class="string">'/home/wangyz/repos'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>然后在控制台，输入以下指令:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">.<span class="regexp">/gradlew publish</span></span><br></pre></td></tr></table></figure></div>
-
-<p>发布成功后，配置引用：</p>
-<p>在需要引入依赖的工程根目录下的build.gradle添加以下内容:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            <span class="comment">//local maven repo path</span></span><br><span class="line">            url uri(<span class="string">'/home/wangyz/repos'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span> &#123;</span><br><span class="line">        <span class="comment">//这里配置为发布时填写的:groupId:artifactId:version</span></span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.wangyz.plugins:customplugin:1.0.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在App的build.gradle下添加以下内容：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;这里的配置为:</span><br><span class="line">apply plugin: &#39;com.wangyz.plugins.customplugin&#39;</span><br></pre></td></tr></table></figure></div>]]></content>
+<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
+<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
+<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
+<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
+<p><a href="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" title="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
+<p>SpecMode有三类，如下所示：</p>
+<p><strong>UNSPECIFIED</strong></p>
+<blockquote>
+<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
+</blockquote>
+<p><strong>EXACTLY</strong></p>
+<blockquote>
+<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
+</blockquote>
+<p><strong>AT_MOST</strong></p>
+<blockquote>
+<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
+</blockquote>
+<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
+<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
+<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
+<p><a href="/images/performTraversals%E6%B5%81%E7%A8%8B.png" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" title="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
+<p><strong>View的measure过程</strong></p>
+<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
+<p><strong>ViewGroup的measure过程</strong></p>
+<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
+<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
+<p>在Activity已启动的时候获取View的宽/高：</p>
+<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
+<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
+<p><strong>2、view.post(runnable)</strong></p>
+<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
+<p><strong>3、ViewTreeObserver</strong></p>
+<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
+<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
+<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
+<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
+<ul>
+<li><p>1、绘制背景-background.draw(canvas)</p>
+</li>
+<li><p>2、绘制自己-onDraw</p>
+</li>
+<li><p>3、绘制children-dispatchDraw</p>
+</li>
+<li><p>4、绘制装饰-onDrawScrollBars</p>
+</li>
+</ul>
+<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
+<li><strong>继承View重写onDraw方法</strong></li>
+</ul>
+<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
+<ul>
+<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
+</ul>
+<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
+<ul>
+<li>继承特定的View(如TextView)</li>
+</ul>
+<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
+<ul>
+<li>继承特定的ViewGroup(如LinearLayout)</li>
+</ul>
+<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
+]]></content>
       <categories>
-        <category>Gradle权威指南</category>
+        <category>Android艺术探索</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
+        <tag>View</tag>
       </tags>
   </entry>
   <entry>
@@ -4913,85 +4995,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>View的工作原理</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
-<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
-<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
-<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
-<p><a href="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" title="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
-<p>SpecMode有三类，如下所示：</p>
-<p><strong>UNSPECIFIED</strong></p>
-<blockquote>
-<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
-</blockquote>
-<p><strong>EXACTLY</strong></p>
-<blockquote>
-<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
-</blockquote>
-<p><strong>AT_MOST</strong></p>
-<blockquote>
-<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
-</blockquote>
-<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
-<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
-<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
-<p><a href="/images/performTraversals%E6%B5%81%E7%A8%8B.png" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" title="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
-<p><strong>View的measure过程</strong></p>
-<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
-<p><strong>ViewGroup的measure过程</strong></p>
-<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
-<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
-<p>在Activity已启动的时候获取View的宽/高：</p>
-<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
-<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
-<p><strong>2、view.post(runnable)</strong></p>
-<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
-<p><strong>3、ViewTreeObserver</strong></p>
-<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
-<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
-<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
-<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
-<ul>
-<li><p>1、绘制背景-background.draw(canvas)</p>
-</li>
-<li><p>2、绘制自己-onDraw</p>
-</li>
-<li><p>3、绘制children-dispatchDraw</p>
-</li>
-<li><p>4、绘制装饰-onDrawScrollBars</p>
-</li>
-</ul>
-<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
-<li><strong>继承View重写onDraw方法</strong></li>
-</ul>
-<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
-<ul>
-<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
-</ul>
-<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
-<ul>
-<li>继承特定的View(如TextView)</li>
-</ul>
-<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
-<ul>
-<li>继承特定的ViewGroup(如LinearLayout)</li>
-</ul>
-<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>View</tag>
       </tags>
   </entry>
   <entry>
