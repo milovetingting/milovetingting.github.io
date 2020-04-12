@@ -1,6 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>基于Netty实现服务端与客户端通信</title>
+    <url>/2020/04/12/Android/%E5%9F%BA%E4%BA%8ENetty%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="基于Netty实现服务端与客户端通信"><a href="#基于Netty实现服务端与客户端通信" class="headerlink" title="基于Netty实现服务端与客户端通信"></a>基于Netty实现服务端与客户端通信</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文介绍基于Netty实现的服务端与客户端通信的简单使用方法，并在此基础上实现一个简单的服务端-客户端指令通信的Demo。</p>
+<h2 id="Netty是什么"><a href="#Netty是什么" class="headerlink" title="Netty是什么"></a>Netty是什么</h2><blockquote>
+<p>Netty是一个NIO客户端-服务器框架，可以快速轻松地开发网络应用程序，例如协议服务器和客户端。它极大地简化了网络编程，例如TCP和UDP套接字服务器的开发。提供一个异步事件驱动的网络应用程序框架和工具，以快速开发可维护的高性能和高可扩展性协议服务器和客户端。</p>
+</blockquote>
+<p>以上内容摘选自<a href="https://netty.io/wiki/user-guide-for-4.x.html" target="_blank" rel="noopener">https://netty.io/wiki/user-guide-for-4.x.html</a></p>
+<p>Netty具有以下特点：</p>
+<ul>
+<li>适用于各种传输类型的统一API-阻塞和非阻塞套接字</li>
+<li>更高的吞吐量，更低的延迟</li>
+<li>减少资源消耗</li>
+<li>减少不必要的内存复制</li>
+<li>完整的SSL / TLS和StartTLS支持</li>
+</ul>
+<p>以上内容摘选自<a href="https://netty.io/" target="_blank" rel="noopener">https://netty.io/</a></p>
+<h2 id="使用入门"><a href="#使用入门" class="headerlink" title="使用入门"></a>使用入门</h2><p>Netty的使用，可以参照Netty的官方文档，这里以4.x为例来演示Netty在服务端和客户端上使用。文档地址：<a href="https://netty.io/wiki/user-guide-for-4.x.html" target="_blank" rel="noopener">https://netty.io/wiki/user-guide-for-4.x.html</a></p>
+<p>这里用Eclipse来进行开发,服务端和客户端都放在一个工程里。</p>
+<p>新建Java工程</p>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><p>首先需要导入netty的jar包。这里使用netty-all-4.1.48.Final.jar。</p>
+<h4 id="NettyServer"><a href="#NettyServer" class="headerlink" title="NettyServer"></a>NettyServer</h4><p>新建NettyServer类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> mPort;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">NettyServer</span><span class="params">(<span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mPort = port;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">					// 指定连接队列大小</span></span><br><span class="line"><span class="class">					.<span class="title">option</span>(<span class="title">ChannelOption</span>.<span class="title">SO_BACKLOG</span>, 128)</span></span><br><span class="line"><span class="class">					//<span class="title">KeepAlive</span></span></span><br><span class="line"><span class="class">					.<span class="title">childOption</span>(<span class="title">ChannelOption</span>.<span class="title">SO_KEEPALIVE</span>, <span class="title">true</span>)</span></span><br><span class="line"><span class="class">					//<span class="title">Handler</span></span></span><br><span class="line"><span class="class">					.<span class="title">childHandler</span>(<span class="title">new</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt;() </span>&#123;</span><br><span class="line"></span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">							channel.pipeline().addLast(<span class="keyword">new</span> NettyServerHandler());</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line">			ChannelFuture f = b.bind(mPort).sync();</span><br><span class="line">			<span class="keyword">if</span> (f.isSuccess()) &#123;</span><br><span class="line">				LogUtil.log(<span class="string">"Server,启动Netty服务端成功，端口号:"</span> + mPort);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// f.channel().closeFuture().sync();</span></span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">// workerGroup.shutdownGracefully();</span></span><br><span class="line">			<span class="comment">// bossGroup.shutdownGracefully();</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="NettyServerHandler"><a href="#NettyServerHandler" class="headerlink" title="NettyServerHandler"></a>NettyServerHandler</h4><p>在初始化时，需要指定Handle，用来处理Channel相关业务。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelActive"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,接收到客户端发来的消息:"</span> + msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,exceptionCaught"</span>);</span><br><span class="line">		cause.printStackTrace();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelInactive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelInactive"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>经过上面这些步骤后，服务端最基本的设置就完成了。</p>
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>客户端和服务端在初始化时大体是类似的，不过相比服务端要简单一些。</p>
+<h4 id="NettyClient"><a href="#NettyClient" class="headerlink" title="NettyClient"></a>NettyClient</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String mHost;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> mPort;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> NettyClientHandler mClientHandler;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> ChannelFuture mChannelFuture;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">NettyClient</span><span class="params">(String host, <span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mHost = host;</span><br><span class="line">		<span class="keyword">this</span>.mPort = port;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Bootstrap b = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">			mClientHandler = <span class="keyword">new</span> NettyClientHandler();</span><br><span class="line">			b.group(workerGroup).channel(NioSocketChannel<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">					// <span class="title">KeepAlive</span></span></span><br><span class="line"><span class="class">					.<span class="title">option</span>(<span class="title">ChannelOption</span>.<span class="title">SO_KEEPALIVE</span>, <span class="title">true</span>)</span></span><br><span class="line"><span class="class">					// <span class="title">Handler</span></span></span><br><span class="line"><span class="class">					.<span class="title">handler</span>(<span class="title">new</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt;() </span>&#123;</span><br><span class="line"></span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">							channel.pipeline().addLast(mClientHandler);</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line">			mChannelFuture = b.connect(mHost, mPort).sync();</span><br><span class="line">			<span class="keyword">if</span> (mChannelFuture.isSuccess()) &#123;</span><br><span class="line">				LogUtil.log(<span class="string">"Client,连接服务端成功"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			mChannelFuture.channel().closeFuture().sync();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			workerGroup.shutdownGracefully();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="NettyClientHandler"><a href="#NettyClientHandler" class="headerlink" title="NettyClientHandler"></a>NettyClientHandler</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,channelActive"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,接收到服务端发来的消息:"</span> + msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,exceptionCaught"</span>);</span><br><span class="line">		cause.printStackTrace();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelInactive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,channelInactive"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>到这里，客户端最基本设置就完成了。</p>
+<h3 id="连接服务端"><a href="#连接服务端" class="headerlink" title="连接服务端"></a>连接服务端</h3><p>新建一个Main类，用于测试服务端和客户端是否能正常连接。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			String host = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">			<span class="keyword">int</span> port = <span class="number">12345</span>;</span><br><span class="line">			NettyServer server = <span class="keyword">new</span> NettyServer(port);</span><br><span class="line">			server.run();</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			NettyClient client = <span class="keyword">new</span> NettyClient(host, port);</span><br><span class="line">			client.connect();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>运行main方法，输出日志如下：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2020-4-13 0:11:02--Server,启动Netty服务端成功，端口号:12345</span><br><span class="line">2020-4-13 0:11:03--Client,channelActive</span><br><span class="line">2020-4-13 0:11:03--Client,连接服务端成功</span><br><span class="line">2020-4-13 0:11:03--Server,channelActive</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到，客户端成功连接上了服务端，服务端和客户端里设置的Handler的channelActive方法都会回调。</p>
+<h3 id="服务端与客户端通信"><a href="#服务端与客户端通信" class="headerlink" title="服务端与客户端通信"></a>服务端与客户端通信</h3><p>在服务端与客户端连接成功后，我们往往需要在双方间进行通信。这里假定，在连接成功后，服务端给客户端发送一个欢迎信息”你好，客户端”，而客户端在收到服务端的消息后，也给服务端回复一个消息”你好，服务端”。下面来实现具体的功能。</p>
+<p>修改服务端NettyServerHandler中的channelActive方法和channelRead方法,在channelActive方法中给客户端发送消息，在channelRead方法中解析客户端发来的消息</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelActive"</span>);</span><br><span class="line">		ByteBuf byteBuf = Unpooled.copiedBuffer(<span class="string">"你好，客户端"</span>, Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">		ctx.writeAndFlush(byteBuf);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ByteBuf buf = (ByteBuf) msg;</span><br><span class="line">		<span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[buf.readableBytes()];</span><br><span class="line">		buf.readBytes(buffer);</span><br><span class="line">		String message = <span class="keyword">new</span> String(buffer, <span class="string">"utf-8"</span>);</span><br><span class="line">		LogUtil.log(<span class="string">"Server,接收到客户端发来的消息:"</span> + message);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>修改客户端NettyClientHandler中的channelRead方法，当收到服务端的消息时，回复服务端</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ByteBuf buf = (ByteBuf) msg;</span><br><span class="line">		<span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[buf.readableBytes()];</span><br><span class="line">		buf.readBytes(buffer);</span><br><span class="line">		String message = <span class="keyword">new</span> String(buffer,<span class="string">"utf-8"</span>);</span><br><span class="line">		LogUtil.log(<span class="string">"Client,接收到服务端发来的消息:"</span> + message);</span><br><span class="line">		</span><br><span class="line">		ByteBuf byteBuf = Unpooled.copiedBuffer(<span class="string">"你好，服务端"</span>, Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">		ctx.writeAndFlush(byteBuf);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>运行后，输出日志如下：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2020-4-13 0:29:16--Server,启动Netty服务端成功，端口号:12345</span><br><span class="line">2020-4-13 0:29:17--Client,channelActive</span><br><span class="line">2020-4-13 0:29:17--Client,连接服务端成功</span><br><span class="line">2020-4-13 0:29:17--Server,channelActive</span><br><span class="line">2020-4-13 0:29:17--Client,接收到服务端发来的消息:你好，客户端</span><br><span class="line">2020-4-13 0:29:17--Server,接收到客户端发来的消息:你好，服务端</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到，服务端与客户端已经可以正常通信。</p>
+<h3 id="粘包与拆包"><a href="#粘包与拆包" class="headerlink" title="粘包与拆包"></a>粘包与拆包</h3><p>在实际的使用场景中，可能会存在短时间内大量数据发送的问题。我们模拟这个场景。在客户端连接上服务端后，服务端给客户端发送100个消息，而为便于分析，客户端在收到服务端消息后，不作回复。</p>
+<p>修改服务端中NettyServerHandler的channelActive方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelActive"</span>);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">			ByteBuf byteBuf = Unpooled.copiedBuffer(<span class="string">"你好，客户端"</span>, Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">			ctx.writeAndFlush(byteBuf);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>修改客户端中NettyClientHandler的channelRead方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ByteBuf buf = (ByteBuf) msg;</span><br><span class="line">		<span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[buf.readableBytes()];</span><br><span class="line">		buf.readBytes(buffer);</span><br><span class="line">		String message = <span class="keyword">new</span> String(buffer, <span class="string">"utf-8"</span>);</span><br><span class="line">		LogUtil.log(<span class="string">"Client,接收到服务端发来的消息:"</span> + message);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//ByteBuf byteBuf = Unpooled.copiedBuffer("你好，服务端", Charset.forName("utf-8"));</span></span><br><span class="line">        <span class="comment">//ctx.writeAndFlush(byteBuf);</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>运行后，输出的部分结果如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2020-4-13 0:35:28--Server,启动Netty服务端成功，端口号:12345</span><br><span class="line">2020-4-13 0:35:29--Client,channelActive</span><br><span class="line">2020-4-13 0:35:29--Client,连接服务端成功</span><br><span class="line">2020-4-13 0:35:29--Server,channelActive</span><br><span class="line">2020-4-13 0:35:29--Client,接收到服务端发来的消息:你好，客户端</span><br><span class="line">2020-4-13 0:35:29--Client,接收到服务端发来的消息:你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端你好，客户端</span><br><span class="line">2020-4-13 0:35:29--Client,接收到服务端发来的消息:你好，客户端</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到，出现了多条消息”粘”在一起的情况。</p>
+<h4 id="什么是粘包与拆包"><a href="#什么是粘包与拆包" class="headerlink" title="什么是粘包与拆包"></a>什么是粘包与拆包</h4><blockquote>
+<p>TCP是个”流”协议，所谓流，就是没有界限的一串数据。TCP底层并不了解上层业务数据的具体含义，它会根据TCP缓冲区的实际情况进行包的划分，所以在业务上认为，一个完整的包可能会被TCP拆分成多个包进行发送，也有可能把多个小的包封装成一个大的数据包发送，这就是所谓的TCP粘包和拆包问题。</p>
+</blockquote>
+<p>以上内容摘选自<a href="https://blog.csdn.net/J080624/article/details/87209637" target="_blank" rel="noopener">TCP粘包/拆包与Netty解决方案</a></p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><blockquote>
+<p>在没有 Netty 的情况下，用户如果自己需要拆包，基本原理就是不断从 TCP 缓冲区中读取数据，每次读取完都需要判断是否是一个完整的数据包 如果当前读取的数据不足以拼接成一个完整的业务数据包，那就保留该数据，继续从 TCP 缓冲区中读取，直到得到一个完整的数据包。 如果当前读到的数据加上已经读取的数据足够拼接成一个数据包，那就将已经读取的数据拼接上本次读取的数据，构成一个完整的业务数据包传递到业务逻辑，多余的数据仍然保留，以便和下次读到的数据尝试拼接。</p>
+</blockquote>
+<p>以上内容摘选自<a href="https://juejin.im/post/5bdaf8ea6fb9a0227b02275a" target="_blank" rel="noopener">彻底理解Netty，这一篇文章就够了</a></p>
+<p>而使用Netty，则解决这个问题的方法就简单多了。Netty已经提供了四个拆包器:</p>
+<ul>
+<li>FixedLengthFrameDecoder:固定长度的拆包器,Netty会把固定长度的数据包发送给下一个channelHandler</li>
+<li>LineBasedFrameDecoder:行拆包器,每个数据包以换行符分隔发送</li>
+<li>DelimiterBasedFrameDecoder:分隔符拆包器，可以自定义分隔符，行拆包器是分隔符拆包器的一种特例</li>
+<li>LengthFieldBasedFrameDecoder：基于长度域的拆包器，如果自定义协议中包含长度域的字段，就可以使用这个拆包器</li>
+</ul>
+<p>在这里，我们选用分隔符拆包器</p>
+<p>首先定义分隔符</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATA_PACK_SEPARATOR = <span class="string">"#$&amp;*"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在服务端的channelHandler配置中，需要增加</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">//这个配置需要在添加Handler前设置</span></span><br><span class="line">	channel.pipeline().addLast(<span class="keyword">new</span> DelimiterBasedFrameDecoder(<span class="number">1024</span>,Unpooled.copiedBuffer(Config.DATA_PACK_SEPARATOR.getBytes())));</span><br><span class="line">	channel.pipeline().addLast(<span class="keyword">new</span> NettyServerHandler());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在客户端的channelHandler的配置中，同样也需要增加</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">//这个配置需要在添加Handler前设置</span></span><br><span class="line">	channel.pipeline().addLast(<span class="keyword">new</span> DelimiterBasedFrameDecoder(<span class="number">1024</span>,Unpooled.copiedBuffer(Config.DATA_PACK_SEPARATOR.getBytes())));</span><br><span class="line">	channel.pipeline().addLast(<span class="keyword">new</span> NettyServerHandler());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>发送数据时，在数据的末尾增加分隔符:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelActive"</span>);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">			ByteBuf byteBuf = Unpooled.copiedBuffer(<span class="string">"你好，客户端"</span>+Config.DATA_PACK_SEPARATOR, Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">			ctx.writeAndFlush(byteBuf);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>运行后，可以发现，已经解决”粘包”与”拆包”的问题。</p>
+<h3 id="心跳"><a href="#心跳" class="headerlink" title="心跳"></a>心跳</h3><p>在网络应用中，为了判断连接是否还存在，一般会通过发送心跳包来检测。在Netty中，配置心跳包的步骤如下</p>
+<p>在客户端的channelHandler的配置中，需要增加</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			channel.pipeline().addLast(<span class="keyword">new</span> IdleStateHandler(<span class="number">5</span>, <span class="number">5</span>, <span class="number">10</span>));</span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line">						&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在NettyClientHandler中，重写userEventTriggered方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">userEventTriggered</span><span class="params">(ChannelHandlerContext ctx, Object evt)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		IdleStateEvent event = (IdleStateEvent) evt;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,Idle:"</span> + event.state());</span><br><span class="line">		<span class="keyword">switch</span> (event.state()) &#123;</span><br><span class="line">		<span class="keyword">case</span> READER_IDLE:</span><br><span class="line"></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> WRITER_IDLE:</span><br><span class="line">			ByteBuf byteBuf = Unpooled.copiedBuffer(<span class="string">"心跳^v^v"</span>, Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> ALL_IDLE:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">super</span>.userEventTriggered(ctx, evt);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>当写空闲达到配置的时间时，往服务端发送一个心跳消息</p>
+<p>运行后，日志输出如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2020-4-13 1:22:50--Server,启动Netty服务端成功，端口号:12345</span><br><span class="line">2020-4-13 1:22:51--Client,channelActive</span><br><span class="line">2020-4-13 1:22:51--Client,连接服务端成功</span><br><span class="line">2020-4-13 1:22:51--Server,channelActive</span><br><span class="line">2020-4-13 1:22:51--Client,接收到服务端发来的消息:你好，客户端</span><br><span class="line">2020-4-13 1:22:56--Client,Idle:WRITER_IDLE</span><br><span class="line">2020-4-13 1:22:56--Server,接收到客户端发来的消息:心跳^v^</span><br><span class="line">2020-4-13 1:22:56--Client,Idle:READER_IDLE</span><br><span class="line">2020-4-13 1:23:01--Client,Idle:WRITER_IDLE</span><br><span class="line">2020-4-13 1:23:01--Server,接收到客户端发来的消息:心跳^v^</span><br><span class="line">2020-4-13 1:23:01--Client,Idle:READER_IDLE</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到，心跳包按我们配置的时间正常输出了。</p>
+<h3 id="配置编码器与解码器"><a href="#配置编码器与解码器" class="headerlink" title="配置编码器与解码器"></a>配置编码器与解码器</h3><p>我们上面在发送数据时，需要通过ByteBuf来转换String，而通过配置编码，解码器，我们就可以直接发送字符串。配置如下：</p>
+<p>在服务端与客户端的channelHandler分别增加以下配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	<span class="comment">//这个配置需要在添加Handler前设置</span></span><br><span class="line">	channel.pipeline().addLast(<span class="string">"encoder"</span>, <span class="keyword">new</span> StringEncoder());</span><br><span class="line">	channel.pipeline().addLast(<span class="string">"decoder"</span>, <span class="keyword">new</span> StringDecoder());</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在发送消息时，则可以直接通过<code>ctx.writeAndFlush(&quot;心跳^v^&quot; + Config.DATA_PACK_SEPARATOR)</code>的形式来发送。</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>到此，最简单的服务端与客户端通信的Demo已经完成。源码地址：<a href="https://github.com/milovetingting/Samples/tree/master/NettyDemo" target="_blank" rel="noopener">https://github.com/milovetingting/Samples/tree/master/NettyDemo</a></p>
+<h2 id="使用进阶"><a href="#使用进阶" class="headerlink" title="使用进阶"></a>使用进阶</h2><p>在上面的基础上，我们来实现一个下面的需求：</p>
+<ul>
+<li><p>客户端需要登录到服务端</p>
+</li>
+<li><p>客户端登录成功后，服务端可以给客户端发送指令消息，客户端在收到消息及处理完消息后，都需要上报给服务端</p>
+</li>
+</ul>
+<h3 id="封装连接"><a href="#封装连接" class="headerlink" title="封装连接"></a>封装连接</h3><p>为便于程序扩展，我们将客户端连接服务端的部分抽取出来。通过一个接口来定义连接的方法，而连接的具体实现由子类来实现。</p>
+<p>定义接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IConnection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 连接服务器</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> host     服务器地址</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> port     端口</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> callback 连接回调</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(String host, <span class="keyword">int</span> port, IConnectionCallback callback)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在这里还需要定义连接的回调接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IConnectionCallback</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 连接成功</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConnected</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>具体的连接实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyConnection</span> <span class="keyword">implements</span> <span class="title">IConnection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> NettyClient mClient;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(String host, <span class="keyword">int</span> port, IConnectionCallback callback)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">			mClient = <span class="keyword">new</span> NettyClient(host, port);</span><br><span class="line">			mClient.setConnectionCallBack(callback);</span><br><span class="line">			mClient.connect();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>为便于管理连接，定义一个连接的管理类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnectionManager</span> <span class="keyword">implements</span> <span class="title">IConnection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> IConnection mConnection;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">ConnectionManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnectionManagerInner</span> </span>&#123;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> ConnectionManager INSTANCE = <span class="keyword">new</span> ConnectionManager();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ConnectionManager <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ConnectionManagerInner.INSTANCE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initConnection</span><span class="params">(IConnection connection)</span> </span>&#123;</span><br><span class="line">		mConnection = connection;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">checkInit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mConnection == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalAccessError(<span class="string">"please invoke initConnection first!"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(String host, <span class="keyword">int</span> port, IConnectionCallback callback)</span> </span>&#123;</span><br><span class="line">		checkInit();</span><br><span class="line">		mConnection.connect(host, port, callback);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用连接：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			String host = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">			<span class="keyword">int</span> port = <span class="number">12345</span>;</span><br><span class="line">			NettyServer server = <span class="keyword">new</span> NettyServer(port);</span><br><span class="line">			server.run();</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			ConnectionManager.initConnection(<span class="keyword">new</span> NettyConnection());</span><br><span class="line">			ConnectionManager.getInstance().connect(host, port, <span class="keyword">new</span> IConnectionCallback() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConnected</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					LogUtil.log(<span class="string">"Main,onConnected"</span>););</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在调用connect方法前，需要先调用initConnection来指定具体的连接类</p>
+<h3 id="消息Bean的定义"><a href="#消息Bean的定义" class="headerlink" title="消息Bean的定义"></a>消息Bean的定义</h3><p>在连接成功后，服务端会给客户端发送一个欢迎的消息。为便于管理，我们定义一个消息Bean</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Msg</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 欢迎</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_WELCOME = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> type;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> String msg;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="服务端发送欢迎消息"><a href="#服务端发送欢迎消息" class="headerlink" title="服务端发送欢迎消息"></a>服务端发送欢迎消息</h3><p>服务端发送消息</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> ChannelHandlerContextWrapper mChannelHandlerContextWrapper;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Server,channelActive"</span>);</span><br><span class="line">		mChannelHandlerContextWrapper = <span class="keyword">new</span> ChannelHandlerContextWrapper(ctx);</span><br><span class="line">		MsgUtil.sendWelcomeMsg(mChannelHandlerContextWrapper);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在这里，通过定义一个ChannelHandlerContextWrapper类来统一管理消息分隔符</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChannelHandlerContextWrapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> ChannelHandlerContext mContext;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ChannelHandlerContextWrapper</span><span class="params">(ChannelHandlerContext context)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mContext = context;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 包装writeAndFlush方法</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> object</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeAndFlush</span><span class="params">(Object object)</span> </span>&#123;</span><br><span class="line">		mContext.writeAndFlush(object + Config.DATA_PACK_SEPARATOR);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>再进一步，通过定义MsgUtil类来封装发送欢迎消息</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 发送欢迎消息</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> wrapper</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendWelcomeMsg</span><span class="params">(ChannelHandlerContextWrapper wrapper)</span> </span>&#123;</span><br><span class="line">		Msg msg = <span class="keyword">new</span> Msg();</span><br><span class="line">		msg.type = Msg.TYPE_WELCOME;</span><br><span class="line">		msg.msg = <span class="string">"你好，客户端"</span>;</span><br><span class="line">		wrapper.writeAndFlush(Global.sGson.toJson(msg));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="客户端消息接收"><a href="#客户端消息接收" class="headerlink" title="客户端消息接收"></a>客户端消息接收</h3><p>对于客户端而言，为方便处理消息，我们需要定义一个方法来接收消息。通过在IConnection接口中新增一个registerMsgCallback方法来实现</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IConnection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 连接服务器</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> host     服务器地址</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> port     端口</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> callback 连接回调</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(String host, <span class="keyword">int</span> port, IConnectionCallback callback)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 注册消息回调</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> callback</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerMsgCallback</span><span class="params">(IMsgCallback callback)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在这里，还需要新增IMsgCallback接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IMsgCallback</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 接收到消息时的回调</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> msg</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMsgReceived</span><span class="params">(Msg msg)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>对应到实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyConnection</span> <span class="keyword">implements</span> <span class="title">IConnection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> NettyClient mClient;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(String host, <span class="keyword">int</span> port, IConnectionCallback callback)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">			mClient = <span class="keyword">new</span> NettyClient(host, port);</span><br><span class="line">			mClient.setConnectionCallBack(callback);</span><br><span class="line">			mClient.connect();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerMsgCallback</span><span class="params">(IMsgCallback callback)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (mClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalAccessError(<span class="string">"please invoke connect first!"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		mClient.registerMsgCallback(callback);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="消息的分发"><a href="#消息的分发" class="headerlink" title="消息的分发"></a>消息的分发</h4><p>在客户端，为便于处理消息，我们对消息类型进行划分</p>
+<p>修改消息Bean</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Msg</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 欢迎</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_WELCOME = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 心跳</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_HEART_BEAT = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 登录</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_LOGIN = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_A = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_B = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_C = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> type;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> String msg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>假定消息是串行的，需要一个一个地处理。为便于管理消息，增加MsgQueue类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgQueue</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> PriorityBlockingQueue&lt;Msg&gt; mQueue;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> using;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">MsgQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mQueue = <span class="keyword">new</span> PriorityBlockingQueue&lt;&gt;(<span class="number">128</span>, <span class="keyword">new</span> Comparator&lt;Msg&gt;() &#123;</span><br><span class="line"></span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Msg msg1, Msg msg2)</span> </span>&#123;</span><br><span class="line">				<span class="keyword">int</span> res = msg2.priority - msg1.priority;</span><br><span class="line">				<span class="keyword">if</span> (res == <span class="number">0</span> &amp;&amp; msg1.time != msg2.time) &#123;</span><br><span class="line">					<span class="keyword">return</span> (<span class="keyword">int</span>) (msg2.time - msg1.time);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">return</span> res;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MsgQueue <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> MsgQueueInner.INSTANCE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgQueueInner</span> </span>&#123;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MsgQueue INSTANCE = <span class="keyword">new</span> MsgQueue();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 将消息加入消息队列</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> msg</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueueMsg</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">		mQueue.add(msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 从消息队列获取消息</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Msg <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (using) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		Msg msg = mQueue.poll();</span><br><span class="line">		<span class="keyword">if</span> (msg != <span class="keyword">null</span>) &#123;</span><br><span class="line">			makeUse(<span class="keyword">true</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> msg;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 标记使用状态</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> use</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">makeUse</span><span class="params">(<span class="keyword">boolean</span> use)</span> </span>&#123;</span><br><span class="line">		using = use;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 是否能够使用</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">canUse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> !using;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>增加消息的分发类MsgDispatcher</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgDispatcher</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Integer, Class&lt;? extends IMsgHandler&gt;&gt; mHandlerMap;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		mHandlerMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_WELCOME, WelcomeMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_HEART_BEAT, HeartBeatMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_LOGIN, HeartBeatMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_COMMAND_A, CommandAMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_COMMAND_B, CommandBMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		mHandlerMap.put(Msg.TYPE_COMMAND_C, CommandCMsgHandler<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dispatch</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (MsgQueue.getInstance().canUse()) &#123;</span><br><span class="line">			Msg msg = MsgQueue.getInstance().next();</span><br><span class="line">			<span class="keyword">if</span> (msg == <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			dispatch(msg);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dispatch</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			IMsgHandler handler = (IMsgHandler) Class.forName(mHandlerMap.get(msg.type).getName()).newInstance();</span><br><span class="line">			handler.handle(msg);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="消息的处理"><a href="#消息的处理" class="headerlink" title="消息的处理"></a>消息的处理</h4><p>定义IMsgHandler,在这里定义了处理的方法，具体实现由子类实现</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IMsgHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 处理消息</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> msg</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Msg msg)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>为统一管理，定义Base类BaseCommandHandler</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseCommandHandler</span> <span class="keyword">implements</span> <span class="title">IMsgHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">		execute(msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,received command:"</span> + msg);</span><br><span class="line">		doHandle(msg);</span><br><span class="line">		MsgQueue.getInstance().makeUse(<span class="keyword">false</span>);</span><br><span class="line">		LogUtil.log(<span class="string">"Client,report command:"</span> + msg);</span><br><span class="line">		MsgDispatcher.dispatch();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doHandle</span><span class="params">(Msg msg)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在BaseCommandHandler中，定义execute方法，顺序调用：上报消息已接收成功、处理消息、上报消息已处理完成。这里的消息上报部分，都只是输出一个日志来代替，在实际的业务中，可以抽取出一个抽象方法，让子类来实现。</p>
+<p>定义子类，继承自BaseCommandHandler</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginMsgHandler</span> <span class="keyword">extends</span> <span class="title">BaseCommandHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doHandle</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">		LogUtil.log(<span class="string">"Client,handle msg:"</span> + msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>对应的心跳类型消息、欢迎类型消息等，都可以新增对应的处理类来实现，这里不再展开。</p>
+<p>接收到消息时的处理</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			String host = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">			<span class="keyword">int</span> port = <span class="number">12345</span>;</span><br><span class="line">			NettyServer server = <span class="keyword">new</span> NettyServer(port);</span><br><span class="line">			server.run();</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			ConnectionManager.initConnection(<span class="keyword">new</span> NettyConnection());</span><br><span class="line">			ConnectionManager.getInstance().connect(host, port, <span class="keyword">new</span> IConnectionCallback() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConnected</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					LogUtil.log(<span class="string">"Main,onConnected"</span>);</span><br><span class="line"></span><br><span class="line">					ConnectionManager.getInstance().registerMsgCallback(<span class="keyword">new</span> IMsgCallback() &#123;</span><br><span class="line"></span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMsgReceived</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">							MsgQueue.getInstance().enqueueMsg(msg);</span><br><span class="line">							MsgDispatcher.dispatch();</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="客户端登录"><a href="#客户端登录" class="headerlink" title="客户端登录"></a>客户端登录</h3><p>修改消息Bean，增加登录的请求和响应</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Msg</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 欢迎</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_WELCOME = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 心跳</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_HEART_BEAT = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 登录</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_LOGIN = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_A = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_B = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_COMMAND_C = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> type;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> String msg;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> priority;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">long</span> time;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 登录请求信息</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginRuquestInfo</span> </span>&#123;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 用户名</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> String user;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 密码</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> String pwd;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">"LoginRuquestInfo [user="</span> + user + <span class="string">", pwd="</span> + pwd + <span class="string">"]"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 登录响应信息</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginResponseInfo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 登录成功</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CODE_SUCCESS = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 登录失败</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CODE_FAILED = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 响应码</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">int</span> code;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 响应数据</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> String data;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseData</span> </span>&#123;</span><br><span class="line">			<span class="keyword">public</span> String token;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">"LoginResponseInfo [code="</span> + code + <span class="string">", data="</span> + data + <span class="string">"]"</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>发送登录请求</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			String host = <span class="string">"127.0.0.1"</span>;</span><br><span class="line">			<span class="keyword">int</span> port = <span class="number">12345</span>;</span><br><span class="line">			NettyServer server = <span class="keyword">new</span> NettyServer(port);</span><br><span class="line">			server.run();</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			ConnectionManager.initConnection(<span class="keyword">new</span> NettyConnection());</span><br><span class="line">			ConnectionManager.getInstance().connect(host, port, <span class="keyword">new</span> IConnectionCallback() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConnected</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					LogUtil.log(<span class="string">"Main,onConnected"</span>);</span><br><span class="line"></span><br><span class="line">					ConnectionManager.getInstance().registerMsgCallback(<span class="keyword">new</span> IMsgCallback() &#123;</span><br><span class="line"></span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMsgReceived</span><span class="params">(Msg msg)</span> </span>&#123;</span><br><span class="line">							MsgQueue.getInstance().enqueueMsg(msg);</span><br><span class="line">							MsgDispatcher.dispatch();</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line"></span><br><span class="line">					Msg msg = <span class="keyword">new</span> Msg();</span><br><span class="line">					msg.type = Msg.TYPE_LOGIN;</span><br><span class="line"></span><br><span class="line">					Msg.LoginRuquestInfo request = <span class="keyword">new</span> LoginRuquestInfo();</span><br><span class="line">					request.user = <span class="string">"wangyz"</span>;</span><br><span class="line">					request.pwd = <span class="string">"wangyz"</span>;</span><br><span class="line"></span><br><span class="line">					Gson gson = <span class="keyword">new</span> Gson();</span><br><span class="line">					msg.msg = gson.toJson(request);</span><br><span class="line"></span><br><span class="line">					ConnectionManager.getInstance().sendMsg(msg);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这里，引入Gson，将消息Bean转成json字符串后发送。</p>
+<p>对应到服务端，为便于解析出消息，也需要对应的修改消息的Bean。服务端对消息的具体分发与处理，和客户端类似，这里不再展开。</p>
+<h3 id="源码-1"><a href="#源码-1" class="headerlink" title="源码"></a>源码</h3><p>由于篇幅限制，Demo中指令的优先级处理，模拟服务端指令下发等，这里没有再进一步详细介绍，具体可以参考源码:<a href="https://github.com/milovetingting/Samples/tree/master/Netty" target="_blank" rel="noopener">https://github.com/milovetingting/Samples/tree/master/Netty</a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本文介绍了基于Netty实现服务端与客户端通信的基本用法，以及在此基础上，实现处理服务端指令并上报。Demo中通信的数据格式，用到了json，而优化的做法，可以用protobuf来实现，这里只展示通信的流程及简单的封装，因而未使用protobuf。Demo中只实现大体的流程，可能存在未测试到的Bug，权当一个参考的思路吧。</p>
+<p>End~</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Netty</tag>
+        <tag>通信</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Gradle自定义插件发布到Maven</title>
     <url>/2020/04/05/Android/Gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%8F%91%E5%B8%83%E5%88%B0Maven/</url>
     <content><![CDATA[<blockquote>
@@ -56,8 +260,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android</tag>
         <tag>Gradle</tag>
+        <tag>Android</tag>
         <tag>插件</tag>
         <tag>Maven</tag>
       </tags>
@@ -742,8 +946,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android</tag>
         <tag>Android Studio</tag>
+        <tag>Android</tag>
       </tags>
   </entry>
   <entry>
@@ -796,8 +1000,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android</tag>
         <tag>Gradle</tag>
+        <tag>Android</tag>
         <tag>字节码</tag>
         <tag>插桩</tag>
       </tags>
@@ -838,8 +1042,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android</tag>
         <tag>Gradle</tag>
+        <tag>Android</tag>
         <tag>插件</tag>
         <tag>调试</tag>
       </tags>
@@ -932,8 +1136,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Android</tag>
         <tag>Gradle</tag>
+        <tag>Android</tag>
         <tag>插件</tag>
       </tags>
   </entry>
@@ -3799,8 +4003,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Service</tag>
-        <tag>BroadcastReceiver</tag>
         <tag>Activity</tag>
+        <tag>BroadcastReceiver</tag>
         <tag>四大组件</tag>
         <tag>ContentProvider</tag>
       </tags>
@@ -4444,35 +4648,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Android Gradle 插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
-<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
-<p>App插件id: com.android.application</p>
-<p>Library插件id: com.android.library</p>
-<p>Test插件id: com.android.test</p>
-<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置好后，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
-<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
-<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
-<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android动画</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Android%E5%8A%A8%E7%94%BB/</url>
     <content><![CDATA[<blockquote>
@@ -4531,56 +4706,32 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <title>Android Gradle 插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
+<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
+<p>App插件id: com.android.application</p>
+<p>Library插件id: com.android.library</p>
+<p>Test插件id: com.android.test</p>
+<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
+<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
+<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
+<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
       <categories>
-        <category>Android艺术探索</category>
+        <category>Gradle权威指南</category>
       </categories>
       <tags>
-        <tag>Drawable</tag>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -4649,6 +4800,140 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
+</blockquote>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
+</blockquote>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
+</blockquote>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
+<ul>
+<li>FLAG_ONE_SHOT:</li>
+</ul>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
+<ul>
+<li>FLAG_NO_CREATE:</li>
+</ul>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
+<ul>
+<li>FLAG_CANCEL_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
+<ul>
+<li>FLAG_UPDATE_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -4732,87 +5017,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
@@ -5205,62 +5409,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Groovy基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
-
-<p>而双引号可以做运算:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
-
-<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
-<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
-<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
-<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
-<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
-]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>Groovy</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>IPC机制</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<blockquote>
@@ -5391,89 +5539,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Activity的生命周期和启动模式</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
+    <title>Groovy基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
-<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
-</blockquote>
-<p><strong>Activity会经历如下生命周期:</strong></p>
-<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
-<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
-<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
-</blockquote>
-<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
-<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
-<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
-<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
-<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
-<blockquote>
-<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
-</blockquote>
-<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
-<blockquote>
-<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
-</blockquote>
-<p>2、singleTop:栈顶复用模式。</p>
-<blockquote>
-<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
-</blockquote>
-<p>3、singleTask:栈内复用模式。</p>
-<blockquote>
-<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
-</blockquote>
-<blockquote>
-<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
-</blockquote>
-<p>4、singleInstance:单实例模式。</p>
-<blockquote>
-<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
-</blockquote>
-<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
-<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
-<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
-</blockquote>
-<blockquote>
-<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
-</blockquote>
-<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
-<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
-</blockquote>
-<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
-<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
-</blockquote>
-<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
-<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
-<p>scheme://host:port/path|pathPrefix|pathPattern</p>
-<p>具体的例子如：</p>
-<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
-<p>content://com.example.project:200/folder/subfolder/etc</p>
-</blockquote>
-<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
-<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
-<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
-<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
-<blockquote>
-<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
-</blockquote>
-<blockquote>
-<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
-</blockquote>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
+<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
+
+<p>而双引号可以做运算:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
+
+<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
+<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
+<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
+<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
+<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
 ]]></content>
       <categories>
-        <category>Android艺术探索</category>
+        <category>Gradle权威指南</category>
       </categories>
       <tags>
-        <tag>Activity</tag>
-        <tag>生命周期</tag>
-        <tag>启动模式</tag>
+        <tag>Gradle</tag>
+        <tag>Groovy</tag>
       </tags>
   </entry>
   <entry>
@@ -5597,6 +5715,92 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Activity的生命周期和启动模式</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
+<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
+</blockquote>
+<p><strong>Activity会经历如下生命周期:</strong></p>
+<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
+<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
+<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
+</blockquote>
+<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
+<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
+<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
+<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
+<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
+<blockquote>
+<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
+</blockquote>
+<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
+<blockquote>
+<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
+</blockquote>
+<p>2、singleTop:栈顶复用模式。</p>
+<blockquote>
+<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
+</blockquote>
+<p>3、singleTask:栈内复用模式。</p>
+<blockquote>
+<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
+</blockquote>
+<blockquote>
+<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
+</blockquote>
+<p>4、singleInstance:单实例模式。</p>
+<blockquote>
+<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
+</blockquote>
+<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
+<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
+<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
+</blockquote>
+<blockquote>
+<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
+</blockquote>
+<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
+<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
+</blockquote>
+<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
+<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
+</blockquote>
+<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
+<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
+<p>scheme://host:port/path|pathPrefix|pathPattern</p>
+<p>具体的例子如：</p>
+<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
+<p>content://com.example.project:200/folder/subfolder/etc</p>
+</blockquote>
+<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
+<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
+<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
+<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
+<blockquote>
+<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
+</blockquote>
+<blockquote>
+<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
+
+<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Activity</tag>
+        <tag>生命周期</tag>
+        <tag>启动模式</tag>
       </tags>
   </entry>
   <entry>
