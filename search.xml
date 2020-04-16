@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Jetpack学习-Room</title>
+    <url>/2020/04/16/Android/Jetpack%E5%AD%A6%E4%B9%A0-Room/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Jetpack学习-Room"><a href="#Jetpack学习-Room" class="headerlink" title="Jetpack学习-Room"></a>Jetpack学习-Room</h1><h2 id="Room是什么"><a href="#Room是什么" class="headerlink" title="Room是什么"></a>Room是什么</h2><blockquote>
+<p>Room 持久性库在 SQLite 的基础上提供了一个抽象层，让用户能够在充分利用 SQLite 的强大功能的同时，获享更强健的数据库访问机制</p>
+</blockquote>
+<p>以上内容来自官方文档。用一句话总结下：Room是基于SQLite封装的一个框架。</p>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><h3 id="引入Room"><a href="#引入Room" class="headerlink" title="引入Room"></a>引入Room</h3><p>在需要使用的模块的build.gradle中增加以下配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">def</span> room_version = <span class="string">"2.2.3"</span></span><br><span class="line">    implementation <span class="string">"androidx.room:room-runtime:$room_version"</span></span><br><span class="line">    annotationProcessor <span class="string">"androidx.room:room-compiler:$room_version"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><code>room_version</code>最新可用的版本可以在官方的文档上查看。</p>
+<h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@Entity标识这个类用于建表</span></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//@PrimaryKey:主键,autoGenerate:是否自增长</span></span><br><span class="line">    <span class="meta">@PrimaryKey</span>(autoGenerate = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//@ColumnInfo:表中的字段,name:表中的字段名</span></span><br><span class="line">    <span class="meta">@ColumnInfo</span>(name = <span class="string">"name"</span>)</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//@ColumnInfo:表中的字段,默认用下面的字段名age</span></span><br><span class="line">    <span class="meta">@ColumnInfo</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="Dao"><a href="#Dao" class="headerlink" title="Dao"></a>Dao</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Dao</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">StudentDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Insert</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(Student... students)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Delete</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(Student student)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Update</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(Student student)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Query</span>(<span class="string">"select * from student"</span>)</span><br><span class="line">    <span class="function">List&lt;Student&gt; <span class="title">getAll</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Query</span>(<span class="string">"select * from student where name = :name"</span>)</span><br><span class="line">    <span class="function">List&lt;Student&gt; <span class="title">findByName</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Query</span>(<span class="string">"select * from student where id in (:ids)"</span>)</span><br><span class="line">    <span class="function">List&lt;Student&gt; <span class="title">findByIds</span><span class="params">(<span class="keyword">int</span>[] ids)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>通过<code>@Dao</code>来标识这是一个Dao，在编译时会通过<code>APT</code>生成具体的实现类。<code>@Insert</code>,<code>@Delete</code>,<code>@Update</code>,<code>@Query</code>同理。</p>
+<h3 id="DataBase"><a href="#DataBase" class="headerlink" title="DataBase"></a>DataBase</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Database</span>(entities = &#123;Student<span class="class">.<span class="keyword">class</span>&#125;, <span class="title">version</span> </span>= <span class="number">1</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">DataBase</span> <span class="keyword">extends</span> <span class="title">RoomDatabase</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> StudentDao <span class="title">studentDao</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">DataBase dataBase = Room.databaseBuilder(getApplicationContext(), DataBase.class, "room").build();</span><br><span class="line">StudentDao dao = dataBase.studentDao();</span><br><span class="line">List&lt;Student&gt; students = dao.getAll();</span><br></pre></td></tr></table></figure></div>
+
+<p>以上只介绍了最基本的使用步骤，有关<code>数据库升级</code>、<code>多表关联</code>，<code>查询部分字段</code>等，可以在官方文档上查看。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>上面使用的过程中，大量用到了注解，可以推测出，Room是通过注解处理器来辅助生成所需要的类文件，具体原理这里不再展开，还是比较简单的(其实是我不想写^_^)。</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Jetpack</tag>
+        <tag>Room</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jetpack学习-DataBinding</title>
     <url>/2020/04/15/Android/Jetpack%E5%AD%A6%E4%B9%A0-DataBinding/</url>
     <content><![CDATA[<blockquote>
@@ -702,8 +738,8 @@
       <tags>
         <tag>Gradle</tag>
         <tag>Android</tag>
-        <tag>Maven</tag>
         <tag>插件</tag>
+        <tag>Maven</tag>
       </tags>
   </entry>
   <entry>
@@ -1353,8 +1389,8 @@
       </categories>
       <tags>
         <tag>Android</tag>
-        <tag>Artifactory</tag>
         <tag>Maven</tag>
+        <tag>Artifactory</tag>
         <tag>Repository</tag>
       </tags>
   </entry>
@@ -3680,45 +3716,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>状态模式</title>
-    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客</p>
-<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
-<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
-<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
-</li>
-<li><p>代码中包含大量与对象状态有关的条件语句。</p>
-</li>
-</ol>
-<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类的实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>调用</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>位运算的简单应用-权限管理</title>
     <url>/2020/01/16/Android/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -3756,6 +3753,45 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>状态模式</title>
+    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
+</li>
+<li><p>代码中包含大量与对象状态有关的条件语句。</p>
+</li>
+</ol>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类的实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
       </tags>
   </entry>
   <entry>
@@ -4862,8 +4898,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>构建</tag>
         <tag>多渠道</tag>
+        <tag>构建</tag>
       </tags>
   </entry>
   <entry>
@@ -4906,8 +4942,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>多项目</tag>
         <tag>构建</tag>
+        <tag>多项目</tag>
       </tags>
   </entry>
   <entry>
@@ -5088,35 +5124,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Android Gradle 插件</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
-<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
-<p>App插件id: com.android.application</p>
-<p>Library插件id: com.android.library</p>
-<p>Test插件id: com.android.test</p>
-<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置好后，就可以应用插件了</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
-<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
-<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
-<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android动画</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Android%E5%8A%A8%E7%94%BB/</url>
     <content><![CDATA[<blockquote>
@@ -5175,56 +5182,32 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <title>Android Gradle 插件</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC7%E7%AB%A0-Android_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+<h1 id="Android-Gradle-插件"><a href="#Android-Gradle-插件" class="headerlink" title="Android Gradle 插件"></a>Android Gradle 插件</h1><h2 id="Android-Gradle-插件简介"><a href="#Android-Gradle-插件简介" class="headerlink" title="Android Gradle 插件简介"></a>Android Gradle 插件简介</h2><p>从Gradle角度来看，Android其实是Gradle的一个第三方插件，它是由Google的Android团队开发的。但从Android角度 来看，Android插件是基于Gradle构建的，和Android Studio完美搭配的新一代构建系统。</p>
+<h2 id="Android-Gradle-插件分类"><a href="#Android-Gradle-插件分类" class="headerlink" title="Android Gradle 插件分类"></a>Android Gradle 插件分类</h2><p>在Android中有三类工程，一类是App应用工程，它可以生成一个可运行的apk应用。一类是Library库工程，它可以生成AAR包给其它工程使用。一类是Test测试工程，用于对App工程或者Library库工程进行单元测试。</p>
+<p>App插件id: com.android.application</p>
+<p>Library插件id: com.android.library</p>
+<p>Test插件id: com.android.test</p>
+<h2 id="应用Android-Gradle插件"><a href="#应用Android-Gradle插件" class="headerlink" title="应用Android Gradle插件"></a>应用Android Gradle插件</h2><p>要应用一个插件，必须知道它们的插件id,如果是第三方插件，还需要配置它们的依赖classpath。Android Gradle插件就是第三方插件，它托管在Jcenter上，所在在应用前，需要配置依赖classpath，这样应用插件的时候，Gradle才能找到它们。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">buildscript</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">dependencies</span>&#123;</span><br><span class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置好后，就可以应用插件了</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android&#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Android-Gradle-工程示例"><a href="#Android-Gradle-工程示例" class="headerlink" title="Android Gradle 工程示例"></a>Android Gradle 工程示例</h2><p>详见p75</p>
+<p>Android Gradle工程的配置，都是在android{}中，这是唯一的入口 。</p>
+<h3 id="compileSdkVersion"><a href="#compileSdkVersion" class="headerlink" title="compileSdkVersion"></a>compileSdkVersion</h3><h3 id="buildToolsVersion"><a href="#buildToolsVersion" class="headerlink" title="buildToolsVersion"></a>buildToolsVersion</h3><h3 id="defaultConfig"><a href="#defaultConfig" class="headerlink" title="defaultConfig"></a>defaultConfig</h3><p>defaultConfig是默认的配置。它是一个ProductFlavor，ProductFlavor允许我们根据不同情况同时生成多个不同的APK包。</p>
+<h3 id="buildTypes"><a href="#buildTypes" class="headerlink" title="buildTypes"></a>buildTypes</h3><h2 id="Android-Gradle-任务"><a href="#Android-Gradle-任务" class="headerlink" title="Android Gradle 任务"></a>Android Gradle 任务</h2><h2 id="从Eclipse迁移到Android-Gradle工程"><a href="#从Eclipse迁移到Android-Gradle工程" class="headerlink" title="从Eclipse迁移到Android Gradle工程"></a>从Eclipse迁移到Android Gradle工程</h2><h3 id="使用Android-Studio导入"><a href="#使用Android-Studio导入" class="headerlink" title="使用Android Studio导入"></a>使用Android Studio导入</h3><h3 id="从Eclipse-ADT导出"><a href="#从Eclipse-ADT导出" class="headerlink" title="从Eclipse+ADT导出"></a>从Eclipse+ADT导出</h3>]]></content>
       <categories>
-        <category>Android艺术探索</category>
+        <category>Gradle权威指南</category>
       </categories>
       <tags>
-        <tag>Drawable</tag>
+        <tag>Gradle</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -5293,6 +5276,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
       </tags>
   </entry>
   <entry>
