@@ -3,7 +3,11 @@
   <entry>
     <title>IntelliJ IDEA插件开发的简单流程</title>
     <url>/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="IntelliJ-IDEA插件开发的简单流程"><a href="#IntelliJ-IDEA插件开发的简单流程" class="headerlink" title="IntelliJ IDEA插件开发的简单流程"></a>IntelliJ IDEA插件开发的简单流程</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时用<code>Android Studio</code>开发项目时，我们都会或多或少接触到一些插件，这些插件能帮助我们提高开发效率。如果我们有一些特定的需求，但还没有插件可以满足这些需求，那么可以通过自定义插件来实现。</p>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="IntelliJ-IDEA插件开发的简单流程"><a href="#IntelliJ-IDEA插件开发的简单流程" class="headerlink" title="IntelliJ IDEA插件开发的简单流程"></a>IntelliJ IDEA插件开发的简单流程</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时用<code>Android Studio</code>开发项目时，我们都会或多或少接触到一些插件，这些插件能帮助我们提高开发效率。如果我们有一些特定的需求，但还没有插件可以满足这些需求，那么可以通过自定义插件来实现。</p>
 <h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><h3 id="创建插件工程"><a href="#创建插件工程" class="headerlink" title="创建插件工程"></a>创建插件工程</h3><ol>
 <li><code>File-New-Project</code>,在创建工程的界面，选择<code>IntelliJ Platform Plugin</code>,右侧选择<code>SDK</code>，这里需要选择<code>IntelliJ IDEA</code>安装目录下的SDK，这个SDK包含后面插件开发所需要的jar。</li>
 </ol>
@@ -6551,6 +6555,62 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Groovy基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
+
+<p>而双引号可以做运算:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
+
+<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
+<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
+<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
+<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
+<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
+]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>Groovy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>IPC机制</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<blockquote>
@@ -6681,59 +6741,89 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Groovy基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
+    <title>Activity的生命周期和启动模式</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<blockquote>
 <p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
 </blockquote>
-<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
+<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
+</blockquote>
+<p><strong>Activity会经历如下生命周期:</strong></p>
+<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
+<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
+<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
+</blockquote>
+<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
+<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
+<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
+<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
+<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
+<blockquote>
+<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
+</blockquote>
+<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
+<blockquote>
+<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
+</blockquote>
+<p>2、singleTop:栈顶复用模式。</p>
+<blockquote>
+<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
+</blockquote>
+<p>3、singleTask:栈内复用模式。</p>
+<blockquote>
+<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
+</blockquote>
+<blockquote>
+<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
+</blockquote>
+<p>4、singleInstance:单实例模式。</p>
+<blockquote>
+<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
+</blockquote>
+<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
+<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
+<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
+</blockquote>
+<blockquote>
+<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
+</blockquote>
+<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
+<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
+</blockquote>
+<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
+<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
+</blockquote>
+<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
+<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
+<p>scheme://host:port/path|pathPrefix|pathPattern</p>
+<p>具体的例子如：</p>
+<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
+<p>content://com.example.project:200/folder/subfolder/etc</p>
+</blockquote>
+<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
+<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
+<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
+<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
+<blockquote>
+<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
+</blockquote>
+<blockquote>
+<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
 
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
-
-<p>而双引号可以做运算:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
-
-<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
-<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
-<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
-<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
-<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
+<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
 ]]></content>
       <categories>
-        <category>Gradle权威指南</category>
+        <category>Android艺术探索</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
-        <tag>Groovy</tag>
+        <tag>Activity</tag>
+        <tag>生命周期</tag>
+        <tag>启动模式</tag>
       </tags>
   </entry>
   <entry>
@@ -6857,92 +6947,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Activity的生命周期和启动模式</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
-<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
-</blockquote>
-<p><strong>Activity会经历如下生命周期:</strong></p>
-<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
-<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
-<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
-</blockquote>
-<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
-<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
-<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
-<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
-<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
-<blockquote>
-<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
-</blockquote>
-<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
-<blockquote>
-<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
-</blockquote>
-<p>2、singleTop:栈顶复用模式。</p>
-<blockquote>
-<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
-</blockquote>
-<p>3、singleTask:栈内复用模式。</p>
-<blockquote>
-<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
-</blockquote>
-<blockquote>
-<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
-</blockquote>
-<p>4、singleInstance:单实例模式。</p>
-<blockquote>
-<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
-</blockquote>
-<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
-<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
-<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
-</blockquote>
-<blockquote>
-<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
-</blockquote>
-<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
-<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
-</blockquote>
-<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
-<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
-</blockquote>
-<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
-<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
-<p>scheme://host:port/path|pathPrefix|pathPattern</p>
-<p>具体的例子如：</p>
-<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
-<p>content://com.example.project:200/folder/subfolder/etc</p>
-</blockquote>
-<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
-<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
-<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
-<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
-<blockquote>
-<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
-</blockquote>
-<blockquote>
-<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
-</blockquote>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
-
-<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Activity</tag>
-        <tag>生命周期</tag>
-        <tag>启动模式</tag>
       </tags>
   </entry>
   <entry>
