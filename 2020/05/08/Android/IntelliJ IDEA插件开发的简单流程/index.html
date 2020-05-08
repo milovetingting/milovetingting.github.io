@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>IntelliJ IDEA插件开发的简单流程 | milovetingting</title><meta name="description" content="IntelliJ IDEA插件开发的简单流程"><meta name="keywords" content="Android,插件,IDEA"><meta name="author" content="milovetingting,milovetingting@gmail.com"><meta name="copyright" content="milovetingting"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="IntelliJ IDEA插件开发的简单流程"><meta name="twitter:description" content="IntelliJ IDEA插件开发的简单流程"><meta name="twitter:image" content="http://www.milovetingting.cn/images/cover_android.jpg"><meta property="og:type" content="article"><meta property="og:title" content="IntelliJ IDEA插件开发的简单流程"><meta property="og:url" content="http://www.milovetingting.cn/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/"><meta property="og:site_name" content="milovetingting"><meta property="og:description" content="IntelliJ IDEA插件开发的简单流程"><meta property="og:image" content="http://www.milovetingting.cn/images/cover_android.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="http://www.milovetingting.cn/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/"><link rel="next" title="IOC之运行时注入-实现Activity的布局注入+控件注入+事件绑定" href="http://www.milovetingting.cn/2020/05/08/Android/IOC%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5-%E5%AE%9E%E7%8E%B0Activity%E7%9A%84%E5%B8%83%E5%B1%80%E6%B3%A8%E5%85%A5+%E6%8E%A7%E4%BB%B6%E6%B3%A8%E5%85%A5+%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8ba6d970b7b738df6e65e31041f9ba3e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: milovetingting","link":"链接: http://www.milovetingting.cn/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/","source":"来源: milovetingting","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"title":"Snackbar.bookmark.title","message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">milovetingting</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">97</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">82</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">6</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#IntelliJ-IDEA插件开发的简单流程"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">IntelliJ IDEA插件开发的简单流程</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#前言"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">前言</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#自定义插件"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">自定义插件</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#创建插件工程"><span class="toc_mobile_items-number">1.2.1.</span> <span class="toc_mobile_items-text">创建插件工程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#配置SDK"><span class="toc_mobile_items-number">1.2.2.</span> <span class="toc_mobile_items-text">配置SDK</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#配置插件信息"><span class="toc_mobile_items-number">1.2.3.</span> <span class="toc_mobile_items-text">配置插件信息</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#创建Action"><span class="toc_mobile_items-number">1.2.4.</span> <span class="toc_mobile_items-text">创建Action</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#发布插件"><span class="toc_mobile_items-number">1.2.5.</span> <span class="toc_mobile_items-text">发布插件</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#应用插件"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">应用插件</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#后记"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">后记</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IntelliJ-IDEA插件开发的简单流程"><span class="toc-number">1.</span> <span class="toc-text">IntelliJ IDEA插件开发的简单流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义插件"><span class="toc-number">1.2.</span> <span class="toc-text">自定义插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建插件工程"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建插件工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置SDK"><span class="toc-number">1.2.2.</span> <span class="toc-text">配置SDK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置插件信息"><span class="toc-number">1.2.3.</span> <span class="toc-text">配置插件信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Action"><span class="toc-number">1.2.4.</span> <span class="toc-text">创建Action</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#发布插件"><span class="toc-number">1.2.5.</span> <span class="toc-text">发布插件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用插件"><span class="toc-number">1.3.</span> <span class="toc-text">应用插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">1.4.</span> <span class="toc-text">后记</span></a></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(/images/cover_android.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">IntelliJ IDEA插件开发的简单流程</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-05-08<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-05-08</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Android/">Android</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">586</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 1 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h1 id="IntelliJ-IDEA插件开发的简单流程"><a href="#IntelliJ-IDEA插件开发的简单流程" class="headerlink" title="IntelliJ IDEA插件开发的简单流程"></a>IntelliJ IDEA插件开发的简单流程</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时用<code>Android Studio</code>开发项目时，我们都会或多或少接触到一些插件，这些插件能帮助我们提高开发效率。如果我们有一些特定的需求，但还没有插件可以满足这些需求，那么可以通过自定义插件来实现。</p>
+<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><h3 id="创建插件工程"><a href="#创建插件工程" class="headerlink" title="创建插件工程"></a>创建插件工程</h3><ol>
+<li><code>File-New-Project</code>,在创建工程的界面，选择<code>IntelliJ Platform Plugin</code>,右侧选择<code>SDK</code>，这里需要选择<code>IntelliJ IDEA</code>安装目录下的SDK，这个SDK包含后面插件开发所需要的jar。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B.png" data-fancybox="group" data-caption="创建工程" class="fancybox"><img alt="创建工程" title="创建工程" data-src="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>点击<code>Next</code>后，在弹出的界面配置工程信息，包括工程名称，保存地址。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B2.png" data-fancybox="group" data-caption="创建工程2" class="fancybox"><img alt="创建工程2" title="创建工程2" data-src="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="配置SDK"><a href="#配置SDK" class="headerlink" title="配置SDK"></a>配置SDK</h3><p>如果前面创建工程时，没有IntelliJ IDEA的SDK可选，可以在这里配置</p>
+<ol>
+<li>File-Project Structure-Platform Settings-SDKs.</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK.png" data-fancybox="group" data-caption="配置SDK" class="fancybox"><img alt="配置SDK" title="配置SDK" data-src="/images/%E9%85%8D%E7%BD%AESDK.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>如果右侧没有任何可选的SDK，那么需要先配置<code>JDK</code>。点<code>+</code>号-<code>Add JDK</code></li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK2.png" data-fancybox="group" data-caption="配置SDK2" class="fancybox"><img alt="配置SDK2" title="配置SDK2" data-src="/images/%E9%85%8D%E7%BD%AESDK2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>选择JDK的位置</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK3.png" data-fancybox="group" data-caption="配置SDK3" class="fancybox"><img alt="配置SDK3" title="配置SDK3" data-src="/images/%E9%85%8D%E7%BD%AESDK3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="4">
+<li>添加JDK后</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK4.png" data-fancybox="group" data-caption="配置SDK4" class="fancybox"><img alt="配置SDK4" title="配置SDK4" data-src="/images/%E9%85%8D%E7%BD%AESDK4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="5">
+<li>添加IntelliJ IDEA SDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK5.png" data-fancybox="group" data-caption="配置SDK5" class="fancybox"><img alt="配置SDK5" title="配置SDK5" data-src="/images/%E9%85%8D%E7%BD%AESDK5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="6">
+<li>选择IntelliJ IDEA的安装位置</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK6.png" data-fancybox="group" data-caption="配置SDK6" class="fancybox"><img alt="配置SDK6" title="配置SDK6" data-src="/images/%E9%85%8D%E7%BD%AESDK6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="7">
+<li>然后选择JDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK7.png" data-fancybox="group" data-caption="配置SDK7" class="fancybox"><img alt="配置SDK7" title="配置SDK7" data-src="/images/%E9%85%8D%E7%BD%AESDK7.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="8">
+<li>配置好后</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK8.png" data-fancybox="group" data-caption="配置SDK8" class="fancybox"><img alt="配置SDK8" title="配置SDK8" data-src="/images/%E9%85%8D%E7%BD%AESDK8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="9">
+<li>点击Project Settings-Project,在右侧的Project SDK中选择刚才配置的SDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK9.png" data-fancybox="group" data-caption="配置SDK9" class="fancybox"><img alt="配置SDK9" title="配置SDK9" data-src="/images/%E9%85%8D%E7%BD%AESDK9.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="配置插件信息"><a href="#配置插件信息" class="headerlink" title="配置插件信息"></a>配置插件信息</h3><p>主要配置插件id,插件名称,插件描述，更新日志等。</p>
+<p><a href="/images/plugin%E9%85%8D%E7%BD%AE.png" data-fancybox="group" data-caption="plugin配置" class="fancybox"><img alt="plugin配置" title="plugin配置" data-src="/images/plugin%E9%85%8D%E7%BD%AE.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="创建Action"><a href="#创建Action" class="headerlink" title="创建Action"></a>创建Action</h3><ol>
+<li>在src目录上，右键-New-Plugin DevKit-Action</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction.png" data-fancybox="group" data-caption="创建action" class="fancybox"><img alt="创建action" title="创建action" data-src="/images/%E5%88%9B%E5%BB%BAaction.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>配置action的id,name等，在下方的Groups面板中，根据实际情况，选择action需要加入的group</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction2.png" data-fancybox="group" data-caption="创建action2" class="fancybox"><img alt="创建action2" title="创建action2" data-src="/images/%E5%88%9B%E5%BB%BAaction2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>创建完成后，在Action的回调方法中实际具体的逻辑。这里作为演示，只弹出一个对话框。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction3.png" data-fancybox="group" data-caption="创建action3" class="fancybox"><img alt="创建action3" title="创建action3" data-src="/images/%E5%88%9B%E5%BB%BAaction3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="发布插件"><a href="#发布插件" class="headerlink" title="发布插件"></a>发布插件</h3><ol>
+<li>Build-Prepare Plugin Module</li>
+</ol>
+<p><a href="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B60.png" data-fancybox="group" data-caption="发布插件" class="fancybox"><img alt="发布插件" title="发布插件" data-src="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B60.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>Build完成后，会生成插件包</li>
+</ol>
+<p><a href="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B62.png" data-fancybox="group" data-caption="发布插件2" class="fancybox"><img alt="发布插件2" title="发布插件2" data-src="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B62.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="应用插件"><a href="#应用插件" class="headerlink" title="应用插件"></a>应用插件</h2><ol>
+<li>File-Setting-Plugins,选择从Disk安装</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6.png" data-fancybox="group" data-caption="安装插件" class="fancybox"><img alt="安装插件" title="安装插件" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>在弹出的窗口中，选择刚才生成的插件包，确定后，需要重启IDE</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B62.png" data-fancybox="group" data-caption="安装插件2" class="fancybox"><img alt="安装插件2" title="安装插件2" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B62.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>由于之前的插件，是在Generate的group中，我们可以文件编辑界面右键-Generate或者按Alt+Insert快捷键</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B63.png" data-fancybox="group" data-caption="安装插件3" class="fancybox"><img alt="安装插件3" title="安装插件3" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B63.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="4">
+<li>在弹出的界面中，选择第一项，这个就是我们定义的插件</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B64.png" data-fancybox="group" data-caption="安装插件4" class="fancybox"><img alt="安装插件4" title="安装插件4" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B64.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="5">
+<li>可以跳过步骤3,4，我们可以直接通过前面定义的快捷键来调用插件</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B65.png" data-fancybox="group" data-caption="安装插件5" class="fancybox"><img alt="安装插件5" title="安装插件5" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B65.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本文介绍了基于IntelliJ IDEA开发插件的最简单的流程。当然，实际插件开发，要比这个复杂得多，涉及的API更多，具体的使用可以查阅官方文档。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:milovetingting@gmail.com">milovetingting</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.milovetingting.cn/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/">http://www.milovetingting.cn/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.milovetingting.cn">milovetingting</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Android/">Android    </a><a class="post-meta__tags" href="/tags/%E6%8F%92%E4%BB%B6/">插件    </a><a class="post-meta__tags" href="/tags/IDEA/">IDEA    </a></div><div class="post_share"><div class="social-share" data-image="/images/cover_android.jpg" data-sites="facebook,twitter,wechat,weibo"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2020/05/08/Android/IOC%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5-%E5%AE%9E%E7%8E%B0Activity%E7%9A%84%E5%B8%83%E5%B1%80%E6%B3%A8%E5%85%A5+%E6%8E%A7%E4%BB%B6%E6%B3%A8%E5%85%A5+%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A/"><img class="next_cover lazyload" data-src="/images/cover_android.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>IOC之运行时注入-实现Activity的布局注入+控件注入+事件绑定</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/04/05/Android/Gradle自定义插件发布到Maven/" title="Gradle自定义插件发布到Maven"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">Gradle自定义插件发布到Maven</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/25/Android/在Android Studio中调试Gradle插件/" title="在Android Studio中调试Gradle插件"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">在Android Studio中调试Gradle插件</div></div></a></div><div class="relatedPosts_item"><a href="/2020/02/24/Android/自定义Gradle插件/" title="自定义Gradle插件"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">自定义Gradle插件</div></div></a></div><div class="relatedPosts_item"><a href="/2020/03/03/Android/使用APT实现Android中View的注入/" title="使用APT实现Android中View的注入"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">使用APT实现Android中View的注入</div></div></a></div><div class="relatedPosts_item"><a href="/2020/04/17/Android/Jetpack学习-Navigation/" title="Jetpack学习-Navigation"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">Jetpack学习-Navigation</div></div></a></div><div class="relatedPosts_item"><a href="/2020/04/16/Android/Jetpack学习-Room/" title="Jetpack学习-Room"><img class="relatedPosts_cover lazyload"data-src="/images/cover_android.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-05-08</div><div class="relatedPosts_title">Jetpack学习-Room</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'ae38b55ae64dd8d9df5a',
+  clientSecret: '684ea96fb1acf523a5f8a2a84eb751c33ca645a4',
+  repo: 'milovetingting.github.io',
+  owner: 'milovetingting',
+  admin: 'milovetingting',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN# en , zh-CN , zh-TW',
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+}</script></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By milovetingting</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>

@@ -1,6 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>IntelliJ IDEA插件开发的简单流程</title>
+    <url>/2020/05/08/Android/IntelliJ%20IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E7%AE%80%E5%8D%95%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="IntelliJ-IDEA插件开发的简单流程"><a href="#IntelliJ-IDEA插件开发的简单流程" class="headerlink" title="IntelliJ IDEA插件开发的简单流程"></a>IntelliJ IDEA插件开发的简单流程</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>平时用<code>Android Studio</code>开发项目时，我们都会或多或少接触到一些插件，这些插件能帮助我们提高开发效率。如果我们有一些特定的需求，但还没有插件可以满足这些需求，那么可以通过自定义插件来实现。</p>
+<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><h3 id="创建插件工程"><a href="#创建插件工程" class="headerlink" title="创建插件工程"></a>创建插件工程</h3><ol>
+<li><code>File-New-Project</code>,在创建工程的界面，选择<code>IntelliJ Platform Plugin</code>,右侧选择<code>SDK</code>，这里需要选择<code>IntelliJ IDEA</code>安装目录下的SDK，这个SDK包含后面插件开发所需要的jar。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B.png" data-fancybox="group" data-caption="创建工程" class="fancybox"><img alt="创建工程" title="创建工程" data-src="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>点击<code>Next</code>后，在弹出的界面配置工程信息，包括工程名称，保存地址。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B2.png" data-fancybox="group" data-caption="创建工程2" class="fancybox"><img alt="创建工程2" title="创建工程2" data-src="/images/%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="配置SDK"><a href="#配置SDK" class="headerlink" title="配置SDK"></a>配置SDK</h3><p>如果前面创建工程时，没有IntelliJ IDEA的SDK可选，可以在这里配置</p>
+<ol>
+<li>File-Project Structure-Platform Settings-SDKs.</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK.png" data-fancybox="group" data-caption="配置SDK" class="fancybox"><img alt="配置SDK" title="配置SDK" data-src="/images/%E9%85%8D%E7%BD%AESDK.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>如果右侧没有任何可选的SDK，那么需要先配置<code>JDK</code>。点<code>+</code>号-<code>Add JDK</code></li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK2.png" data-fancybox="group" data-caption="配置SDK2" class="fancybox"><img alt="配置SDK2" title="配置SDK2" data-src="/images/%E9%85%8D%E7%BD%AESDK2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>选择JDK的位置</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK3.png" data-fancybox="group" data-caption="配置SDK3" class="fancybox"><img alt="配置SDK3" title="配置SDK3" data-src="/images/%E9%85%8D%E7%BD%AESDK3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="4">
+<li>添加JDK后</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK4.png" data-fancybox="group" data-caption="配置SDK4" class="fancybox"><img alt="配置SDK4" title="配置SDK4" data-src="/images/%E9%85%8D%E7%BD%AESDK4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="5">
+<li>添加IntelliJ IDEA SDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK5.png" data-fancybox="group" data-caption="配置SDK5" class="fancybox"><img alt="配置SDK5" title="配置SDK5" data-src="/images/%E9%85%8D%E7%BD%AESDK5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="6">
+<li>选择IntelliJ IDEA的安装位置</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK6.png" data-fancybox="group" data-caption="配置SDK6" class="fancybox"><img alt="配置SDK6" title="配置SDK6" data-src="/images/%E9%85%8D%E7%BD%AESDK6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="7">
+<li>然后选择JDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK7.png" data-fancybox="group" data-caption="配置SDK7" class="fancybox"><img alt="配置SDK7" title="配置SDK7" data-src="/images/%E9%85%8D%E7%BD%AESDK7.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="8">
+<li>配置好后</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK8.png" data-fancybox="group" data-caption="配置SDK8" class="fancybox"><img alt="配置SDK8" title="配置SDK8" data-src="/images/%E9%85%8D%E7%BD%AESDK8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="9">
+<li>点击Project Settings-Project,在右侧的Project SDK中选择刚才配置的SDK</li>
+</ol>
+<p><a href="/images/%E9%85%8D%E7%BD%AESDK9.png" data-fancybox="group" data-caption="配置SDK9" class="fancybox"><img alt="配置SDK9" title="配置SDK9" data-src="/images/%E9%85%8D%E7%BD%AESDK9.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="配置插件信息"><a href="#配置插件信息" class="headerlink" title="配置插件信息"></a>配置插件信息</h3><p>主要配置插件id,插件名称,插件描述，更新日志等。</p>
+<p><a href="/images/plugin%E9%85%8D%E7%BD%AE.png" data-fancybox="group" data-caption="plugin配置" class="fancybox"><img alt="plugin配置" title="plugin配置" data-src="/images/plugin%E9%85%8D%E7%BD%AE.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="创建Action"><a href="#创建Action" class="headerlink" title="创建Action"></a>创建Action</h3><ol>
+<li>在src目录上，右键-New-Plugin DevKit-Action</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction.png" data-fancybox="group" data-caption="创建action" class="fancybox"><img alt="创建action" title="创建action" data-src="/images/%E5%88%9B%E5%BB%BAaction.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>配置action的id,name等，在下方的Groups面板中，根据实际情况，选择action需要加入的group</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction2.png" data-fancybox="group" data-caption="创建action2" class="fancybox"><img alt="创建action2" title="创建action2" data-src="/images/%E5%88%9B%E5%BB%BAaction2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>创建完成后，在Action的回调方法中实际具体的逻辑。这里作为演示，只弹出一个对话框。</li>
+</ol>
+<p><a href="/images/%E5%88%9B%E5%BB%BAaction3.png" data-fancybox="group" data-caption="创建action3" class="fancybox"><img alt="创建action3" title="创建action3" data-src="/images/%E5%88%9B%E5%BB%BAaction3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="发布插件"><a href="#发布插件" class="headerlink" title="发布插件"></a>发布插件</h3><ol>
+<li>Build-Prepare Plugin Module</li>
+</ol>
+<p><a href="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B60.png" data-fancybox="group" data-caption="发布插件" class="fancybox"><img alt="发布插件" title="发布插件" data-src="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B60.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>Build完成后，会生成插件包</li>
+</ol>
+<p><a href="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B62.png" data-fancybox="group" data-caption="发布插件2" class="fancybox"><img alt="发布插件2" title="发布插件2" data-src="/images/%E5%8F%91%E5%B8%83%E6%8F%92%E4%BB%B62.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="应用插件"><a href="#应用插件" class="headerlink" title="应用插件"></a>应用插件</h2><ol>
+<li>File-Setting-Plugins,选择从Disk安装</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6.png" data-fancybox="group" data-caption="安装插件" class="fancybox"><img alt="安装插件" title="安装插件" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>在弹出的窗口中，选择刚才生成的插件包，确定后，需要重启IDE</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B62.png" data-fancybox="group" data-caption="安装插件2" class="fancybox"><img alt="安装插件2" title="安装插件2" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B62.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="3">
+<li>由于之前的插件，是在Generate的group中，我们可以文件编辑界面右键-Generate或者按Alt+Insert快捷键</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B63.png" data-fancybox="group" data-caption="安装插件3" class="fancybox"><img alt="安装插件3" title="安装插件3" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B63.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="4">
+<li>在弹出的界面中，选择第一项，这个就是我们定义的插件</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B64.png" data-fancybox="group" data-caption="安装插件4" class="fancybox"><img alt="安装插件4" title="安装插件4" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B64.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="5">
+<li>可以跳过步骤3,4，我们可以直接通过前面定义的快捷键来调用插件</li>
+</ol>
+<p><a href="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B65.png" data-fancybox="group" data-caption="安装插件5" class="fancybox"><img alt="安装插件5" title="安装插件5" data-src="/images/%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B65.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本文介绍了基于IntelliJ IDEA开发插件的最简单的流程。当然，实际插件开发，要比这个复杂得多，涉及的API更多，具体的使用可以查阅官方文档。</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>插件</tag>
+        <tag>IDEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IOC之运行时注入-实现Activity的布局注入+控件注入+事件绑定</title>
+    <url>/2020/05/08/Android/IOC%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5-%E5%AE%9E%E7%8E%B0Activity%E7%9A%84%E5%B8%83%E5%B1%80%E6%B3%A8%E5%85%A5+%E6%8E%A7%E4%BB%B6%E6%B3%A8%E5%85%A5+%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="IOC之运行时注入-实现Activity的布局注入-控件注入-事件绑定"><a href="#IOC之运行时注入-实现Activity的布局注入-控件注入-事件绑定" class="headerlink" title="IOC之运行时注入-实现Activity的布局注入+控件注入+事件绑定"></a>IOC之运行时注入-实现Activity的布局注入+控件注入+事件绑定</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍基于<code>IOC</code>的设计原则，实现以下功能：</p>
+<ul>
+<li><p>布局注入</p>
+</li>
+<li><p>控件注入</p>
+</li>
+<li><p>事件注入</p>
+</li>
+</ul>
+<p>其实这些功能，在之前也有零散地介绍过，这里再做一个统一的整理。</p>
+<p>这里暂时不考虑运行时反射的效率问题，只是展示一种实现方案。</p>
+<h2 id="IOC的定义"><a href="#IOC的定义" class="headerlink" title="IOC的定义"></a>IOC的定义</h2><p>IOC,即<code>Inversion of Control</code>,意为<code>控制反转</code>,是面向对象编程中的一种设计原则，可以用来降低代码间的耦合。最常见的方式是<code>依赖注入</code>(<code>Dependence Injection</code>,简称<code>DI</code>)。通过IOC，对象在创建时，由外界来控制，而不是内部直接控制。</p>
+<h2 id="布局注入"><a href="#布局注入" class="headerlink" title="布局注入"></a>布局注入</h2><p>平时，我们在Activity中，可能会通过在<code>onCreate</code>方法中调用<code>setContentView</code>的方法，给Activity绑定布局。而基于IOC，则可以通过<code>注解</code>来实现：</p>
+<h3 id="注解的定义"><a href="#注解的定义" class="headerlink" title="注解的定义"></a>注解的定义</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LayoutInject &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 布局id</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@LayoutRes</span> <span class="function"><span class="keyword">int</span> <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="注解的使用"><a href="#注解的使用" class="headerlink" title="注解的使用"></a>注解的使用</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@LayoutInject</span>(R.layout.activity_main)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        InjectUtil.inject(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在MainActivity上加上前面定义的LayoutInject注解,然后在onCreate中调用注入的方法<code>InjectUtil.inject(this)</code></p>
+<h3 id="Inject方法"><a href="#Inject方法" class="headerlink" title="Inject方法"></a>Inject方法</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (target == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        injectLayout(target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 布局注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target 需要注入的组件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">injectLayout</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = target.getClass();</span><br><span class="line">        <span class="keyword">boolean</span> annotationPresent = clazz.isAnnotationPresent(LayoutInject<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">if</span> (!annotationPresent) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        LayoutInject annotation = clazz.getAnnotation(LayoutInject<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">int</span> layoutId = annotation.value();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Method method = clazz.getMethod(<span class="string">"setContentView"</span>, <span class="keyword">int</span><span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            method.invoke(target, layoutId);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="控件注入"><a href="#控件注入" class="headerlink" title="控件注入"></a>控件注入</h2><h3 id="注解的定义-1"><a href="#注解的定义-1" class="headerlink" title="注解的定义"></a>注解的定义</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.FIELD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ViewInject &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 控件id</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@IdRes</span> <span class="function"><span class="keyword">int</span> <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="注解的使用-1"><a href="#注解的使用-1" class="headerlink" title="注解的使用"></a>注解的使用</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ViewInject</span>(R.id.btn1)</span><br><span class="line">   Button btn1;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ViewInject</span>(R.id.btn2)</span><br><span class="line">   Button btn2;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="Inject方法-1"><a href="#Inject方法-1" class="headerlink" title="Inject方法"></a>Inject方法</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (target == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        injectView(target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 控件注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target 需要注入的组件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">injectView</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = target.getClass();</span><br><span class="line">        Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">            <span class="keyword">boolean</span> annotationPresent = field.isAnnotationPresent(ViewInject<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="keyword">if</span> (!annotationPresent) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ViewInject annotation = field.getAnnotation(ViewInject<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="keyword">int</span> viewId = annotation.value();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Method method = clazz.getMethod(<span class="string">"findViewById"</span>, <span class="keyword">int</span><span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                View view = (View) method.invoke(target, viewId);</span><br><span class="line">                field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                field.set(target, view);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="事件注入"><a href="#事件注入" class="headerlink" title="事件注入"></a>事件注入</h2><h3 id="注解的定义-2"><a href="#注解的定义-2" class="headerlink" title="注解的定义"></a>注解的定义</h3><h4 id="事件类型的注解"><a href="#事件类型的注解" class="headerlink" title="事件类型的注解"></a>事件类型的注解</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.ANNOTATION_TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Event &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置listener的方法，如:setOnClickListener</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">String <span class="title">listenerSetter</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 事件，如:new View.OnClickListener()</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Class&lt;?&gt; listenerType();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="点击事件的注解"><a href="#点击事件的注解" class="headerlink" title="点击事件的注解"></a>点击事件的注解</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Event</span>(listenerSetter = <span class="string">"setOnClickListener"</span>, listenerType = View.OnClickListener<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">Target</span>(<span class="title">ElementType</span>.<span class="title">METHOD</span>)</span></span><br><span class="line"><span class="class">@<span class="title">Retention</span>(<span class="title">RetentionPolicy</span>.<span class="title">RUNTIME</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> @<span class="title">interface</span> <span class="title">OnClick</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 控件id</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@IdRes</span> <span class="keyword">int</span>[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="长按事件的注解"><a href="#长按事件的注解" class="headerlink" title="长按事件的注解"></a>长按事件的注解</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Event</span>(listenerSetter = <span class="string">"setOnLongClickListener"</span>, listenerType = View.OnLongClickListener<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">Target</span>(<span class="title">ElementType</span>.<span class="title">METHOD</span>)</span></span><br><span class="line"><span class="class">@<span class="title">Retention</span>(<span class="title">RetentionPolicy</span>.<span class="title">RUNTIME</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> @<span class="title">interface</span> <span class="title">OnLongClick</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 控件id</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@IdRes</span> <span class="keyword">int</span>[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="注解的使用-2"><a href="#注解的使用-2" class="headerlink" title="注解的使用"></a>注解的使用</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@OnClick</span>(&#123;R.id.btn1, R.id.btn2&#125;)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">click</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> id = view.getId();</span><br><span class="line">        <span class="keyword">switch</span> (id) &#123;</span><br><span class="line">            <span class="keyword">case</span> R.id.btn1:</span><br><span class="line">                Toast.makeText(getApplicationContext(), <span class="string">"按钮1点击了"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> R.id.btn2:</span><br><span class="line">                Toast.makeText(getApplicationContext(), <span class="string">"按钮2点击了"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OnLongClick</span>(&#123;R.id.btn1, R.id.btn2&#125;)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">longClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> id = view.getId();</span><br><span class="line">        <span class="keyword">switch</span> (id) &#123;</span><br><span class="line">            <span class="keyword">case</span> R.id.btn1:</span><br><span class="line">                Toast.makeText(getApplicationContext(), <span class="string">"按钮1长按了"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> R.id.btn2:</span><br><span class="line">                Toast.makeText(getApplicationContext(), <span class="string">"按钮2长按了"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="Inject方法-2"><a href="#Inject方法-2" class="headerlink" title="Inject方法"></a>Inject方法</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inject</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (target == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        injectEvent(target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 事件注入</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target 需要注入的组件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">injectEvent</span><span class="params">(Object target)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = target.getClass();</span><br><span class="line">        Method[] methods = clazz.getDeclaredMethods();</span><br><span class="line">        <span class="keyword">for</span> (Method method : methods) &#123;</span><br><span class="line">            Annotation[] annotations = method.getAnnotations();</span><br><span class="line">            <span class="keyword">for</span> (Annotation annotation : annotations) &#123;</span><br><span class="line">                Class&lt;? extends Annotation&gt; annotationType = annotation.annotationType();</span><br><span class="line">                <span class="keyword">boolean</span> annotationPresent = annotationType.isAnnotationPresent(Event<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                <span class="keyword">if</span> (!annotationPresent) &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                Event event = annotationType.getAnnotation(Event<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                String listenerSetter = event.listenerSetter();</span><br><span class="line">                Class&lt;?&gt; listenerType = event.listenerType();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Method valueMethod = annotationType.getDeclaredMethod(<span class="string">"value"</span>);</span><br><span class="line">                    valueMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                    <span class="keyword">int</span>[] viewIds = (<span class="keyword">int</span>[]) valueMethod.invoke(annotation);</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> viewId : viewIds) &#123;</span><br><span class="line">                        Method findViewByIdMethod = clazz.getMethod(<span class="string">"findViewById"</span>, <span class="keyword">int</span><span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                        View view = (View) findViewByIdMethod.invoke(target, viewId);</span><br><span class="line">                        <span class="keyword">if</span> (view == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        ListenerInvocationHandler listenerInvocationHandler = <span class="keyword">new</span> ListenerInvocationHandler(target, method);</span><br><span class="line">                        Object proxyInstance = Proxy.newProxyInstance(InjectUtil.class.getClassLoader(), new Class[]&#123;listenerType&#125;, listenerInvocationHandler);</span><br><span class="line">                        Method listenerSetterMethod = view.getClass().getMethod(listenerSetter, listenerType);</span><br><span class="line">                        listenerSetterMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                        listenerSetterMethod.invoke(view, proxyInstance);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ListenerInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Object target;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Method method;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ListenerInvocationHandler</span><span class="params">(Object target, Method method)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.target = target;</span><br><span class="line">            <span class="keyword">this</span>.method = method;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.method.invoke(target, args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>IOC</tag>
+        <tag>注入</tag>
+        <tag>运行时</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>动态代理+注解+反射实现View的点击事件绑定</title>
     <url>/2020/04/29/Android/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86+%E6%B3%A8%E8%A7%A3+%E5%8F%8D%E5%B0%84%E5%AE%9E%E7%8E%B0View%E7%9A%84%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A/</url>
     <content><![CDATA[<blockquote>
@@ -1250,8 +1404,8 @@
       <tags>
         <tag>Gradle</tag>
         <tag>Android</tag>
-        <tag>插件</tag>
         <tag>Maven</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -1901,8 +2055,8 @@
       </categories>
       <tags>
         <tag>Android</tag>
-        <tag>Maven</tag>
         <tag>Artifactory</tag>
+        <tag>Maven</tag>
         <tag>Repository</tag>
       </tags>
   </entry>
@@ -5410,8 +5564,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>多渠道</tag>
         <tag>构建</tag>
+        <tag>多渠道</tag>
       </tags>
   </entry>
   <entry>
@@ -5454,8 +5608,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>构建</tag>
         <tag>多项目</tag>
+        <tag>构建</tag>
       </tags>
   </entry>
   <entry>
@@ -5723,59 +5877,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Drawable</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java Gradle 插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC6%E7%AB%A0-Java_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -5841,6 +5942,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
       </tags>
   </entry>
   <entry>
@@ -6190,58 +6344,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Gradle构建脚本基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
-<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
-<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
-
-<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
-<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
-<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
-<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
-<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>创建任务的另一种方式:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
-<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>另外，一个任务可以依赖多个任务</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
-<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
-<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>View的事件体系</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BD%93%E7%B3%BB/</url>
     <content><![CDATA[<blockquote>
@@ -6394,6 +6496,58 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>View</tag>
         <tag>事件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Gradle构建脚本基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC3%E7%AB%A0-Gradle%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Gradle构建脚本基础"><a href="#Gradle构建脚本基础" class="headerlink" title="Gradle构建脚本基础"></a>Gradle构建脚本基础</h1><h2 id="Settings文件"><a href="#Settings文件" class="headerlink" title="Settings文件"></a>Settings文件</h2><p>在Gradle中，定义了一个设置文件，用于初始化以及工程树的配置。设置文件的默认名为settings.gradle,放在根工程目录下。</p>
+<p>设置文件大多数的作用都是为了配置子工程。根工程相当于Android Studio中的Project，一个根工程可以有很多子工程。</p>
+<p>一个子工程只有在Settings文件里配置了Gradle才会识别，才会在构建的时候被包含进去。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">rootProject.name = <span class="string">'android-gradle'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter1'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter1'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter2'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter2'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">':Chapter3'</span></span><br><span class="line"><span class="keyword">project</span>(<span class="string">':Chapter3'</span>).projectDir = <span class="keyword">new</span> <span class="keyword">File</span>(rootDir,<span class="string">'Chapter3'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>上面的配置，定义了一些子项目，并且为它们指定了相应的目录。如果不指定，则默认为同级目录。利用这个特性，我们可以把我们的工程放到任何目录下，可以非常灵活地对我们的工程进行分级，分类等。只要在Settings文件里指定好路径就可以了。</p>
+<h2 id="Build文件"><a href="#Build文件" class="headerlink" title="Build文件"></a>Build文件</h2><p>每个Project都会有一个Build文件，该文件是该Project构建的入口，可以在这里对Project进行配置，比如配置版本，需要哪些插件，依赖哪些库等。</p>
+<p>Root Project也有自己的Build文件。Root Project 可以取到所有的Child Project，所以在Root Project的Build文件里可以对Child Project统一配置，如应用的插件，依赖的Maven中心库等。比如配置所有的Child Project的仓库为jcenter：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>又比如，开发一个大型的Java工程，该工程被分为很多小模块，每个模块都是一个Child Project，这些模块也是Java工程，这种情况下可以统一配置：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">subprojects</span>&#123;</span><br><span class="line">    apply plugin:<span class="string">"java"</span></span><br><span class="line">    <span class="keyword">repositories</span>&#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>除了subprojects外，还有allprojects,用于对所有工程进行配置。</p>
+<h2 id="Projects以及Tasks"><a href="#Projects以及Tasks" class="headerlink" title="Projects以及Tasks"></a>Projects以及Tasks</h2><p>一个Project包含很多个Task，也就是说每个Project是由多个Task组成的。</p>
+<h2 id="创建一个任务"><a href="#创建一个任务" class="headerlink" title="创建一个任务"></a>创建一个任务</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask1&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask1:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTaks1:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>创建任务的另一种方式:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">tasks.create(<span class="string">"customTask2"</span>)&#123;</span><br><span class="line">	<span class="keyword">doFirst</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doFirst'</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask2:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务依赖"><a href="#任务依赖" class="headerlink" title="任务依赖"></a>任务依赖</h2><p>任务之间是可以有依赖关系的，这样我们就能控制哪些任务优先于哪些任务执行。</p>
+<p>创建任务的时候，通过dependsOn可以指定依赖的任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask3(dependsOn:customTask2)&#123;</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask3:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>另外，一个任务可以依赖多个任务</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask4&#123;</span><br><span class="line">	dependsOn customTask3,customTask1</span><br><span class="line">	<span class="keyword">doLast</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">'customTask4:doLast'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="任务间通过API控制、交互"><a href="#任务间通过API控制、交互" class="headerlink" title="任务间通过API控制、交互"></a>任务间通过API控制、交互</h2><p>要使用任务名操作任务，必须先定义声明，因为脚本是顺序执行的。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> customTask5&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doFirst</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doFirst'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">customTask5.<span class="keyword">doLast</span>&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">'customTask5:doLast'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="自定义属性"><a href="#自定义属性" class="headerlink" title="自定义属性"></a>自定义属性</h2><p>Project和Task都允许用户添加额外的自定义属性，要添加自定义属性，通过应用所属对应的ext即可实现。添加之后，通过ext属性可以读取和设置，如果要同时添加多个自定义属性，可以通过ext代码块来实现。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">ext.name=<span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">ext&#123;</span><br><span class="line">	age = <span class="number">18</span></span><br><span class="line">	address = <span class="string">'中国'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask6&#123;</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"姓名是:$&#123;name&#125;,年龄是:$&#123;age&#125;,地址是：$&#123;address&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>相比局部变量，自定义属性有更为广泛的作用范围。可以跨Project，跨Task访问这些自定义的属性。只要能访问到这些属性所属的对象，这些属性就可以被访问到。</p>
+<p>自定义属性不仅仅局限在Project和Task上，还可以应用在SourceSet中。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">apply plugin:<span class="string">"java"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>.all&#123;</span><br><span class="line">	ext.resourcesDir = <span class="keyword">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">sourceSets</span>&#123;</span><br><span class="line">	main&#123;</span><br><span class="line">		resourcesDir= <span class="string">'main/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">	test&#123;</span><br><span class="line">		resourcesDir = <span class="string">'test/res'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> customTask7&#123;</span><br><span class="line">	<span class="keyword">sourceSets</span>.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"$&#123;it.name&#125;的resourcesDir是:$&#123;it.resourcesDir&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在项目中，一般使用它来自定义版本和版本名称，把版本号和版本名称单独放在一个Gradle文件中。</p>
+<h2 id="脚本即代码，代码即脚本"><a href="#脚本即代码，代码即脚本" class="headerlink" title="脚本即代码，代码即脚本"></a>脚本即代码，代码即脚本</h2>]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
@@ -6583,92 +6737,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Activity的生命周期和启动模式</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
-<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
-</blockquote>
-<p><strong>Activity会经历如下生命周期:</strong></p>
-<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
-<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
-<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
-</blockquote>
-<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
-<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
-<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
-<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
-<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
-<blockquote>
-<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
-</blockquote>
-<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
-<blockquote>
-<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
-</blockquote>
-<p>2、singleTop:栈顶复用模式。</p>
-<blockquote>
-<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
-</blockquote>
-<p>3、singleTask:栈内复用模式。</p>
-<blockquote>
-<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
-</blockquote>
-<blockquote>
-<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
-</blockquote>
-<p>4、singleInstance:单实例模式。</p>
-<blockquote>
-<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
-</blockquote>
-<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
-<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
-<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
-</blockquote>
-<blockquote>
-<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
-</blockquote>
-<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
-<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
-</blockquote>
-<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
-<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
-</blockquote>
-<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
-<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
-<p>scheme://host:port/path|pathPrefix|pathPattern</p>
-<p>具体的例子如：</p>
-<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
-<p>content://com.example.project:200/folder/subfolder/etc</p>
-</blockquote>
-<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
-<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
-<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
-<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
-<blockquote>
-<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
-</blockquote>
-<blockquote>
-<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
-</blockquote>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
-
-<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Activity</tag>
-        <tag>生命周期</tag>
-        <tag>启动模式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Gradle入门</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC1%E7%AB%A0-Gradle%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<blockquote>
@@ -6789,6 +6857,92 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Activity的生命周期和启动模式</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Activity%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Activity的生命周期和启动模式"><a href="#Activity的生命周期和启动模式" class="headerlink" title="Activity的生命周期和启动模式"></a>Activity的生命周期和启动模式</h1><h2 id="1、Activity的生命周期"><a href="#1、Activity的生命周期" class="headerlink" title="1、Activity的生命周期"></a>1、Activity的生命周期</h2><h3 id="1-1、典型情况下的生命周期"><a href="#1-1、典型情况下的生命周期" class="headerlink" title="1.1、典型情况下的生命周期"></a>1.1、典型情况下的生命周期</h3><blockquote>
+<p>在有用户参与的情况下，Activity所经过的生命周期的改变。</p>
+</blockquote>
+<p><strong>Activity会经历如下生命周期:</strong></p>
+<p>onCreate-onRestart-onStart-onResume-onPause-onStop-onDestroy</p>
+<p><a href="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" data-fancybox="group" data-caption="Activity生命周期" class="fancybox"><img alt="Activity生命周期" title="Activity生命周期" data-src="/images/Activity%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="1-2、异常情况下的生命周期"><a href="#1-2、异常情况下的生命周期" class="headerlink" title="1.2、异常情况下的生命周期"></a>1.2、异常情况下的生命周期</h3><blockquote>
+<p>Activity被系统回收或者由于当前设备的Configuration发生改变从而导致Activity被销毁重建。</p>
+</blockquote>
+<p><a href="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="异常情况下的Activity的重建过程.png" class="fancybox"><img alt="异常情况下的Activity的重建过程.png" title="异常情况下的Activity的重建过程.png" data-src="/images/%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Activity%E7%9A%84%E9%87%8D%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h4 id="1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建"><a href="#1-2-1资源相关的系统配置发生改变导致Activity被杀死并重新创建" class="headerlink" title="1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建"></a>1.2.1资源相关的系统配置发生改变导致Activity被杀死并重新创建</h4><p>系统只在Activity异常终止的时候才会调用onSaveInstanceState和onRestoreInstanceState来存储和恢复数据，其它情况不会触发这个过程。</p>
+<h4 id="1-2-2资源内存不足导致低优先级的Activity被杀死"><a href="#1-2-2资源内存不足导致低优先级的Activity被杀死" class="headerlink" title="1.2.2资源内存不足导致低优先级的Activity被杀死"></a>1.2.2资源内存不足导致低优先级的Activity被杀死</h4><p>Activity优先级:</p>
+<p>1、前台Activity–正在和用户交互的Activity，优先级最高。</p>
+<p>2、可见但非前台Activity–Activity可见但位于后台无法和用户直接交互，如Activity中弹出一个对话框。</p>
+<p>3、后台Activity–已经被暂停的Activity，比如执行了onStop，优先级最低。</p>
+<blockquote>
+<p>当系统内存不足时，系统会按照上述优先级去杀死目标Activity所在的进程，并在后续通过onSaveInstanceState和onRestoreInstanceState来存储和恢复数据。如果一个进程中没有四大组件在执行，那么这个进程将很快被系统杀死，因此，一些后台工作不适合脱离四大组件而独立运行在后台中，这样进程容易被杀死。比较好的方法是将后台工作放入Service中从而保证进程有一定的优先级，这样就不会轻易被系统杀死。</p>
+</blockquote>
+<h2 id="2、Activity的启动模式"><a href="#2、Activity的启动模式" class="headerlink" title="2、Activity的启动模式"></a>2、Activity的启动模式</h2><p>1、standard:标准模式。</p>
+<blockquote>
+<p>每次启动一个Activity都会重新创建一个新的实例，不管这个实例是否已经存在。</p>
+</blockquote>
+<p>2、singleTop:栈顶复用模式。</p>
+<blockquote>
+<p>如果新Activity已经位于任务栈的栈顶，那么此Activity不会被重新创建，同时它的onNewIntent方法会被回调，通过此方法的参数，我们可以取出当前请求的信息。此时，Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。如果新Activity的实例已存在但不是位于栈顶，那么新的Activity仍然会重新创建。</p>
+</blockquote>
+<p>3、singleTask:栈内复用模式。</p>
+<blockquote>
+<p>这是一种单实例模式。在这种模式下，只要Activity在一个栈中存在，那么多次启动此Activity都不会重新创建实例，和singleTop一样，系统也会回调onNewIntent。当一个具有singleTask模式的Activity请求启动后，比如Activity A,系统首先会寻找是否存在A想要的任务栈，如果不存在，就重新创建一个任务栈，然后创建A的实例后把A放入栈中。如果存在A所需的任务栈，这时要看A是否在栈中有实例存在，如果有实例存在，那么系统会把A调到栈顶并调用它的onNewIntent方法，如果实例不存在，就创建A的实例并把A放入栈中。singleTask默认具体有clearTop的效果，会导致栈内所有在A上的Activity全部出栈。</p>
+</blockquote>
+<blockquote>
+<p>TaskAffinity:任务相关性。这个参数标识了一个Activity所需要的任务栈的名字。默认情况下，所有Activity所需的任务栈的名字为应用的包名。我们也可以为每个Activity都单独指定TaskAffinity属性，这个属性值必须不能和包名相同，否则就相当于没有指定。TaskAffinity属性主要和singleTask启动模式或者allowTaskReparenting属性配对使用，在其它情况下没有意义。</p>
+</blockquote>
+<p>4、singleInstance:单实例模式。</p>
+<blockquote>
+<p>这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中。</p>
+</blockquote>
+<p>可以通过AndroidMenifest为Activity指定启动模式。或者通过Intent中设置标志位来为Activity指定启动模式。这两种方式都可以为Activity指定启动模式，但是二者还是有区别。首先，优先级上，第二种方式的优先级要高于第一种；其它，上述两种方式在限定范围上有所不同，第一种方式无法直接为Activity设定FLAG_ACTIVITY_CLEAR_TOP标识，而第二种方式无法为Activity指定singleInstance模式。</p>
+<h2 id="3、IntentFilter的匹配规则"><a href="#3、IntentFilter的匹配规则" class="headerlink" title="3、IntentFilter的匹配规则"></a>3、IntentFilter的匹配规则</h2><blockquote>
+<p>启动Activity分为两种：显示调用和隐式调用。显示调用需要明确地指定启动对象的组件信息，包括包名和类名，而隐式调用则不需要明确地指定组件信息。隐式调用需要Intent能够匹配目标组件的IntentFilter所设置的过滤信息，如果不匹配将无法启动目标Activity。IntentFilter中的过滤信息有action、category、data。</p>
+</blockquote>
+<blockquote>
+<p>为了匹配过滤列表，需要同时匹配过滤列表中的action、category、data信息，否则匹配失败。只有一个Intent同时匹配action类别、category类别、data类别才算完全匹配，只有完全匹配才能启动目标Activity。一个Activity中可以有多个intent-filter，一个Intent只要能匹配任务一组intent-filter即可成功启动对应的Activity。</p>
+</blockquote>
+<h3 id="1、action的匹配规则"><a href="#1、action的匹配规则" class="headerlink" title="1、action的匹配规则"></a>1、action的匹配规则</h3><blockquote>
+<p>一个过滤规则中可以有多个action，那么只要Intent中的action能够和过滤规则中的任务一个action相同即可匹配成功。action的匹配要求Intent中的action存在且必须和过滤规则中的其中一个aciton相同。</p>
+</blockquote>
+<h3 id="2、category的匹配规则"><a href="#2、category的匹配规则" class="headerlink" title="2、category的匹配规则"></a>2、category的匹配规则</h3><blockquote>
+<p>如果Intent中含有category，那么所有的category必须和过滤规则中的其它一个category相同。Intent中可以没有category,如果没有category的话，系统在调用startActivity或者startActivityForResult的时候会默认为Intent加上”android.intent.category.DEFAULT”这个category。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定”android.intent.category.DEFAULT”这个category。</p>
+</blockquote>
+<h3 id="3、data的匹配规则"><a href="#3、data的匹配规则" class="headerlink" title="3、data的匹配规则"></a>3、data的匹配规则</h3><blockquote>
+<p>data由两部分组成，mineType和URI。mimeType指媒体类型，比如image/jpeg、audio/mpeg4-generic和video/*等，可以表示图片、文本、视频等不同的媒体格式。而URI包含的数据就比较多了，下面是URI的结构：</p>
+<p>scheme://host:port/path|pathPrefix|pathPattern</p>
+<p>具体的例子如：</p>
+<p><a href="http://www.baidu.com:80/search/info" target="_blank" rel="noopener">http://www.baidu.com:80/search/info</a></p>
+<p>content://com.example.project:200/folder/subfolder/etc</p>
+</blockquote>
+<p>Scheme:URI的模式，比如http、file、content等。如果URI中没有指定scheme，那么整个URI的其它参数无效，也意味着URI是无效的。</p>
+<p>Host:URI的主机名。比如:<a href="http://www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。" target="_blank" rel="noopener">www.baidu.com。如果URI中没有指定host，那么整个URI的其它参数无效，也意味着URI是无效的。</a></p>
+<p>Port：URI中的端口号，如80，仅当URI中指定了scheme和host参数，port参数才有意义。</p>
+<p>Path、pathPattern、pathPrefix:这三个参数表述路径信息，其中path表示完整的路径信息；pathPattern也表示完整的路径信息，但是它里面可以包含通配符”*”,”*”表示0个或多个任意字符，需要注意的是，由于正则表达式的规则，如果想表示真实的字符串，那么”*”要写成”\*”,”&quot;要写在”\\“;pathPrefix表示路径的前缀信息。</p>
+<blockquote>
+<p>如果要为Intent指定完整的data，必须要调用setDataAndType方法。不能先调用setData再调用setType。因为这两个方法彼此会清除对方的值。</p>
+</blockquote>
+<blockquote>
+<p>当我们通过隐式方式启动一个Activity的时候，可以做一下判断，看是否有Activity能够匹配我们的隐式Intent。如果不做判断就有可能出现错误。判断方法有两种：采用PackageManager的resolveActivity方式或者Intent的resolveActivity方法，如果找不到匹配的Activity会返回null。另外，PackageManager还提供了queryIntentActivities方法，这个方法和resolveActivity方法不同的是：它不是返回最佳匹配的Activity信息，而是返回所有成功的Activity信息。</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> List&lt;ResolveInfo&gt; <span class="title">queryIntentActivities</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ResolveInfo <span class="title">resolveActivity</span><span class="params">(Intent intent,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure></div>
+
+<p>上面两个方法的第二个参数，需要使用MATCH_DEFAULT_ONLY标记位。这个标记的含义是仅仅匹配那些在intent-filter中声明了<category android:name="android.intent.category.DEFAULT">这个category的Activity.使用这个标记位的意义在于，只要上述两个方法不返回null,那么startActivity一定可以成功。</category></p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Activity</tag>
+        <tag>生命周期</tag>
+        <tag>启动模式</tag>
       </tags>
   </entry>
   <entry>
