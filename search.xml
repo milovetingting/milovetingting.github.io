@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>浅析对象的创建过程</title>
+    <url>/2020/05/21/Java/%E6%B5%85%E6%9E%90%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="浅析对象的创建过程"><a href="#浅析对象的创建过程" class="headerlink" title="浅析对象的创建过程"></a>浅析对象的创建过程</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们平时在创建对象时，可能都会这样创建：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object object = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure></div>
+
+<p>看起来很简单的一个过程，那么这个<code>new</code>操作的背后，有哪些相关的知识点，是需要我们掌握的，本文针对这些来展开介绍。</p>
+<p><a href="/images/%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" data-fancybox="group" data-caption="对象的创建过程" class="fancybox"><img alt="对象的创建过程" title="对象的创建过程" data-src="/images/%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="对象的创建过程"><a href="#对象的创建过程" class="headerlink" title="对象的创建过程"></a>对象的创建过程</h2><p>类都是由<code>JVM</code>加载到内存中的，类加载采用<code>双亲委派</code>机制，双亲委派机制具体信息，这里不作展开。类加载包含以下几个过程：</p>
+<h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><p>加载Class信息到内存中,可以从Class文件读取，也可以从<code>Zip</code>包读取，或者在运行时通过<code>动态代理</code>读取。</p>
+<h3 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h3><h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>验证Class文件的<code>字节流</code>中包含的信息是否符合虚拟机要求。</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>为类对象的成员变量分配内存并设置类的成员变量的<code>初始值</code>。</p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>虚拟机将常量池中的<code>符号引用</code>替换为<code>直接引用</code>。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>执行类构造器的<code>init</code>方法。</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>对象的使用过程。</p>
+<h3 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h3><p>当类的所有对象都释放后执行卸载。</p>
+<h2 id="创建方式"><a href="#创建方式" class="headerlink" title="创建方式"></a>创建方式</h2><p>对象的创建方式可以直接通过new的方式来创建，但一般为便于实现对象全局唯一，都会通过单例为实现。</p>
+<p>单例的实现简单来分，有以下几种：</p>
+<ul>
+<li><p>饿汉式</p>
+</li>
+<li><p>懒汉式</p>
+</li>
+<li><p>静态内部类</p>
+</li>
+<li><p>枚举</p>
+</li>
+</ul>
+<h3 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>饿汉式存在的问题是不能按需加载。</p>
+<h3 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h3><h4 id="线程不安全"><a href="#线程不安全" class="headerlink" title="线程不安全"></a>线程不安全</h4><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>存在的问题：多线程的情况下，线程不安全。</p>
+<h4 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h4><h5 id="方法加锁"><a href="#方法加锁" class="headerlink" title="方法加锁"></a>方法加锁</h5><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>通过方法加锁，线程安全的问题是解决了，但是每次获取实例都会加锁，增加了开销。</p>
+<h5 id="代码加锁"><a href="#代码加锁" class="headerlink" title="代码加锁"></a>代码加锁</h5><h6 id="直接加载"><a href="#直接加载" class="headerlink" title="直接加载"></a>直接加载</h6><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>锁不加在方法上，而是加在具体的代码块上。这种方式会存在创建两个对象的情况。</p>
+<h6 id="双重检查锁"><a href="#双重检查锁" class="headerlink" title="双重检查锁"></a>双重检查锁</h6><ul>
+<li>双重检查锁-不加Volatile</li>
+</ul>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这种方式不会存在创建两个对象的情况。但会存在指令重排的问题。</p>
+<ul>
+<li>双重检查锁-加Volatile</li>
+</ul>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">private static volatile Singleton instance;</span><br><span class="line"></span><br><span class="line">    private Singleton() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Singleton getInstance() &#123;</span><br><span class="line">        if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">            synchronized (Singleton.class) &#123;</span><br><span class="line">                if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">                    instance &#x3D; new Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>静态内部类的方式可以实现按需加载。</p>
+<h3 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;</span><br><span class="line"></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="对象的内存结构"><a href="#对象的内存结构" class="headerlink" title="对象的内存结构"></a>对象的内存结构</h2><p>具体的可以参考上一篇文章。</p>
+<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><h4 id="Mark-Word"><a href="#Mark-Word" class="headerlink" title="Mark Word"></a>Mark Word</h4><p>包含HashCode,锁标识,对象年龄等信息。</p>
+<h4 id="Klass-Pointer"><a href="#Klass-Pointer" class="headerlink" title="Klass Pointer"></a>Klass Pointer</h4><p>对象的Class的内存地址</p>
+<h4 id="Length"><a href="#Length" class="headerlink" title="Length"></a>Length</h4><p>这个只在数组类型的对象中存在，用来存放数组长度。</p>
+<h3 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h3><p>存放对象的非静态成员变量信息。</p>
+<h3 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h3><p>JVM要求8字节对齐</p>
+<h2 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h2><p>从GC的角度，可以将Java的堆分为<code>新生代</code>和<code>老年代</code>。新生代和老年代的大小比为：1:2。</p>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><p>用来存放新产生的对象。新生代又分为Eden、SurvivorFrom、SurvivorTo三个区域，比例为：8:1:1。新生代使用的GC算法是复制算法。</p>
+<h4 id="Eden区"><a href="#Eden区" class="headerlink" title="Eden区"></a>Eden区</h4><p>新对象产生后保存的地方。如果是较大的对象，则直接进入老年代。</p>
+<h4 id="SurvivorFrom区"><a href="#SurvivorFrom区" class="headerlink" title="SurvivorFrom区"></a>SurvivorFrom区</h4><p>GC后保留下来的对象会保存在这个区域。</p>
+<h4 id="SurvivorTo区"><a href="#SurvivorTo区" class="headerlink" title="SurvivorTo区"></a>SurvivorTo区</h4><p>SurvivorFrom在GC后保留下来的对象会进入这个区域。</p>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><p>新生代中的对象每经过一次GC后，对应的年龄就会+1，如果对象的年龄达到老年代的标准(默认15次)，则会进入老年代。老年代使用的GC算法是标记清除算法。</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>对象</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java对象占用内存大小--Java对象的内存结构分析</title>
     <url>/2020/05/20/Java/Java%E5%AF%B9%E8%B1%A1%E5%8D%A0%E7%94%A8%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F--Java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id="Java对象占用内存大小–Java对象的内存结构分析"><a href="#Java对象占用内存大小–Java对象的内存结构分析" class="headerlink" title="Java对象占用内存大小–Java对象的内存结构分析"></a>Java对象占用内存大小–Java对象的内存结构分析</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍Java对象的<code>内存结构</code>。</p>
@@ -307,8 +384,8 @@
         <category>Android</category>
       </categories>
       <tags>
-        <tag>插件</tag>
         <tag>Android</tag>
+        <tag>插件</tag>
         <tag>IDEA</tag>
       </tags>
   </entry>
@@ -569,9 +646,9 @@
         <category>Java</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>注解</tag>
         <tag>反射</tag>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -1613,9 +1690,9 @@
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>插件</tag>
         <tag>Android</tag>
         <tag>Maven</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -2265,8 +2342,8 @@
       </categories>
       <tags>
         <tag>Android</tag>
-        <tag>Maven</tag>
         <tag>Artifactory</tag>
+        <tag>Maven</tag>
         <tag>Repository</tag>
       </tags>
   </entry>
@@ -2395,8 +2472,8 @@
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>插件</tag>
         <tag>Android</tag>
+        <tag>插件</tag>
         <tag>调试</tag>
       </tags>
   </entry>
@@ -2489,8 +2566,8 @@
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>插件</tag>
         <tag>Android</tag>
+        <tag>插件</tag>
       </tags>
   </entry>
   <entry>
@@ -3292,9 +3369,9 @@ RUNTIME:在运行时有效（即运行时保留）</code></pre><h4 id="Documente
         <category>Java</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>注解</tag>
         <tag>反射</tag>
+        <tag>Java</tag>
         <tag>Exception</tag>
         <tag>内部类</tag>
         <tag>泛型</tag>
@@ -5354,8 +5431,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
         <category>Android艺术探索</category>
       </categories>
       <tags>
-        <tag>Activity</tag>
         <tag>Service</tag>
+        <tag>Activity</tag>
         <tag>BroadcastReceiver</tag>
         <tag>四大组件</tag>
         <tag>ContentProvider</tag>
@@ -5774,8 +5851,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>多渠道</tag>
         <tag>构建</tag>
+        <tag>多渠道</tag>
       </tags>
   </entry>
   <entry>
@@ -5818,8 +5895,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
-        <tag>构建</tag>
         <tag>多项目</tag>
+        <tag>构建</tag>
       </tags>
   </entry>
   <entry>
@@ -6087,59 +6164,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>Drawable</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
-<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
-</blockquote>
-<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
-<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
-<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
-<li><p>BitmapDrawable</p>
-</li>
-<li><p>ShapeDrawable</p>
-</li>
-<li><p>LayerDrawable</p>
-</li>
-</ul>
-<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
-<ul>
-<li>StateListDrawable</li>
-</ul>
-<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
-<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
-<ul>
-<li>LevelListDrawable</li>
-</ul>
-<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
-<ul>
-<li>TransitionDrawable</li>
-</ul>
-<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
-<ul>
-<li>InsetDrawable</li>
-</ul>
-<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
-<ul>
-<li>ScaleDrawable</li>
-</ul>
-<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
-<ul>
-<li>ClipDrawable</li>
-</ul>
-<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
-<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>Drawable</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java Gradle 插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC6%E7%AB%A0-Java_Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -6205,6 +6229,59 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Drawable</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/Drawable/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Drawable"><a href="#Drawable" class="headerlink" title="Drawable"></a>Drawable</h1><blockquote>
+<p>Drawable表示的是一种可以在Canvas上进行绘制的抽象的概念。</p>
+</blockquote>
+<h2 id="1、Drawable简介"><a href="#1、Drawable简介" class="headerlink" title="1、Drawable简介"></a>1、Drawable简介</h2><p>Drawable是一个抽象类，是所有Drawable对象的基类，每个具体的Drawable都是它的子类，比如ShapeDrawable、BitmapDrawable等。</p>
+<p>通过getIntrinsicWidth和getIntrinsicHeight这两个方法可以获取到Drawable的内部宽/高。但并不是所有的Drawable都有内部宽/高，比如一张图片所形成的Drawable，它的内部宽/高就是图片的宽/高，但是一个颜色形成的Drawable，它没有内部宽/高。Drawable内部宽/高不等同于它的大小。Drawable是没有大小概念的。</p>
+<h2 id="2、Drawable分类"><a href="#2、Drawable分类" class="headerlink" title="2、Drawable分类"></a>2、Drawable分类</h2><ul>
+<li><p>BitmapDrawable</p>
+</li>
+<li><p>ShapeDrawable</p>
+</li>
+<li><p>LayerDrawable</p>
+</li>
+</ul>
+<p>对应的XML标签是<layer-list>,表示一种层次化的Drawable集合。</layer-list></p>
+<ul>
+<li>StateListDrawable</li>
+</ul>
+<p>对应于<selector>标签，也是表示Drawable集合，每个Drawable都对应View的一种状态。主要用于设置可单击的View的背景。</selector></p>
+<p>系统会根据View当前的状态从selector中选择对应的item,每个item对应着一个具体的Drawable，系统按照从上到下的顺序查找，直至查找到第一条匹配的item。一般来说，默认的item都应该放在selector的最后一条并且不带任何状态，这样当上面的item无法匹配View的当前状态，系统会选择默认的item。</p>
+<ul>
+<li>LevelListDrawable</li>
+</ul>
+<p>对应于<level-list>标签，表示一个Drawable集合，集合中的每个Drawable都有一个等级level的概念。根据不同的等级，LevelListDrawable会切换为对应的Drawable。Drawable等级是有范围的，即0-10000，最小等级为0，这也是默认值，最大等级为10000。</level-list></p>
+<ul>
+<li>TransitionDrawable</li>
+</ul>
+<p>对应于<transition>标签，用于实现两个Drawable之间的淡入淡出效果。</transition></p>
+<ul>
+<li>InsetDrawable</li>
+</ul>
+<p>对应于<inset>标签，它可以将其它Drawable内嵌到自己当中，并可以在四周留出一定的间距。当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsetDrawable来实现。通过LayerDrawable也可以实现这种效果。</inset></p>
+<ul>
+<li>ScaleDrawable</li>
+</ul>
+<p>ScaleDrawable对应于<scale>标签，可以根据自己的等级将指定的Drawable缩放到一定比例。等级为0表示ScaleDrawable不可见，这是默认值，要想ScaleDrawable可见，需要等级不为0。</scale></p>
+<ul>
+<li>ClipDrawable</li>
+</ul>
+<p>对应于<clip>标签,可以根据自己当前的等级来裁剪另一个Drawable，裁剪方向可以通过android:clipOrientation和android:gravity这两个属性来共同控制。</clip></p>
+<h2 id="3、自定义Drawable"><a href="#3、自定义Drawable" class="headerlink" title="3、自定义Drawable"></a>3、自定义Drawable</h2>]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>Drawable</tag>
       </tags>
   </entry>
   <entry>
@@ -6372,85 +6449,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>View的工作原理</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
-<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
-<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
-<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
-<p><a href="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" title="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
-<p>SpecMode有三类，如下所示：</p>
-<p><strong>UNSPECIFIED</strong></p>
-<blockquote>
-<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
-</blockquote>
-<p><strong>EXACTLY</strong></p>
-<blockquote>
-<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
-</blockquote>
-<p><strong>AT_MOST</strong></p>
-<blockquote>
-<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
-</blockquote>
-<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
-<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
-<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
-<p><a href="/images/performTraversals%E6%B5%81%E7%A8%8B.png" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" title="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
-<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
-<p><strong>View的measure过程</strong></p>
-<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
-<p><strong>ViewGroup的measure过程</strong></p>
-<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
-<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
-<p>在Activity已启动的时候获取View的宽/高：</p>
-<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
-<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
-<p><strong>2、view.post(runnable)</strong></p>
-<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
-<p><strong>3、ViewTreeObserver</strong></p>
-<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
-<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
-<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
-<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
-<ul>
-<li><p>1、绘制背景-background.draw(canvas)</p>
-</li>
-<li><p>2、绘制自己-onDraw</p>
-</li>
-<li><p>3、绘制children-dispatchDraw</p>
-</li>
-<li><p>4、绘制装饰-onDrawScrollBars</p>
-</li>
-</ul>
-<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
-<li><strong>继承View重写onDraw方法</strong></li>
-</ul>
-<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
-<ul>
-<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
-</ul>
-<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
-<ul>
-<li>继承特定的View(如TextView)</li>
-</ul>
-<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
-<ul>
-<li>继承特定的ViewGroup(如LinearLayout)</li>
-</ul>
-<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>View</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Gradle任务</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC4%E7%AB%A0-Gradle%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<blockquote>
@@ -6551,6 +6549,85 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>Gradle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>View的工作原理</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/View%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h2 id="1、ViewRoot和DecorView"><a href="#1、ViewRoot和DecorView" class="headerlink" title="1、ViewRoot和DecorView"></a>1、ViewRoot和DecorView</h2><p>ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中,同时会创建ViewRootImpl对象，并将ViewRootImpl对象和DecorView建立关联。</p>
+<p>View的绘制流程是从ViewRoot的performTraversals方法开始的，它经过measure、layout和draw三个过程才最终将一个View绘制出来。</p>
+<p>measure过程决定了View的宽/高，Measure完成以后，可以通过getMeasuredWidth和getMeasuredHeight方法来获取View测量后的宽/高，在几乎所有的情况下，它等同于View的最终的宽/高，但是特殊情况除外。Layout过程决定了View的四个顶点的坐标和实际的宽/高，完成以后，可以通过getTop、getBottom、getLeft和getRight来拿到View的四个顶点的位置，可以通过getWidth和getHeight方法拿到View的最终宽/高。Draw过程决定了View的显示，只有draw方法完成后View的内容才能呈现在屏幕上。</p>
+<p>DecorView作为顶级View，一般情况下，它内部会包含一个竖直方向的LinearLayout，在这个LinearLayout里面有上下两个部分，上面是标题栏，下面是内容栏。在Activity中，我们通过setContentView所设置的布局文件其实就是被加到内容栏中的，而内容栏id为content。可以通过下面方法得到content:ViewGroup content = findViewById(R.android.id.content)。通过content.getChildAt(0)可以得到设置的view。DecorView其实是一个FrameLayout,View层的事件都先经过DecorView，然后才传递给我们的View。</p>
+<p><a href="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" data-fancybox="group" data-caption="DecorView的结构" class="fancybox"><img alt="DecorView的结构" title="DecorView的结构" data-src="/images/DecorView%E7%9A%84%E7%BB%93%E6%9E%84.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="2、MeasureSpec"><a href="#2、MeasureSpec" class="headerlink" title="2、MeasureSpec"></a>2、MeasureSpec</h2><p>MeasureSpec代表一个32位的int值，高2位代表SpecMode,低30位代表SpecSize,SpecMode是指测量模式，而SpecSize是指在某种测量模式下的规格大小。</p>
+<p>SpecMode有三类，如下所示：</p>
+<p><strong>UNSPECIFIED</strong></p>
+<blockquote>
+<p>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部。</p>
+</blockquote>
+<p><strong>EXACTLY</strong></p>
+<blockquote>
+<p>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值，对应于LayoutParams中的match_parent和具体的数值这两种模式。</p>
+</blockquote>
+<p><strong>AT_MOST</strong></p>
+<blockquote>
+<p>父容器指定一个可用大小即SpecSize，View的大小不能大于这个值，对应于LayoutParams中的wrap_content。</p>
+</blockquote>
+<p>LayoutParams需要和父容器一起才能决定View的MeasureSpec，从而进一步决定View的宽/高。对于顶级View，即DecorView和普通View来说，MeasureSpec的转换过程略有不同。对于DecorView，其MeasureSpec由窗口的尺寸和其自身的LayoutParams共同确定；对于普通View，其MeasureSpec由父容器的MeasureSpec和自身的Layoutparams共同决定，MeasureSpec一旦确定，onMeasure就可以确定View的测量宽/高。</p>
+<p>当View采用固定宽/高时，不管父容器的MeasureSpec是什么，View的MeasureSpec都是精确模式并且大小遵循LayoutParams中的大小。当View的宽/高是match_parent时，如果父容器的模式是精准模式，那么View也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么View也是最大模式并且大小不会超过父容器的剩余空间。当View的宽/高是wrap_content时，不管父容器的模式是精准还是最大化，View的模式总是最大化并且大小不超过父容器的剩余空间。</p>
+<h2 id="3、View的工作流程"><a href="#3、View的工作流程" class="headerlink" title="3、View的工作流程"></a>3、View的工作流程</h2><p>View的工作流程主要是指measure、layout、draw三大流程，即测量、布局、绘制。</p>
+<p><a href="/images/performTraversals%E6%B5%81%E7%A8%8B.png" data-fancybox="group" data-caption="performTraversals流程" class="fancybox"><img alt="performTraversals流程" title="performTraversals流程" data-src="/images/performTraversals%E6%B5%81%E7%A8%8B.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="3-1、measure过程"><a href="#3-1、measure过程" class="headerlink" title="3.1、measure过程"></a>3.1、measure过程</h3><p>measure过程要分情况，如果只是一个原始的view，则通过measure方法就完成了其测量过程，如果是一个ViewGroup，除了完成自己的测量过程外，还会遍历调用所有子元素的measure方法，各个子元素再递归去执行这个流程。</p>
+<p><strong>View的measure过程</strong></p>
+<p>直接继承View的自定义控件需要重写onMeasure方法并设置wrap_content时的自身大小，否则在布局中使用wrap_content就相当于使用match_parent。</p>
+<p><strong>ViewGroup的measure过程</strong></p>
+<p>ViewGroup并没有定义其测量的具体过程，因为ViewGroup是一个抽象类，其测量过程的onMeasure方法需要各个子类去具体实现。</p>
+<p>View的measure是三大流程中最复杂的一个，measure完成后，通过getMeasuredWidth/Height方法就可以正确获取到View的测量宽/高，但在某些极端情况下，系统可能会多次measure才能确实最终端的测量宽/高，建议在onLayout方法去获取View的测量宽/高或者最终宽/高。</p>
+<p>在Activity已启动的时候获取View的宽/高：</p>
+<p><strong>1、Activity/View#onWindowFocusChanged</strong></p>
+<p>View已经初始化完毕，宽/高已经准备好了。onWindowFocusChanged会被调用多次，当Activity的窗口得到焦点和失去焦点均会被调用一次。</p>
+<p><strong>2、view.post(runnable)</strong></p>
+<p>通过post可以将一个runnable投递到消息队列的尾部，然后等Looper调用此消息的时候，View也已经初始化好了。</p>
+<p><strong>3、ViewTreeObserver</strong></p>
+<p>使用OnGlobalLayoutListener接口，当View树的状态发生改变或者View树内部的View的可见性发生改变时，onGlobalLayout方法会回调。onGlobalLayout会调用多次。</p>
+<p><strong>4、view.measure(int widthMeasureSpec,int heightMeasureSpec)</strong></p>
+<h3 id="3-2、layout过程"><a href="#3-2、layout过程" class="headerlink" title="3.2、layout过程"></a>3.2、layout过程</h3><p>Layout的作用是ViewGroup用来确定子元素的位置，当ViewGroup的位置被确定后，它在onLayout中会遍历所有子元素并调用其layout方法，在layout方法中onLayout方法又会被调用。</p>
+<h3 id="3-3、draw过程"><a href="#3-3、draw过程" class="headerlink" title="3.3、draw过程"></a>3.3、draw过程</h3><p>View的绘制过程遵循如下几步:</p>
+<ul>
+<li><p>1、绘制背景-background.draw(canvas)</p>
+</li>
+<li><p>2、绘制自己-onDraw</p>
+</li>
+<li><p>3、绘制children-dispatchDraw</p>
+</li>
+<li><p>4、绘制装饰-onDrawScrollBars</p>
+</li>
+</ul>
+<h2 id="4、自定义View"><a href="#4、自定义View" class="headerlink" title="4、自定义View"></a>4、自定义View</h2><h3 id="4-1、自定义View的分类"><a href="#4-1、自定义View的分类" class="headerlink" title="4.1、自定义View的分类"></a>4.1、自定义View的分类</h3><ul>
+<li><strong>继承View重写onDraw方法</strong></li>
+</ul>
+<p>用于实现一些不规则的图形。采用这种方式需要自己支持wrap_content,并且padding也需要自己处理。</p>
+<ul>
+<li><strong>继承ViewGroup派生特殊的Layout</strong></li>
+</ul>
+<p>主要用于实现自定义的布局，需要合理处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
+<ul>
+<li>继承特定的View(如TextView)</li>
+</ul>
+<p>一般用于扩展某种已有的View的功能，比如TextView，这种方法比较容易实现。不需要自己支持wrap_content和padding等。</p>
+<ul>
+<li>继承特定的ViewGroup(如LinearLayout)</li>
+</ul>
+<p>这种方法不用自己处理ViewGroup的测量和布局这两个过程。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>View</tag>
       </tags>
   </entry>
   <entry>
@@ -6761,6 +6838,62 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>Groovy基础</title>
+    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
+
+<p>而双引号可以做运算:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
+
+<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
+<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
+<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
+<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
+<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
+]]></content>
+      <categories>
+        <category>Gradle权威指南</category>
+      </categories>
+      <tags>
+        <tag>Gradle</tag>
+        <tag>Groovy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>IPC机制</title>
     <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/IPC%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<blockquote>
@@ -6888,62 +7021,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>IPC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Groovy基础</title>
-    <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC2%E7%AB%A0-Groovy%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="Groovy基础"><a href="#Groovy基础" class="headerlink" title="Groovy基础"></a>Groovy基础</h1><p>Groovy是基于JVM虚拟机的一种动态语言。每个Gradle的build脚本文件都是一个Groovy脚本文件。</p>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>在Groovy中，分号不是必需的。在Groovy中，单引号和双引号都可以定义一个字符串变量 ，单引号标记的是纯粹的字符串变量，而不是对字符串里的表达式做运行，但是双引号可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printString &#123;</span><br><span class="line">	<span class="keyword">def</span> str1 = <span class="string">'单引号'</span></span><br><span class="line">	<span class="keyword">def</span> str2 = <span class="string">"双引号"</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"单引号定义的字符串类型:"</span>+str1.getClass().name</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号定义的字符串类型:"</span>+str2.getClass().name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号定义的字符串类型:java.lang.String</span><br><span class="line">双引号定义的字符串类型:java.lang.String</span><br></pre></td></tr></table></figure></div>
-
-<p>而双引号可以做运算:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span>  printStringVar&#123;</span><br><span class="line">	<span class="keyword">def</span> name = <span class="string">'张三'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> <span class="string">'单引号的变量计算:$&#123;name&#125;'</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"双引号的变量计算:$&#123;name&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">单引号的变量计算:$&#123;name&#125;</span><br><span class="line">双引号的变量计算:张三</span><br></pre></td></tr></table></figure></div>
-
-<p>一个$符号紧跟着一对花括号，花括号里放表达式，如${name}、${1+1}等，只有一个变量的时候，可以省略花括号，如$name。</p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printList &#123;</span><br><span class="line">	<span class="keyword">def</span> numList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">	<span class="keyword">println</span> numList.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>]<span class="comment">//访问第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">1</span>]<span class="comment">//访问最后一个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[-<span class="number">2</span>]<span class="comment">//访问倒数第二个元素</span></span><br><span class="line">	<span class="keyword">println</span> numList[<span class="number">1</span>..<span class="number">3</span>]<span class="comment">//访问第二个到第四个元素</span></span><br><span class="line"></span><br><span class="line">	numList.<span class="keyword">each</span> &#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>Groovy还为List提供了非常方便的迭代操作，这就是each方法。</p>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map用法和List想像，只不过它的值是一个K:V键值对。访问也非常灵活，采用map[key]或者map.key都可以。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMap&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">'name'</span>:<span class="string">'张三'</span>,<span class="string">'age'</span>:<span class="number">18</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.getClass().name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">println</span> map1[<span class="string">'name'</span>]</span><br><span class="line">	<span class="keyword">println</span> map1.age</span><br><span class="line"></span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"key:$&#123;it.key&#125;,Value:$&#123;it.value&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="括号可以省略"><a href="#括号可以省略" class="headerlink" title="括号可以省略"></a>括号可以省略</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> invokeMethod&#123;</span><br><span class="line">	method1(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	method1 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method1(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">println</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="return可以不写"><a href="#return可以不写" class="headerlink" title="return可以不写"></a>return可以不写</h3><p>在Groovy中，定义有返回值的方法时，return语句不是必需的。当没有return时，Groovy会把方法执行过程中的最后一句代码作为返回值。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> printMethodReturn&#123;</span><br><span class="line">	<span class="keyword">def</span> max1 = method2 <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">	<span class="keyword">def</span> max2 = method2 <span class="number">3</span>,<span class="number">5</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"max1:$&#123;max1&#125;,max2:$&#123;max2&#125;"</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> method2(<span class="keyword">int</span> a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;b)&#123;</span><br><span class="line">		a	</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		b</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="代码块可以作为参数传递"><a href="#代码块可以作为参数传递" class="headerlink" title="代码块可以作为参数传递"></a>代码块可以作为参数传递</h3><h2 id="JavaBean"><a href="#JavaBean" class="headerlink" title="JavaBean"></a>JavaBean</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloJavaBean&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	p.name=<span class="string">"张三"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"名字是:$&#123;p.name&#125;"</span></span><br><span class="line">	<span class="keyword">println</span> <span class="string">"年龄是:$&#123;p.age&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	<span class="keyword">private</span> String name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> getAge()&#123;</span><br><span class="line">		<span class="number">18</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在Groovy中，并不是一定要定义成员变量才能作为类的属性访问。我们直接用getter/setter方法，也一样可以当作属性访问。</p>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包是Groovy的一个非常重要的特性，是DSL的基础。</p>
-<h3 id="初识闭包"><a href="#初识闭包" class="headerlink" title="初识闭包"></a>初识闭包</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> helloClosure&#123;</span><br><span class="line">	customEach&#123;</span><br><span class="line">		<span class="keyword">println</span> it</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	eachMap&#123;k,v-&gt;<span class="keyword">println</span> <span class="string">"$&#123;k&#125; is $&#123;v&#125;"</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> customEach(closure)&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i in <span class="number">1</span>..<span class="number">10</span>)&#123;</span><br><span class="line">		closure(i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="向闭包传递参数"><a href="#向闭包传递参数" class="headerlink" title="向闭包传递参数"></a>向闭包传递参数</h3><p>当闭包有一个参数时，默认就是it，当有多个参数时，it就不能表达了，我们需要把参数一一列出。</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> eachMap(closure)&#123;</span><br><span class="line">	<span class="keyword">def</span> map1 = [<span class="string">"name"</span>:<span class="string">"张三"</span>,<span class="string">"age"</span>:<span class="number">18</span>]</span><br><span class="line">	map1.<span class="keyword">each</span>&#123;</span><br><span class="line">		closure(it.key,it.value)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="闭包委托"><a href="#闭包委托" class="headerlink" title="闭包委托"></a>闭包委托</h3><p>Groovy的闭包有thisObject,owener,delegate三个属性。默认情况下，delegate和owner是相等的，但是delegate是可以被修改的。</p>
-<p>thisObject的优先级最高，thisObject其实就是这个构建脚本的上下文，它和脚本中的this对象是相等的。优先级从高到低依次是：thisObject&gt;owner&gt;delegate。</p>
-<p>在DSL中，比如Gradle，我们一般会指定delegate为当前的it，这样我们在闭包内就可以对该it进行配置，如下:</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">task</span> configClosure&#123;</span><br><span class="line">	person&#123;</span><br><span class="line">		name=<span class="string">"张三"</span></span><br><span class="line">		age = <span class="number">18</span></span><br><span class="line">		dumpPerson()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person&#123;</span><br><span class="line">	String name</span><br><span class="line">	<span class="keyword">int</span> age</span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> dumpPerson()&#123;</span><br><span class="line">		<span class="keyword">println</span> <span class="string">"name:$&#123;name&#125;,age:$&#123;age&#125;"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> person(Closure&lt;Person&gt; closure)&#123;</span><br><span class="line">	Person p = <span class="keyword">new</span> Person()</span><br><span class="line">	closure.delegate = p</span><br><span class="line">	closure.setResolveStrategy(Closure.DELEGATE_FIRST)</span><br><span class="line">	closure(p)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><p>DSL,即Domain Specific Language，领域特定语言，就是专门关注某一领域的语言，在于专，而不是全。</p>
-<p>Gradle就是一门DSL,它是基于Groovy，专门解决自动化构建的DSL。</p>
-]]></content>
-      <categories>
-        <category>Gradle权威指南</category>
-      </categories>
-      <tags>
-        <tag>Gradle</tag>
-        <tag>Groovy</tag>
       </tags>
   </entry>
   <entry>
@@ -7259,8 +7336,8 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
         <category>Android</category>
       </categories>
       <tags>
-        <tag>Gradle</tag>
         <tag>Android Studio</tag>
+        <tag>Gradle</tag>
       </tags>
   </entry>
   <entry>
