@@ -1,6 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>KMM跨平台开发环境搭建</title>
+    <url>/2020/12/05/Android/KMM%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="KMM跨平台开发环境搭建"><a href="#KMM跨平台开发环境搭建" class="headerlink" title="KMM跨平台开发环境搭建"></a>KMM跨平台开发环境搭建</h1><h3 id="KMM是什么"><a href="#KMM是什么" class="headerlink" title="KMM是什么"></a>KMM是什么</h3><blockquote>
+<p> KMM即<strong>Kotlin Multiplatform Mobile</strong> ,是由Jetbrains提供的跨平台移动开发SDK，借助 Kotlin的跨平台能力，可以使用一个工程为多个平台编译。</p>
+<p> 使用 KMM，具备灵活性的同时也保留了原生编程的优势。为 Android/iOS 应用程序的业务逻辑代码使用单一的代码库，仅在需要的时候编写平台特定代码，例如实现原生的 UI，使用平台特定 API 等等。</p>
+<p> KMM 可以和你的工程无缝集成。共享代码，使用 Kotlin 编写，使用 Kotlin/JVM 编译成 JVM 字节码，使用 Kotlin/Native 编译成二进制，所以你可以和使用其他一般类库一样使用 KMM 业务逻辑模块。</p>
+</blockquote>
+<h3 id="KMM环境搭建"><a href="#KMM环境搭建" class="headerlink" title="KMM环境搭建"></a>KMM环境搭建</h3><h4 id="配置KMM插件"><a href="#配置KMM插件" class="headerlink" title="配置KMM插件"></a>配置KMM插件</h4><ol>
+<li><p>打开Android Studio，点击Configure-Plugins</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/5ec32f49-7ade-49e7-ae71-ec099b602d92.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5ec32f49-7ade-49e7-ae71-ec099b602d92.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>在plugins中搜索KMM，然后选择安装</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/54bf6e4e-f086-4482-b6b9-207874a809ac.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/54bf6e4e-f086-4482-b6b9-207874a809ac.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>安装后需要重启IDE</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/d4359e3e-d64b-4393-97fe-623ced01d3fb.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/d4359e3e-d64b-4393-97fe-623ced01d3fb.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>点击Restart</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/7710a24d-0c77-4098-9f05-498a8bf7bf1c.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/7710a24d-0c77-4098-9f05-498a8bf7bf1c.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>重启IDE后，选择创建Android Studio工程，在创建工程时，选择KMM Application</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/db2fcdf1-cfee-4d98-9ee7-3106cd044218.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/db2fcdf1-cfee-4d98-9ee7-3106cd044218.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>配置工程名称，包名等信息</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/8fea8816-0e21-479b-90ee-edc81881f941.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/8fea8816-0e21-479b-90ee-edc81881f941.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>创建工程后，可能会出现如下错误,出现这个错误，是因为KMM要求Kotlin版本至少要1.4.10</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/e4f3d747-ec06-4718-92eb-5c34d9ce1ba4.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/e4f3d747-ec06-4718-92eb-5c34d9ce1ba4.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>工程同步后，工程目录如下,主要包含androidApp、iosApp、shared目录，分别对应Android、IOS、共用的模块。</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/db72b4b3-7db0-48f5-8a5f-d7791fbad47b.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/db72b4b3-7db0-48f5-8a5f-d7791fbad47b.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>将App运行到手机上</p>
+<p> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/5057a54d-d4d0-44f3-bf3f-9e5d25f425e8.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5057a54d-d4d0-44f3-bf3f-9e5d25f425e8.jpg" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ol>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://zhuanlan.zhihu.com/p/265524788" target="_blank" rel="noopener">Hello World —— 使用 Kotlin 开发跨平台应用</a></p>
+<p><a href="https://kotlinlang.org/docs/mobile/home.html" target="_blank" rel="noopener">Kotlin Multiplatform Mobile Docs</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在搭建环境过程中，由于需要下载相应的依赖项，这个过程会视具体网络而不同。KMM要求kotlin版本在1.4.10以上，否则会无法构建工程。</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>KMM</tag>
+        <tag>跨平台</tag>
+        <tag>环境搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IntelliJ-Idea导出可执行Jar</title>
+    <url>/2020/12/05/Java/IntelliJ-Idea%E5%AF%BC%E5%87%BA%E5%8F%AF%E6%89%A7%E8%A1%8CJar/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="IntelliJ-Idea导出可执行Jar"><a href="#IntelliJ-Idea导出可执行Jar" class="headerlink" title="IntelliJ-Idea导出可执行Jar"></a>IntelliJ-Idea导出可执行Jar</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>IntelliJ Idea 导出可执行Jar包，记录如下。</p>
+<h2 id="创建Java文件，在里面添加main方法"><a href="#创建Java文件，在里面添加main方法" class="headerlink" title="创建Java文件，在里面添加main方法"></a>创建Java文件，在里面添加main方法</h2><p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/cf277b11-3b74-4f23-a610-d0ed73c7a957.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/cf277b11-3b74-4f23-a610-d0ed73c7a957.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h2 id="配置Artifacts"><a href="#配置Artifacts" class="headerlink" title="配置Artifacts"></a>配置Artifacts</h2><p>File-Project Structure-Project Settings-Artifacts</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/6e67c051-cd68-4ee4-83d7-553189f8fcf0.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/6e67c051-cd68-4ee4-83d7-553189f8fcf0.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击+号</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/f4fcdc12-69a8-4808-89fb-853ea8f1cbd8.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/f4fcdc12-69a8-4808-89fb-853ea8f1cbd8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击JAR-From modules with dependencies…</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5f029724-cf36-46d7-bf49-d0673babb620.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5f029724-cf36-46d7-bf49-d0673babb620.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>选择Main Class</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/fa80f5a1-ea6d-493d-bd7b-3b5109797193.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/fa80f5a1-ea6d-493d-bd7b-3b5109797193.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击Build-Build Artifacts</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/77ceaecc-2f79-4688-9dcd-2833559264d4.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/77ceaecc-2f79-4688-9dcd-2833559264d4.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/8971b832-ef7f-435e-977d-f20c3787feb3.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/8971b832-ef7f-435e-977d-f20c3787feb3.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>点击Build</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/f6397640-6f58-44c2-a050-062dc4acb12f.png" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/f6397640-6f58-44c2-a050-062dc4acb12f.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>可以看到，已经在out目录下生成了jar</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>IntelliJ Idea</tag>
+        <tag>Jar</tag>
+        <tag>导出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++中的常量指针和指针常量</title>
     <url>/2020/11/21/C++/C++%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E5%B8%B8%E9%87%8F/</url>
     <content><![CDATA[<blockquote>
@@ -5029,6 +5116,45 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>状态模式</title>
+    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
+<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
+</li>
+<li><p>代码中包含大量与对象状态有关的条件语句。</p>
+</li>
+</ol>
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类接口</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义控制类的实现类</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>输出结果</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>位运算的简单应用-权限管理</title>
     <url>/2020/01/16/Android/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -5066,45 +5192,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </categories>
       <tags>
         <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>状态模式</title>
-    <url>/2020/01/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客</p>
-<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h1><h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><p>状态模式中的行为是由状态来决定的，不同状态下有不同的行为。</p>
-<h2 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h2><p>当一个对象的内在状态改变时允许其改变行为。</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
-<li><p>一个对象的行为取决于它的状态，并且它必须在运行时根据状态来改变行为。</p>
-</li>
-<li><p>代码中包含大量与对象状态有关的条件语句。</p>
-</li>
-</ol>
-<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>定义状态接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOnState</span> <span class="keyword">implements</span> <span class="title">TvState</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"下一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"上一个频道"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"增加音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"减小音量"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PowerOffState</span> <span class="keyword">implements</span> <span class="title">TvState</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类接口</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>定义控制类的实现类</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TvController</span> <span class="keyword">implements</span> <span class="title">PowerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> TvState mTvState;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setTvState</span><span class="params">(TvState tvState)</span> </span>&#123;</span><br><span class="line">		mTvState = tvState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOnState());</span><br><span class="line">		System.out.println(<span class="string">"开机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">powerOff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		setTvState(<span class="keyword">new</span> PowerOffState());</span><br><span class="line">		System.out.println(<span class="string">"关机啦"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.nextChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prevChannel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.prevChannel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnUp();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turnDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		mTvState.turnDown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>调用</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TvController tvController = <span class="keyword">new</span> TvController();</span><br><span class="line">		tvController.powerOn();</span><br><span class="line">		tvController.nextChannel();</span><br><span class="line">		tvController.turnUp();</span><br><span class="line">		tvController.powerOff();</span><br><span class="line">		tvController.turnDown();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>输出结果</p>
-<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开机啦</span><br><span class="line">下一个频道</span><br><span class="line">增加音量</span><br><span class="line">关机啦</span><br></pre></td></tr></table></figure></div>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式</tag>
       </tags>
   </entry>
   <entry>
@@ -6645,87 +6732,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Gradle插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -6806,6 +6812,87 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
+</blockquote>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
+</blockquote>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
+</blockquote>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
+<ul>
+<li>FLAG_ONE_SHOT:</li>
+</ul>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
+<ul>
+<li>FLAG_NO_CREATE:</li>
+</ul>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
+<ul>
+<li>FLAG_CANCEL_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
+<ul>
+<li>FLAG_UPDATE_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
