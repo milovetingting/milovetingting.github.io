@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Android电量优化-Battery Historian环境搭建及简单使用 | milovetingting</title><meta name="description" content="Android电量优化-Battery Historian环境搭建及简单使用"><meta name="keywords" content="电量,优化,Battery Historian"><meta name="author" content="milovetingting,milovetingting@gmail.com"><meta name="copyright" content="milovetingting"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Android电量优化-Battery Historian环境搭建及简单使用"><meta name="twitter:description" content="Android电量优化-Battery Historian环境搭建及简单使用"><meta name="twitter:image" content="http://www.milovetingting.cn/images/cover_android.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Android电量优化-Battery Historian环境搭建及简单使用"><meta property="og:url" content="http://www.milovetingting.cn/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="og:site_name" content="milovetingting"><meta property="og:description" content="Android电量优化-Battery Historian环境搭建及简单使用"><meta property="og:image" content="http://www.milovetingting.cn/images/cover_android.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="http://www.milovetingting.cn/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><link rel="next" title="Crash监控的简单实现方案" href="http://www.milovetingting.cn/2020/12/10/Android/Crash%E7%9B%91%E6%8E%A7%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8ba6d970b7b738df6e65e31041f9ba3e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: milovetingting","link":"链接: http://www.milovetingting.cn/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/","source":"来源: milovetingting","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"title":"Snackbar.bookmark.title","message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">milovetingting</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">112</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">116</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">9</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Android电量优化-Battery-Historian环境搭建及简单使用"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">Android电量优化-Battery Historian环境搭建及简单使用</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#前言"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">前言</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#安装Docker"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">安装Docker</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#安装Docker-1"><span class="toc_mobile_items-number">1.2.1.</span> <span class="toc_mobile_items-text">安装Docker</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#配置镜像加速器"><span class="toc_mobile_items-number">1.2.2.</span> <span class="toc_mobile_items-text">配置镜像加速器</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#安装Battery-Historian"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">安装Battery Historian</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#导出电量数据"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">导出电量数据</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#分析耗电"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">分析耗电</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#后记"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">后记</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#参考"><span class="toc_mobile_items-number">1.7.</span> <span class="toc_mobile_items-text">参考</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android电量优化-Battery-Historian环境搭建及简单使用"><span class="toc-number">1.</span> <span class="toc-text">Android电量优化-Battery Historian环境搭建及简单使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Docker"><span class="toc-number">1.2.</span> <span class="toc-text">安装Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Docker-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置镜像加速器"><span class="toc-number">1.2.2.</span> <span class="toc-text">配置镜像加速器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Battery-Historian"><span class="toc-number">1.3.</span> <span class="toc-text">安装Battery Historian</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#导出电量数据"><span class="toc-number">1.4.</span> <span class="toc-text">导出电量数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析耗电"><span class="toc-number">1.5.</span> <span class="toc-text">分析耗电</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">1.6.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">1.7.</span> <span class="toc-text">参考</span></a></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(/images/cover_android.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">Android电量优化-Battery Historian环境搭建及简单使用</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-12-12<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-12-12</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Android/">Android</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">1.3k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 4 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android电量优化-Battery-Historian环境搭建及简单使用"><a href="#Android电量优化-Battery-Historian环境搭建及简单使用" class="headerlink" title="Android电量优化-Battery Historian环境搭建及简单使用"></a>Android电量优化-Battery Historian环境搭建及简单使用</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在Android5.0后，Batterystats已经内置在Android系统中，用于收集设备上的电池数据。可以使用adb将收集的电池数据导出，并生成可使用 Battery Historian 分析的报告。Battery Historian 会将报告从 Batterystats 转换为可在浏览器中查看的 HTML 直观视图。</p>
+<p>在Android8.0后，也可通过Android Studio的Profiler-Energy工具查看，这里不再多介绍。</p>
+<h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><p>Battery Historian可以通过Docker来安装，也可以直接下载Battery Historian源码编译。</p>
+<p>通过源码编译的方式，步骤较多，过程较复杂。这里不多介绍。</p>
+<p>最简单的方法是通过Docker来安装。</p>
+<h3 id="安装Docker-1"><a href="#安装Docker-1" class="headerlink" title="安装Docker"></a>安装Docker</h3><p>安装Docker，可以在官网上下载对应系统平台的安装包，可以参考这个链接：<a href="https://yeasy.gitbook.io/docker_practice/install" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/install</a></p>
+<h3 id="配置镜像加速器"><a href="#配置镜像加速器" class="headerlink" title="配置镜像加速器"></a>配置镜像加速器</h3><p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。可以参考这个链接:<a href="https://yeasy.gitbook.io/docker_practice/install/mirror" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/install/mirror</a></p>
+<h2 id="安装Battery-Historian"><a href="#安装Battery-Historian" class="headerlink" title="安装Battery Historian"></a>安装Battery Historian</h2><ol>
+<li>启动Docker后，运行cmd，然后输入<code>docker search battery</code>,搜索battery historian的镜像</li>
+</ol>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5908023d-65c4-49f6-b46b-fc34a958902a.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="search battery" class="fancybox"><img alt="search battery" title="search battery" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5908023d-65c4-49f6-b46b-fc34a958902a.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>上面列出了battery historian相关的镜像，可以选择一个镜像,通过<code>docker pull blystad/battery-historian-2</code>命令，拉取镜像</li>
+</ol>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/97ffe43c-5de3-4516-8d2c-99993877ee8f.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="pull battery" class="fancybox"><img alt="pull battery" title="pull battery" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/97ffe43c-5de3-4516-8d2c-99993877ee8f.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>下载所需时间视网络情况而不同，如果下载缓慢，请参考前面的链接配置镜像加速器。</p>
+<ol start="3">
+<li><p>运行 run –name=battery -d -p 9999:9999 blystad/battery-historian-2``</p>
+<ul>
+<li>name参数也可以指定其它名称，只要不重复就可以。命令的最后一个参数是上面拉取镜像时用到的名称。</li>
+</ul>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/ef7bebac-f548-49b0-a8b9-2ef49d9f6de5.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="run" class="fancybox"><img alt="run" title="run" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/ef7bebac-f548-49b0-a8b9-2ef49d9f6de5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ul>
+<li>如果已经运行过上面的命令，一般会报错,可以指定name和port为其它值即可</li>
+</ul>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/20b5b0a6-7003-451b-afd9-addb6518cee6.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="run" class="fancybox"><img alt="run" title="run" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/20b5b0a6-7003-451b-afd9-addb6518cee6.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>然后打开Docker的Dashboard面板，这里以Windows10为例，右击电脑右下角的Docker图标，在弹出的菜单中选择Dashboard</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/4bc8a1e3-631a-4f38-9daa-f306b208efe5.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="DockerBoard" class="fancybox"><img alt="DockerBoard" title="DockerBoard" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/4bc8a1e3-631a-4f38-9daa-f306b208efe5.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>可以看到，已经创建好了我们需要的容器。点击start图标</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/a24d7423-9d99-4088-a32f-39c015435c3e.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/a24d7423-9d99-4088-a32f-39c015435c3e.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>点击下图红框中的图标，会在浏览器中打开<a href="http://localhost:9999/" target="_blank" rel="noopener">http://localhost:9999/</a></p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/6381ca2b-9493-4e40-916c-2a681ed1f30d.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/6381ca2b-9493-4e40-916c-2a681ed1f30d.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>打开后的界面是这样的:</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/2f70752a-ad37-4724-b491-db05e27a5604.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/2f70752a-ad37-4724-b491-db05e27a5604.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>如果打开过程缓慢，那么可以考虑是否加载网页过程中出错了。可以F12打开开发者工具<br> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/23533ecd-9d46-462e-9e49-51c367f883b2.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/23533ecd-9d46-462e-9e49-51c367f883b2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>如果看到上图红框所示的情况，那么一般是执行出错了。点击查看，可以看到是由于加载不到js文件导致的。这种情况的话，只能科学上网，否则后面上传Bugreport文件时不会出现<code>Submit</code>按钮。</p>
+<p>或者不通过Docker的方式安装Battery Historian,而是通过编译源码的方式，通过修改html文件中引用的js文件路径为可以访问的路径。</p>
+</li>
+</ol>
+<h2 id="导出电量数据"><a href="#导出电量数据" class="headerlink" title="导出电量数据"></a>导出电量数据</h2><ul>
+<li><p>重置电池数据收集</p>
+<blockquote>
+<p>adb shell dumpsys batterystats –reset</p>
+</blockquote>
+<p>设备始终会在后台收集 Batterystats 和其他调试信息。重置操作会清除旧的电池收集数据。如果不重置，输出内容会非常大。</p>
+</li>
+<li><p>如果需要统计所有的唤醒锁的信息，则需要设置</p>
+<blockquote>
+<p> adb shell dumpsys batterystats –enable full-wake-history</p>
+</blockquote>
+</li>
+<li><p>统计完成后，需要关闭这个功能</p>
+<blockquote>
+<p>adb shell dumpsys batterystats –disable full-wake-history</p>
+</blockquote>
+</li>
+<li><p>断开设备与计算机的连接，以便仅消耗设备电池的电量。</p>
+</li>
+<li><p>操作要测试的应用</p>
+</li>
+<li><p>重新连接手机，导出数据</p>
+<ul>
+<li><p>对于搭载 Android 7.0 及更高版本的设备：</p>
+<blockquote>
+<p>adb bugreport &gt; [path/]bugreport.zip</p>
+</blockquote>
+</li>
+<li><p>对于搭载 Android 6.0 及更低版本的设备：</p>
+<blockquote>
+<p>adb bugreport &gt; [path/]bugreport.txt</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>上传报告</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/94e4482a-b180-461b-a0e4-7ae08bc792f2.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/94e4482a-b180-461b-a0e4-7ae08bc792f2.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ul>
+<h2 id="分析耗电"><a href="#分析耗电" class="headerlink" title="分析耗电"></a>分析耗电</h2><ul>
+<li><p>上传成功后，生成的分析报告页面</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/c3cf4a7a-b83a-411e-bee2-2ea9c46b964f.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/c3cf4a7a-b83a-411e-bee2-2ea9c46b964f.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>可以看到，图中红框中的黑线下降趋势。鼠标放在线上面，会显示耗电的应用情况。</p>
+</li>
+<li><p>AndroidQ及以上导出的数据报告，可能会无法解析</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/2830cdc5-6a12-4864-93b3-a6dab7463fc8.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/2830cdc5-6a12-4864-93b3-a6dab7463fc8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><code>遇到这种情况，可以换一个镜像</code></p>
+<blockquote>
+<p>docker pull runcare/battery-historian</p>
+</blockquote>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/8d444fa9-6e83-4f0c-ac19-c2424c24efc8.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/8d444fa9-6e83-4f0c-ac19-c2424c24efc8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>镜像拉取完成后</p>
+<blockquote>
+<p>docker run –name=battery2 -d -p 9999:9999 runcare/battery-historian</p>
+</blockquote>
+<p>注意：name不要和已有的重复，端口号也不要重复，可以先停止原运行的容器。</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/46c18c20-ed0d-4584-920d-5f0a7874b851.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/46c18c20-ed0d-4584-920d-5f0a7874b851.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>然后就可以正常解析报告</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/77e5d898-e1d7-406c-b6ee-2cdb2dc0f7b2.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/77e5d898-e1d7-406c-b6ee-2cdb2dc0f7b2.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>可以选定需要分析的应用来查看具体的信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/9f44616c-85c4-4858-b65d-5129903d6417.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/9f44616c-85c4-4858-b65d-5129903d6417.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>查看右侧的wakelock、service等信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5f8e402d-1d49-4423-86c3-c7bd4365f0a6.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5f8e402d-1d49-4423-86c3-c7bd4365f0a6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5e34b544-2a64-48d6-89d3-48c76cc2c185.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5e34b544-2a64-48d6-89d3-48c76cc2c185.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>查看System Stats标签下的相关信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/4a5819f9-e668-489e-8c73-dc54ff6503fc.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/4a5819f9-e668-489e-8c73-dc54ff6503fc.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ul>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>电量优化是一个比较系统性的工作，需要熟悉项目的具体业务，再结合Historian分析报告，分析具体的耗电点，结合代码进行优化，再验证优化效果。</p>
+<p>本文简单记录Battery Historian的环境搭建及电量报告的导出、上传。具体的分析还是需要结合实际业务来分析耗电的情况，在实践中提高电量优化的能力。</p>
+<p>记录如上，以便后续查看。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://developer.android.com/topic/performance/power/setup-battery-historian?hl=zh_cn" target="_blank" rel="noopener">https://developer.android.com/topic/performance/power/setup-battery-historian?hl=zh_cn</a></p>
+<p><a href="https://www.jianshu.com/p/378cf678bdeb" target="_blank" rel="noopener">https://www.jianshu.com/p/378cf678bdeb</a></p>
+<p><a href="https://yeasy.gitbook.io/docker_practice/" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/</a></p>
+<p><a href="https://developer.android.com/topic/performance/power/battery-historian?hl=zh_cn" target="_blank" rel="noopener">https://developer.android.com/topic/performance/power/battery-historian?hl=zh_cn</a></p>
+<p><a href="https://developer.android.com/studio/profile/energy-profiler?hl=zh-cn" target="_blank" rel="noopener">https://developer.android.com/studio/profile/energy-profiler?hl=zh-cn</a></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:milovetingting@gmail.com">milovetingting</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.milovetingting.cn/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://www.milovetingting.cn/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.milovetingting.cn">milovetingting</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%94%B5%E9%87%8F/">电量    </a><a class="post-meta__tags" href="/tags/%E4%BC%98%E5%8C%96/">优化    </a><a class="post-meta__tags" href="/tags/Battery-Historian/">Battery Historian    </a></div><div class="post_share"><div class="social-share" data-image="/images/cover_android.jpg" data-sites="facebook,twitter,wechat,weibo"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2020/12/10/Android/Crash%E7%9B%91%E6%8E%A7%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/"><img class="next_cover lazyload" data-src="/images/cover_android.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>Crash监控的简单实现方案</span></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'ae38b55ae64dd8d9df5a',
+  clientSecret: '684ea96fb1acf523a5f8a2a84eb751c33ca645a4',
+  repo: 'milovetingting.github.io',
+  owner: 'milovetingting',
+  admin: 'milovetingting',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN# en , zh-CN , zh-TW',
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+}</script></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By milovetingting</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>

@@ -1,6 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Android电量优化-Battery Historian环境搭建及简单使用</title>
+    <url>/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Android电量优化-Battery-Historian环境搭建及简单使用"><a href="#Android电量优化-Battery-Historian环境搭建及简单使用" class="headerlink" title="Android电量优化-Battery Historian环境搭建及简单使用"></a>Android电量优化-Battery Historian环境搭建及简单使用</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在Android5.0后，Batterystats已经内置在Android系统中，用于收集设备上的电池数据。可以使用adb将收集的电池数据导出，并生成可使用 Battery Historian 分析的报告。Battery Historian 会将报告从 Batterystats 转换为可在浏览器中查看的 HTML 直观视图。</p>
+<p>在Android8.0后，也可通过Android Studio的Profiler-Energy工具查看，这里不再多介绍。</p>
+<h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><p>Battery Historian可以通过Docker来安装，也可以直接下载Battery Historian源码编译。</p>
+<p>通过源码编译的方式，步骤较多，过程较复杂。这里不多介绍。</p>
+<p>最简单的方法是通过Docker来安装。</p>
+<h3 id="安装Docker-1"><a href="#安装Docker-1" class="headerlink" title="安装Docker"></a>安装Docker</h3><p>安装Docker，可以在官网上下载对应系统平台的安装包，可以参考这个链接：<a href="https://yeasy.gitbook.io/docker_practice/install" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/install</a></p>
+<h3 id="配置镜像加速器"><a href="#配置镜像加速器" class="headerlink" title="配置镜像加速器"></a>配置镜像加速器</h3><p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。可以参考这个链接:<a href="https://yeasy.gitbook.io/docker_practice/install/mirror" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/install/mirror</a></p>
+<h2 id="安装Battery-Historian"><a href="#安装Battery-Historian" class="headerlink" title="安装Battery Historian"></a>安装Battery Historian</h2><ol>
+<li>启动Docker后，运行cmd，然后输入<code>docker search battery</code>,搜索battery historian的镜像</li>
+</ol>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5908023d-65c4-49f6-b46b-fc34a958902a.png" data-fancybox="group" data-caption="search battery" class="fancybox"><img alt="search battery" title="search battery" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5908023d-65c4-49f6-b46b-fc34a958902a.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li>上面列出了battery historian相关的镜像，可以选择一个镜像,通过<code>docker pull blystad/battery-historian-2</code>命令，拉取镜像</li>
+</ol>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/97ffe43c-5de3-4516-8d2c-99993877ee8f.png" data-fancybox="group" data-caption="pull battery" class="fancybox"><img alt="pull battery" title="pull battery" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/97ffe43c-5de3-4516-8d2c-99993877ee8f.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>下载所需时间视网络情况而不同，如果下载缓慢，请参考前面的链接配置镜像加速器。</p>
+<ol start="3">
+<li><p>运行 run –name=battery -d -p 9999:9999 blystad/battery-historian-2``</p>
+<ul>
+<li>name参数也可以指定其它名称，只要不重复就可以。命令的最后一个参数是上面拉取镜像时用到的名称。</li>
+</ul>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/ef7bebac-f548-49b0-a8b9-2ef49d9f6de5.png" data-fancybox="group" data-caption="run" class="fancybox"><img alt="run" title="run" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/ef7bebac-f548-49b0-a8b9-2ef49d9f6de5.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ul>
+<li>如果已经运行过上面的命令，一般会报错,可以指定name和port为其它值即可</li>
+</ul>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/20b5b0a6-7003-451b-afd9-addb6518cee6.png" data-fancybox="group" data-caption="run" class="fancybox"><img alt="run" title="run" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/20b5b0a6-7003-451b-afd9-addb6518cee6.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>然后打开Docker的Dashboard面板，这里以Windows10为例，右击电脑右下角的Docker图标，在弹出的菜单中选择Dashboard</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/4bc8a1e3-631a-4f38-9daa-f306b208efe5.png" data-fancybox="group" data-caption="DockerBoard" class="fancybox"><img alt="DockerBoard" title="DockerBoard" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/4bc8a1e3-631a-4f38-9daa-f306b208efe5.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>可以看到，已经创建好了我们需要的容器。点击start图标</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/a24d7423-9d99-4088-a32f-39c015435c3e.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/a24d7423-9d99-4088-a32f-39c015435c3e.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>点击下图红框中的图标，会在浏览器中打开<a href="http://localhost:9999/" target="_blank" rel="noopener">http://localhost:9999/</a></p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/6381ca2b-9493-4e40-916c-2a681ed1f30d.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/6381ca2b-9493-4e40-916c-2a681ed1f30d.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>打开后的界面是这样的:</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/2f70752a-ad37-4724-b491-db05e27a5604.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/2f70752a-ad37-4724-b491-db05e27a5604.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>如果打开过程缓慢，那么可以考虑是否加载网页过程中出错了。可以F12打开开发者工具<br> <a href="https://gitee.com/milovetingting/pic-repository/raw/master/23533ecd-9d46-462e-9e49-51c367f883b2.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/23533ecd-9d46-462e-9e49-51c367f883b2.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>如果看到上图红框所示的情况，那么一般是执行出错了。点击查看，可以看到是由于加载不到js文件导致的。这种情况的话，只能科学上网，否则后面上传Bugreport文件时不会出现<code>Submit</code>按钮。</p>
+<p>或者不通过Docker的方式安装Battery Historian,而是通过编译源码的方式，通过修改html文件中引用的js文件路径为可以访问的路径。</p>
+</li>
+</ol>
+<h2 id="导出电量数据"><a href="#导出电量数据" class="headerlink" title="导出电量数据"></a>导出电量数据</h2><ul>
+<li><p>重置电池数据收集</p>
+<blockquote>
+<p>adb shell dumpsys batterystats –reset</p>
+</blockquote>
+<p>设备始终会在后台收集 Batterystats 和其他调试信息。重置操作会清除旧的电池收集数据。如果不重置，输出内容会非常大。</p>
+</li>
+<li><p>如果需要统计所有的唤醒锁的信息，则需要设置</p>
+<blockquote>
+<p> adb shell dumpsys batterystats –enable full-wake-history</p>
+</blockquote>
+</li>
+<li><p>统计完成后，需要关闭这个功能</p>
+<blockquote>
+<p>adb shell dumpsys batterystats –disable full-wake-history</p>
+</blockquote>
+</li>
+<li><p>断开设备与计算机的连接，以便仅消耗设备电池的电量。</p>
+</li>
+<li><p>操作要测试的应用</p>
+</li>
+<li><p>重新连接手机，导出数据</p>
+<ul>
+<li><p>对于搭载 Android 7.0 及更高版本的设备：</p>
+<blockquote>
+<p>adb bugreport &gt; [path/]bugreport.zip</p>
+</blockquote>
+</li>
+<li><p>对于搭载 Android 6.0 及更低版本的设备：</p>
+<blockquote>
+<p>adb bugreport &gt; [path/]bugreport.txt</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>上传报告</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/94e4482a-b180-461b-a0e4-7ae08bc792f2.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/94e4482a-b180-461b-a0e4-7ae08bc792f2.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ul>
+<h2 id="分析耗电"><a href="#分析耗电" class="headerlink" title="分析耗电"></a>分析耗电</h2><ul>
+<li><p>上传成功后，生成的分析报告页面</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/c3cf4a7a-b83a-411e-bee2-2ea9c46b964f.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/c3cf4a7a-b83a-411e-bee2-2ea9c46b964f.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>可以看到，图中红框中的黑线下降趋势。鼠标放在线上面，会显示耗电的应用情况。</p>
+</li>
+<li><p>AndroidQ及以上导出的数据报告，可能会无法解析</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/2830cdc5-6a12-4864-93b3-a6dab7463fc8.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/2830cdc5-6a12-4864-93b3-a6dab7463fc8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><code>遇到这种情况，可以换一个镜像</code></p>
+<blockquote>
+<p>docker pull runcare/battery-historian</p>
+</blockquote>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/8d444fa9-6e83-4f0c-ac19-c2424c24efc8.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/8d444fa9-6e83-4f0c-ac19-c2424c24efc8.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>镜像拉取完成后</p>
+<blockquote>
+<p>docker run –name=battery2 -d -p 9999:9999 runcare/battery-historian</p>
+</blockquote>
+<p>注意：name不要和已有的重复，端口号也不要重复，可以先停止原运行的容器。</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/46c18c20-ed0d-4584-920d-5f0a7874b851.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/46c18c20-ed0d-4584-920d-5f0a7874b851.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>然后就可以正常解析报告</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/77e5d898-e1d7-406c-b6ee-2cdb2dc0f7b2.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/77e5d898-e1d7-406c-b6ee-2cdb2dc0f7b2.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>可以选定需要分析的应用来查看具体的信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/9f44616c-85c4-4858-b65d-5129903d6417.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/9f44616c-85c4-4858-b65d-5129903d6417.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>查看右侧的wakelock、service等信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5f8e402d-1d49-4423-86c3-c7bd4365f0a6.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5f8e402d-1d49-4423-86c3-c7bd4365f0a6.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/5e34b544-2a64-48d6-89d3-48c76cc2c185.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/5e34b544-2a64-48d6-89d3-48c76cc2c185.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>查看System Stats标签下的相关信息</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/4a5819f9-e668-489e-8c73-dc54ff6503fc.png" data-fancybox="group" data-caption="start" class="fancybox"><img alt="start" title="start" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/4a5819f9-e668-489e-8c73-dc54ff6503fc.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ul>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>电量优化是一个比较系统性的工作，需要熟悉项目的具体业务，再结合Historian分析报告，分析具体的耗电点，结合代码进行优化，再验证优化效果。</p>
+<p>本文简单记录Battery Historian的环境搭建及电量报告的导出、上传。具体的分析还是需要结合实际业务来分析耗电的情况，在实践中提高电量优化的能力。</p>
+<p>记录如上，以便后续查看。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://developer.android.com/topic/performance/power/setup-battery-historian?hl=zh_cn" target="_blank" rel="noopener">https://developer.android.com/topic/performance/power/setup-battery-historian?hl=zh_cn</a></p>
+<p><a href="https://www.jianshu.com/p/378cf678bdeb" target="_blank" rel="noopener">https://www.jianshu.com/p/378cf678bdeb</a></p>
+<p><a href="https://yeasy.gitbook.io/docker_practice/" target="_blank" rel="noopener">https://yeasy.gitbook.io/docker_practice/</a></p>
+<p><a href="https://developer.android.com/topic/performance/power/battery-historian?hl=zh_cn" target="_blank" rel="noopener">https://developer.android.com/topic/performance/power/battery-historian?hl=zh_cn</a></p>
+<p><a href="https://developer.android.com/studio/profile/energy-profiler?hl=zh-cn" target="_blank" rel="noopener">https://developer.android.com/studio/profile/energy-profiler?hl=zh-cn</a></p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>电量</tag>
+        <tag>优化</tag>
+        <tag>Battery Historian</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Crash监控的简单实现方案</title>
+    <url>/2020/12/10/Android/Crash%E7%9B%91%E6%8E%A7%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="Crash监控的简单实现方案"><a href="#Crash监控的简单实现方案" class="headerlink" title="Crash监控的简单实现方案"></a>Crash监控的简单实现方案</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文从Java层及Native展开,简单记录Android中的Crash监控方案。</p>
+<h2 id="Java层Crash"><a href="#Java层Crash" class="headerlink" title="Java层Crash"></a>Java层Crash</h2><p>Java层的crash监控，可以通过实现<code>Thread.UncaughtExceptionHandler</code>接口，重写<code>uncaughtException</code>方法来实现，简单示意代码如下:</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CrashHandler</span> <span class="keyword">implements</span> <span class="title">Thread</span>.<span class="title">UncaughtExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Context mContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String mPath;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context, String path)</span> </span>&#123;</span><br><span class="line">        mContext = context.getApplicationContext();</span><br><span class="line">        mPath = path;</span><br><span class="line">        defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();</span><br><span class="line">        Thread.setDefaultUncaughtExceptionHandler(<span class="keyword">new</span> CrashHandler());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">uncaughtException</span><span class="params">(@NonNull Thread thread, @NonNull Throwable throwable)</span> </span>&#123;</span><br><span class="line">        File dir = <span class="keyword">new</span> File(mContext.getExternalCacheDir(), mPath);</span><br><span class="line">        <span class="keyword">if</span> (!dir.exists()) &#123;</span><br><span class="line">            dir.mkdirs();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> l = System.currentTimeMillis();</span><br><span class="line">        File file = <span class="keyword">new</span> File(dir, l + <span class="string">".txt"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            PrintWriter pw = <span class="keyword">new</span> PrintWriter(<span class="keyword">new</span> FileWriter(file));</span><br><span class="line">            SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line">            pw.println(<span class="string">"time: "</span> + sdf.format(<span class="keyword">new</span> Date()));</span><br><span class="line">            pw.println(<span class="string">"thread: "</span> + thread.getName());</span><br><span class="line">            throwable.printStackTrace(pw);</span><br><span class="line">            pw.flush();</span><br><span class="line">            pw.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ioException) &#123;</span><br><span class="line">            ioException.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (defaultUncaughtExceptionHandler != <span class="keyword">null</span>) &#123;</span><br><span class="line">                defaultUncaughtExceptionHandler.uncaughtException(thread, throwable);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>新建一个<code>CrashUtil</code>类，封装<code>CrashHandler</code></p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CrashUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Java层Crash信息保存目录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String JAVA_CRASH_DIR = <span class="string">"java_crash"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//初始化Java层CrashHandler</span></span><br><span class="line">        Context applicationContext = context.getApplicationContext();</span><br><span class="line">        CrashHandler.init(applicationContext, JAVA_CRASH_DIR);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在Application的onCreate方法中，初始化<code>CrashHandler</code></p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppInit</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        CrashUtil.init(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在<code>AndroidManifest</code>中配置<code>Application</code>的<code>name</code>属性</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">xml</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">".AppInit"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:roundIcon</span>=<span class="string">"@mipmap/ic_launcher_round"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">"@style/AppTheme"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--省略其它代码--&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="Native层Crash"><a href="#Native层Crash" class="headerlink" title="Native层Crash"></a>Native层Crash</h2><p>Native层crash监控，可以采用Google的BreakPad开源框架。开源地址:<a href="https://github.com/google/breakpad" target="_blank" rel="noopener">https://github.com/google/breakpad</a></p>
+<p>BreakPad需要编译后才能使用。</p>
+<ol>
+<li><p>新建一个module，专门编译BreakPad。</p>
+</li>
+<li><p>要新建的breakpadlib的src/main目录下，新建cpp目录，这个目录名称随意。</p>
+</li>
+<li><p>在cpp目录下新建breakpad目录，这个目录名称随意。</p>
+</li>
+<li><p>将下载回来的BreakPad代码解压后，将里面的src目录都复制到刚才新建的breakpad目录下。</p>
+</li>
+<li><p>在breakpad目录下新建CMakeLists.txt文件，在里面配置如下</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cmake</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(src src/common/android/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">enable_language</span>(ASM)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(breakpad STATIC</span><br><span class="line">        src/client/linux/crash_generation/crash_generation_client.cc</span><br><span class="line">        src/client/linux/dump_writer_common/thread_info.cc</span><br><span class="line">        src/client/linux/dump_writer_common/ucontext_reader.cc</span><br><span class="line">        src/client/linux/handler/exception_handler.cc</span><br><span class="line">        src/client/linux/handler/minidump_descriptor.cc</span><br><span class="line">        src/client/linux/log/log.cc</span><br><span class="line">        src/client/linux/microdump_writer/microdump_writer.cc</span><br><span class="line">        src/client/linux/minidump_writer/linux_dumper.cc</span><br><span class="line">        src/client/linux/minidump_writer/linux_ptrace_dumper.cc</span><br><span class="line">        src/client/linux/minidump_writer/minidump_writer.cc</span><br><span class="line">        src/client/minidump_file_writer.cc</span><br><span class="line">        src/common/convert_UTF.cc</span><br><span class="line">        src/common/md5.cc</span><br><span class="line">        src/common/string_conversion.cc</span><br><span class="line">        src/common/linux/breakpad_getcontext.S</span><br><span class="line">        src/common/linux/elfutils.cc</span><br><span class="line">        src/common/linux/file_id.cc</span><br><span class="line">        src/common/linux/guid_creator.cc</span><br><span class="line">        src/common/linux/linux_libc_support.cc</span><br><span class="line">        src/common/linux/memory_mapped_file.cc</span><br><span class="line">        src/common/linux/safe_readlink.cc)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(breakpad log)</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>在breakpadlib模块的src/main/java/包名/目录下，创建NativeCrash.java文件，在这里声明Native方法，方便其它模块调用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeCrash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"breakpad_lib"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(String path)</span> </span>&#123;</span><br><span class="line">        initNativeCrash(path);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化NativeCrash</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> path</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">initNativeCrash</span><span class="params">(String path)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+
+
+</li>
+</ol>
+<ol start="7">
+<li><p>在cpp目录下，新建breakpad_lib.cpp文件，实现native方法，并配置Native层crash的监听</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cpp</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;android/log.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"client/linux/handler/minidump_descriptor.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"client/linux/handler/exception_handler.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TAG <span class="meta-string">"breakpad_lib"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">DumpCallback</span><span class="params">(<span class="keyword">const</span> google_breakpad::MinidumpDescriptor &amp;descriptor,</span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">void</span> *context,</span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">bool</span> succeeded)</span> </span>&#123;</span><br><span class="line">    __android_log_print(ANDROID_LOG_ERROR, TAG, <span class="string">"native crash:%s"</span>, descriptor.path());</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span></span><br><span class="line">JNIEXPORT <span class="keyword">void</span> JNICALL</span><br><span class="line">Java_com_wangyz_breadpadlib_NativeCrash_initNativeCrash(JNIEnv *env, jclass clazz, jstring path_) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *path = env-&gt;GetStringUTFChars(path_, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    __android_log_print(ANDROID_LOG_INFO, TAG, <span class="string">"initNativeCrash,dmp path:%s"</span>, path);</span><br><span class="line"></span><br><span class="line">    google_breakpad::<span class="function">MinidumpDescriptor <span class="title">descriptor</span><span class="params">(path)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> google_breakpad::<span class="function">ExceptionHandler <span class="title">eh</span><span class="params">(descriptor, <span class="literal">NULL</span>, DumpCallback, <span class="literal">NULL</span>, <span class="literal">true</span>, <span class="number">-1</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    env-&gt;ReleaseStringUTFChars(path_, path);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>在cpp目录下创建CMakeLists.txt文件</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cmake</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(breakpad/src breakpad/src/common/android/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(breakpad_lib SHARED breakpad_lib.cpp)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span>(breakpad)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(breakpad_lib breakpad log)</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>在breakpadlib的build.gradle文件中配置ndk</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 要编译哪些CPU架构</span></span><br><span class="line">        externalNativeBuild &#123;</span><br><span class="line">            cmake &#123;</span><br><span class="line">                abiFilters <span class="string">'armeabi-v7a'</span>, <span class="string">'x86'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把哪些CPU架构打包进去</span></span><br><span class="line">        ndk &#123;</span><br><span class="line">            abiFilters <span class="string">'armeabi-v7a'</span>, <span class="string">'x86'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    externalNativeBuild &#123;</span><br><span class="line">        cmake &#123;</span><br><span class="line">            path <span class="string">'src/main/cpp/CMakeLists.txt'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>build这个module，就会生成包含so的aar，可以给其它模块引用，这样就可以为Native层的Crash增加监控。</p>
+</li>
+</ol>
+<p>breakpadlib目录结构如图</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/09178d05-1f07-4c26-bda9-e5902503e94a.png" data-fancybox="group" data-caption="breakpadlib目录结构" class="fancybox"><img alt="breakpadlib目录结构" title="breakpadlib目录结构" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/09178d05-1f07-4c26-bda9-e5902503e94a.png" src="/img/loading.gif" class="lazyload"></a></p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在编译时，一般会报错。这是由于缺少相应的文件导致的。将<code>linux_syscall_support.h</code>文件放到cpp/breakpad/src/third_part/lss目录下，再编译就可以了。</p>
+<h3 id="app模块引用breakpad编译出来的aar"><a href="#app模块引用breakpad编译出来的aar" class="headerlink" title="app模块引用breakpad编译出来的aar"></a>app模块引用breakpad编译出来的aar</h3><p>将编译出来的aar放到app模块的libs目录下，并配置app的build.gradle文件</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">sourceSets</span> &#123;</span><br><span class="line">        main &#123;</span><br><span class="line">            jniLibs.srcDir([<span class="string">'libs'</span>])</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        <span class="keyword">flatDir</span> &#123;</span><br><span class="line">            dirs <span class="string">'libs'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    api(name: <span class="string">'breadpadlib-release'</span>, ext: <span class="string">'aar'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>同步工程，然后在前面创建的CrashUtil中增加对Native的Crash的初始化。</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CrashUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Java层Crash信息保存目录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String JAVA_CRASH_DIR = <span class="string">"java_crash"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Native层Crash信息保存目录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String NATIVE_CRASH_DIR = <span class="string">"native_crash"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//初始化Java层CrashHandler</span></span><br><span class="line">        Context applicationContext = context.getApplicationContext();</span><br><span class="line">        CrashHandler.init(applicationContext, JAVA_CRASH_DIR);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//初始化Native层CrashHandler</span></span><br><span class="line">        File file = <span class="keyword">new</span> File(context.getExternalCacheDir(), NATIVE_CRASH_DIR);</span><br><span class="line">        <span class="keyword">if</span> (!file.exists()) &#123;</span><br><span class="line">            file.mkdirs();</span><br><span class="line">        &#125;</span><br><span class="line">        NativeCrash.init(file.getAbsolutePath());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="模拟Native层Crash"><a href="#模拟Native层Crash" class="headerlink" title="模拟Native层Crash"></a>模拟Native层Crash</h3><ol>
+<li><p>新建一个module:crash,用于生成演示Native层Crash所用的so。</p>
+</li>
+<li><p>在crash模块下的src/main/java/目录下创建CrashTest.java，声明native方法</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CrashTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"crash_test"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testCrash</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        test();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>在crash模块下的src/main/目录下，新建jni目录</p>
+</li>
+<li><p>在jni目录下新建cpp目录，在cpp目录下创建crash_test.cpp</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cpp</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span></span><br><span class="line">JNIEXPORT <span class="keyword">void</span> JNICALL</span><br><span class="line">Java_com_wangyz_crash_CrashTest_test(JNIEnv* env,jclass clazz) &#123;</span><br><span class="line">    <span class="keyword">int</span> * i = <span class="literal">NULL</span>;</span><br><span class="line">    *i = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>生成so</p>
+<p>可以通过ndk-build直接生成so文件。在jni目录下创建Android.mk</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">mk</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight mk"><table><tr><td class="code"><pre><span class="line">LOCAL_PATH := <span class="variable">$(<span class="built_in">call</span> my-<span class="built_in">dir</span>)</span></span><br><span class="line"><span class="keyword">include</span> <span class="variable">$(CLEAR_VARS)</span></span><br><span class="line"></span><br><span class="line">LOCAL_MODULE := crash_test</span><br><span class="line">LOCAL_SRC_FILES := cpp/crash_test.cpp</span><br><span class="line"><span class="keyword">include</span> <span class="variable">$(BUILD_SHARED_LIBRARY)</span></span><br></pre></td></tr></table></figure></div>
+
+<p>然后在jni的目录下，执行cmd命令ndk-build。如果没有在系统环境变量中配置ndk，一般会报<code>&#39;ndk-build&#39; 不是内部或外部命令，也不是可运行的程序</code>。通过Android Studio下载的ndk，一般在Android Studio配置的SDK目录下。进入SDK目录下的ndk目录，选择一个版本的ndk，将这个路径配置到环境变量中。重新打开CMD窗口，并定位到jni目录下，重新执行ndk-build,就会在jni目录下生成libs和obj目录。</p>
+<p>也可以在crash模块的build.gradle中配置来生成aar</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 要编译哪些CPU架构</span></span><br><span class="line">        externalNativeBuild &#123;</span><br><span class="line">            cmake &#123;</span><br><span class="line">                abiFilters <span class="string">'armeabi-v7a'</span>, <span class="string">'x86'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把哪些CPU架构打包进去</span></span><br><span class="line">        ndk &#123;</span><br><span class="line">            abiFilters <span class="string">'armeabi-v7a'</span>, <span class="string">'x86'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    externalNativeBuild &#123;</span><br><span class="line">        cmake &#123;</span><br><span class="line">            path <span class="string">'src/main/jni/CMakeLists.txt'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在jni目录下创建CMakeLists.txt</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cmake</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># CMake方式需要在build.grale中配置其它信息,但可以build生成aar</span></span><br><span class="line"><span class="comment"># 采用Android.mk配置，不需要再额外配置信息</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(cpp/)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span>(crash_test SHARED cpp/crash_test.cpp)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(crash_test)</span><br></pre></td></tr></table></figure></div>
+
+<p>build后，就可以生成包含so的aar文件</p>
+<p>crash模块的目录结构</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/cc3c8a44-c166-49b2-b47f-6dff026e7cf1.png" data-fancybox="group" data-caption="breakpadlib目录结构" class="fancybox"><img alt="breakpadlib目录结构" title="breakpadlib目录结构" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/cc3c8a44-c166-49b2-b47f-6dff026e7cf1.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>将aar放到app模块的libs目录，并在build.gradle中增加对新加入的aar的引用</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">api(name: <span class="string">'crash-release'</span>, ext: <span class="string">'aar'</span>)## 测试Crash</span><br></pre></td></tr></table></figure></div>
+
+</li>
+</ol>
+<h2 id="测试Crash"><a href="#测试Crash" class="headerlink" title="测试Crash"></a>测试Crash</h2><h3 id="Java-Crash"><a href="#Java-Crash" class="headerlink" title="Java Crash"></a>Java Crash</h3><p>在Activity的onCreate中加入以下代码</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟java crash</span></span><br><span class="line"><span class="keyword">int</span> i = <span class="number">1</span> / <span class="number">0</span>;</span><br></pre></td></tr></table></figure></div>
+
+<p>打包APK，安装到手机，运行APK，程序Crash。查看/sdcard/Android/data/包名/，发现在java_crash目录，生成了记录crash信息的文件。</p>
+<h3 id="Native-Crash"><a href="#Native-Crash" class="headerlink" title="Native Crash"></a>Native Crash</h3><p>在Activity的onCreate中加入以下代码</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟native crash</span></span><br><span class="line">CrashTest.testCrash();</span><br></pre></td></tr></table></figure></div>
+
+<p>打包APK，安装到手机，运行APK，程序Crash。查看/sdcard/Android/data/包名/，发现在native_crash目录，生成了记录crash信息的文件xxx.dmp。</p>
+<p>将dmp文件导出到电脑。然后在Android Studio的安装目录/bin/lldb/bin中，执行CMD命令</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cmd</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">minidump_stackwalk D:\<span class="number">15</span>d05b74-<span class="number">5316</span>-<span class="number">4082</span>-cb24cda2-<span class="number">80</span>f355e4.dmp &gt; crash.txt</span><br></pre></td></tr></table></figure></div>
+
+<p>在当前目录下会生成crash.txt文件</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Operating system: Android</span><br><span class="line">                  0.0.0 Linux 4.4.23+ #1 SMP PREEMPT Wed Sep 30 13:40:36 CST 2020 armv7l</span><br><span class="line">CPU: arm</span><br><span class="line">     ARMv1 ARM part(0x4100d0b0) features: half,thumb,fastmult,vfpv2,edsp,neon,vfpv3,tls,vfpv4,idiva,idivt</span><br><span class="line">     8 CPUs</span><br><span class="line"></span><br><span class="line">GPU: UNKNOWN</span><br><span class="line"></span><br><span class="line">Crash reason:  SIGILL</span><br><span class="line">Crash address: 0xcb13875c</span><br><span class="line">Process uptime: not available</span><br><span class="line"></span><br><span class="line">Thread 0 (crashed)</span><br><span class="line"> 0  libcrash_test.so + 0x75c</span><br><span class="line">     r0 &#x3D; 0xed7b1230    r1 &#x3D; 0xffc18d0c    r2 &#x3D; 0x00430000    r3 &#x3D; 0xffc18ec8</span><br><span class="line">     r4 &#x3D; 0xef0c35f4    r5 &#x3D; 0x00000000    r6 &#x3D; 0x00000000    r7 &#x3D; 0xffc18fc8</span><br><span class="line">     r8 &#x3D; 0x00000056    r9 &#x3D; 0xed7cb000   r10 &#x3D; 0x00000000   r12 &#x3D; 0xcb13875d</span><br><span class="line">     fp &#x3D; 0xffc18d74    sp &#x3D; 0xffc18d00    lr &#x3D; 0xcb2d3519    pc &#x3D; 0xcb13875c</span><br><span class="line">    Found by: given as instruction pointer in context</span><br><span class="line"> 1  dalvik-LinearAlloc (deleted) + 0xe5f2</span><br><span class="line">     sp &#x3D; 0xffc18d04    pc &#x3D; 0xef0c35f4</span><br><span class="line">    Found by: stack scanning</span><br><span class="line"> 2  dalvik-main space (region space) (deleted) + 0xc909ce</span><br><span class="line">     sp &#x3D; 0xffc18d10    pc &#x3D; 0x138909d0</span><br><span class="line">    Found by: stack scanning</span><br><span class="line"> 3  libart.so + 0x3e0931</span><br><span class="line">     sp &#x3D; 0xffc18d70    pc &#x3D; 0xeb2a0933</span><br><span class="line">    Found by: stack scanning</span><br><span class="line"> 4  base.vdex + 0x1d521f</span><br><span class="line">     sp &#x3D; 0xffc18d78    pc &#x3D; 0xcb519221</span><br><span class="line">    Found by: stack scanning</span><br></pre></td></tr></table></figure></div>
+
+<p>这个文件列出了操作系统、CPU等信息。</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/866f8e10-bee6-4ea2-9c4e-254e2c55b421.png" data-fancybox="group" data-caption="breakpadlib目录结构" class="fancybox"><img alt="breakpadlib目录结构" title="breakpadlib目录结构" data-src="https://gitee.com/milovetingting/pic-repository/raw/master/866f8e10-bee6-4ea2-9c4e-254e2c55b421.png" src="/img/loading.gif" class="lazyload"></a></p>
+<p>在ndk目录下，找到ndk\21.0.6113669\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin\目录，这里的arm-linux-androideabi-4.9具体以手机的CPU架构为准。</p>
+<p>执行CMD</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">cmd</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">arm-linux-androideabi-addr2line.exe -f -C -e D:\libcrash_test.so <span class="number">0</span>x75c</span><br></pre></td></tr></table></figure></div>
+
+<p>这里的libcrash_text.so就是发生crash的so文件，0x75c为上面转换出来的crash.txt中发生crash的地址。通过addr2line工具，可以看到发生crash的具体行数。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>关于crash监控方案，本文记录得比较浅显的，可以查阅其它更详细的资料。</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p><a href="https://github.com/milovetingting/Samples/tree/master/BreakPad" target="_blank" rel="noopener">https://github.com/milovetingting/Samples/tree/master/BreakPad</a></p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Crash</tag>
+        <tag>Native</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>KMM跨平台开发环境搭建</title>
     <url>/2020/12/05/Android/KMM%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<blockquote>
@@ -6732,6 +6998,87 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       </tags>
   </entry>
   <entry>
+    <title>RemoteViews</title>
+    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
+<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
+</blockquote>
+<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
+<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
+<ul>
+<li><strong>onEnable:</strong></li>
+</ul>
+<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
+<ul>
+<li><strong>onUpdate:</strong></li>
+</ul>
+<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
+<ul>
+<li><strong>onDeleted:</strong></li>
+</ul>
+<p>每删除一次桌面小部件就调用一次</p>
+<ul>
+<li><strong>onDisabled:</strong></li>
+</ul>
+<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
+<ul>
+<li><strong>onReceive:</strong></li>
+</ul>
+<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
+<p><strong>PendingIntent</strong></p>
+<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
+<p>PendingIntent主要方法：</p>
+<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
+</blockquote>
+<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
+</blockquote>
+<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
+<blockquote>
+<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
+</blockquote>
+<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
+<p><strong>flags:</strong></p>
+<ul>
+<li>FLAG_ONE_SHOT:</li>
+</ul>
+<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
+<ul>
+<li>FLAG_NO_CREATE:</li>
+</ul>
+<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
+<ul>
+<li>FLAG_CANCEL_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
+<ul>
+<li>FLAG_UPDATE_CURRENT:</li>
+</ul>
+<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
+<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
+<p><strong>Layout</strong></p>
+<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
+<p><strong>View</strong></p>
+<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
+<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
+<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
+<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
+<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
+]]></content>
+      <categories>
+        <category>Android艺术探索</category>
+      </categories>
+      <tags>
+        <tag>RemoteViews</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Gradle插件</title>
     <url>/2020/01/01/Gradle%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97/%E7%AC%AC5%E7%AB%A0-Gradle%E6%8F%92%E4%BB%B6/</url>
     <content><![CDATA[<blockquote>
@@ -6812,87 +7159,6 @@ compareAndSetState()</code></pre><p>AQS 定义两种资源共享方式</p>
       <tags>
         <tag>Gradle</tag>
         <tag>插件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RemoteViews</title>
-    <url>/2020/01/01/Android%E5%BC%80%E5%8F%91%E8%89%BA%E6%9C%AF%E6%8E%A2%E7%B4%A2/RemoteViews/</url>
-    <content><![CDATA[<blockquote>
-<p>个人博客:<br><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
-</blockquote>
-<h1 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h1><blockquote>
-<p>RemoteViews表示的是一个View结构，它可以在其他进程中显示。RemoteViews在Android中的使用场景有两种：通知栏和桌面小部件。</p>
-</blockquote>
-<h2 id="1、RemoteViews的应用"><a href="#1、RemoteViews的应用" class="headerlink" title="1、RemoteViews的应用"></a>1、RemoteViews的应用</h2><p>RemoteViews在实际开发中，主要用在通知栏的桌面小部件的开发过程中。通知栏主要是通过NotificationManager的notify方法来实现，除了默认效果，还可以另外定义布局。桌面小部件则是通过AppWidgetProvider来实现，AppWidgetProvider本质上是一个广播。RemoteViews运行在系统的SystemServer进程。</p>
-<p>AppWidgetProvider除了最常用的onUpdate方法，还有以下几个方法：</p>
-<ul>
-<li><strong>onEnable:</strong></li>
-</ul>
-<p>当该窗口小部件第一次添加到桌面时调用该方法，可添加多次但只在第一次调用。</p>
-<ul>
-<li><strong>onUpdate:</strong></li>
-</ul>
-<p>小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由updatePeriodMillis来指定，每个周期小部件都会自动更新一次。</p>
-<ul>
-<li><strong>onDeleted:</strong></li>
-</ul>
-<p>每删除一次桌面小部件就调用一次</p>
-<ul>
-<li><strong>onDisabled:</strong></li>
-</ul>
-<p>当最后一个该类型的桌面小部件被删除时调用该方法</p>
-<ul>
-<li><strong>onReceive:</strong></li>
-</ul>
-<p>这是广播的内置方法，用于分发具体的事件给其它方法。</p>
-<p><strong>PendingIntent</strong></p>
-<p>PendingIntent表示一种处于pending状态的意图，而pending状态表示的是一种待定、等待、即将发生的意思，就是说接下来有一个Intent将在某个特定的时刻发生。PendingIntent和Intent的区别在于，PendingIntent是在将来的某个不确定的时刻发生，而Intent是立刻发生。PendingIntent典型使用场景是给RemoveViews添加单击事件，通过send和cancel方法来发送和取消特定的待定的Intent。</p>
-<p>PendingIntent主要方法：</p>
-<p><strong>getActivity(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startActivity(Intent)</p>
-</blockquote>
-<p><strong>getService(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.startService(Intent)</p>
-</blockquote>
-<p><strong>getBroadcast(Context context,int requestCode,Intent intent,int flags)</strong></p>
-<blockquote>
-<p>获得一个PendingIntent，该待定意图发生时，效果相当于Context.sendBroadcast(Intent)</p>
-</blockquote>
-<p>PendingIntent匹配规则：如果两个PendingIntent它们内部的Intent相同并且requestCode也相同，那么这两个PendingIntent就是相同的。</p>
-<p><strong>flags:</strong></p>
-<ul>
-<li>FLAG_ONE_SHOT:</li>
-</ul>
-<p>当前描述的PendingIntent只能被使用一次，然后它就会被自动cancel。</p>
-<ul>
-<li>FLAG_NO_CREATE:</li>
-</ul>
-<p>当前描述的PendingIntent不会主动创建。日常开发中没有太多的使用意义。</p>
-<ul>
-<li>FLAG_CANCEL_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被cancel，然后系统创建一个新的PendingIntent。对于通知栏消息，那些被cancel的消息单击后将无法打开。</p>
-<ul>
-<li>FLAG_UPDATE_CURRENT:</li>
-</ul>
-<p>当前描述的PendingIntent如果已经存在，那么它们都会被更新，即Intent中的Extras会被替换成最新的。</p>
-<h2 id="2、RemoteViews的内部机制"><a href="#2、RemoteViews的内部机制" class="headerlink" title="2、RemoteViews的内部机制"></a>2、RemoteViews的内部机制</h2><p>RemoteView并不能支持所有的View类型，它所支持的类型如下：</p>
-<p><strong>Layout</strong></p>
-<p>FrameLayout、LinearLayout、RelativeLayout、GridLayout。</p>
-<p><strong>View</strong></p>
-<p>AnalogClock、Buttom、Chronometer、ImageButton、ImageView、ProgressBar、TextView、ViewFlipper、ListView、GridView、StackView、AdapterViewFlipper、ViewStub。</p>
-<p>上面所描述的是RemoteViews所支持的所有View类型，RemoteViews不支持它们的子类以及其他View类型。</p>
-<p>通知栏和桌面小部件分别由NotificationManager和AppWidgetManager管理，而NotificationManager和AppWidgetManager通过Binder分别和SystemServer进程中的NotificationManagerService以及AppWidgetService进行通信。由此可见，通知栏和桌面小部件中的布局实际是在NotificationManagerService以及AppWidgetService中被加载的,而它们运行在系统的SystemServer中。</p>
-<p>setOnClickPendingIntent、setPendingIntentTemplate以及setOnClickFillInIntent它们之间的区别和联系：</p>
-<p>首先setOnClickPendingIntent用于给普通View设置单击事件，但不能给集合(ListView和StackView)中的View设置单击事件，比如我们不能给ListView中的item通过setOnClickPendingIntent这种方式添加单击事件，因为开销比较大，所以系统禁止了这种方式；其次，如果要给ListView和StackView中的item添加单击事件，则必须将setPendingIntentTemplate和setOnClickFillInIntent组合使用才可以。</p>
-]]></content>
-      <categories>
-        <category>Android艺术探索</category>
-      </categories>
-      <tags>
-        <tag>RemoteViews</tag>
       </tags>
   </entry>
   <entry>
