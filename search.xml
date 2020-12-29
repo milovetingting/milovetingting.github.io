@@ -1,6 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>阿里云HttpDns接入</title>
+    <url>/2020/12/29/Android/%E9%98%BF%E9%87%8C%E4%BA%91HttpDns%E6%8E%A5%E5%85%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>个人博客</p>
+<p><a href="http://www.milovetingting.cn">http://www.milovetingting.cn</a></p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>简单记录集成阿里云HTTPDNS服务的过程</p>
+<h2 id="什么是HTTPDNS"><a href="#什么是HTTPDNS" class="headerlink" title="什么是HTTPDNS"></a>什么是HTTPDNS</h2><blockquote>
+<p>HTTPDNS是面向多端应用（移动端APP，PC客户端应用）的域名解析服务，具有域名防劫持、精准调度、实时解析生效的特性。</p>
+</blockquote>
+<p>以上来自阿里云HTTPDNS文档。</p>
+<h2 id="接入流程"><a href="#接入流程" class="headerlink" title="接入流程"></a>接入流程</h2><h3 id="服务开通"><a href="#服务开通" class="headerlink" title="服务开通"></a>服务开通</h3><p>HTTPDNS是移动研发平台提供的服务，请参考<a href="https://help.aliyun.com/document_detail/169962.html" target="_blank" rel="noopener">EMAS 快速入门</a>开通服务。</p>
+<ol>
+<li>开通服务后，进入控制台，点击添加产品，如图所示</li>
+</ol>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/f0419b44-fc1c-4b2c-85b5-7e5b244c2f11.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://gitee.com/milovetingting/pic-repository/raw/master/f0419b44-fc1c-4b2c-85b5-7e5b244c2f11.png" src="/img/loading.gif" class="lazyload"></a></p>
+<ol start="2">
+<li><p>完成添加产品后，点击添加应用，如图所示</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/1b62e94e-628f-4eb7-a156-abab0345d783.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://gitee.com/milovetingting/pic-repository/raw/master/1b62e94e-628f-4eb7-a156-abab0345d783.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>添加应用完成后，点击刚才添加的应用</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/4f33e154-c3e0-4e9e-8693-c0963131ba32.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://gitee.com/milovetingting/pic-repository/raw/master/4f33e154-c3e0-4e9e-8693-c0963131ba32.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>查看Account ID,这个id后面配置dns会用到</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/f054ef36-2055-432e-a549-4810491df8d9.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://gitee.com/milovetingting/pic-repository/raw/master/f054ef36-2055-432e-a549-4810491df8d9.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+<li><p>在域名列表中添加域名</p>
+<p><a href="https://gitee.com/milovetingting/pic-repository/raw/master/2d472091-fc93-48cc-81a4-a99219f123ac.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://gitee.com/milovetingting/pic-repository/raw/master/2d472091-fc93-48cc-81a4-a99219f123ac.png" src="/img/loading.gif" class="lazyload"></a></p>
+</li>
+</ol>
+<h3 id="Android-SDK-接入"><a href="#Android-SDK-接入" class="headerlink" title="Android SDK 接入"></a>Android SDK 接入</h3><ol>
+<li>在项目根目录下的build.gradle文件中添加Maven仓库地址</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">    <span class="keyword">repositories</span> &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url <span class="string">'http://maven.aliyun.com/nexus/content/repositories/releases/'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<ol start="2">
+<li>在需要引入HTTPDNS服务的模块下的build.gradle中添加依赖</li>
+</ol>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="keyword">compile</span> (<span class="string">'com.aliyun.ams:alicloud-android-httpdns:1.3.3@aar'</span>) &#123;</span><br><span class="line">        transitive <span class="keyword">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>按照以上官方文档配置，在同步工程后，会报错</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Could not find com.aliyun.ams:alicloud-android-utdid:1.1.5.4.</span><br><span class="line">Searched in the following locations:</span><br><span class="line">  - http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;repositories&#x2F;releases&#x2F;com&#x2F;aliyun&#x2F;ams&#x2F;alicloud-android-utdid&#x2F;1.1.5.4&#x2F;alicloud-android-utdid-1.1.5.4.pom</span><br><span class="line">  - https:&#x2F;&#x2F;dl.google.com&#x2F;dl&#x2F;android&#x2F;maven2&#x2F;com&#x2F;aliyun&#x2F;ams&#x2F;alicloud-android-utdid&#x2F;1.1.5.4&#x2F;alicloud-android-utdid-1.1.5.4.pom</span><br><span class="line">  - https:&#x2F;&#x2F;jcenter.bintray.com&#x2F;com&#x2F;aliyun&#x2F;ams&#x2F;alicloud-android-utdid&#x2F;1.1.5.4&#x2F;alicloud-android-utdid-1.1.5.4.pom</span><br><span class="line">Required by:</span><br><span class="line">    project :app &gt; com.aliyun.ams:alicloud-android-httpdns:1.3.3 &gt; com.aliyun.ams:alicloud-android-beacon:1.0.4.3</span><br></pre></td></tr></table></figure></div>
+
+<p>修改如下</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">implementation(<span class="string">'com.aliyun.ams:alicloud-android-httpdns:1.3.3@aar'</span>) &#123;</span><br><span class="line">    transitive <span class="keyword">true</span></span><br><span class="line">    <span class="keyword">exclude</span> <span class="keyword">group</span>: <span class="string">'com.aliyun.ams'</span>, module: <span class="string">'alicloud-android-utdid'</span></span><br><span class="line">&#125;</span><br><span class="line">implementation <span class="string">'com.aliyun.ams:alicloud-android-utdid:1.1.5.3'</span></span><br></pre></td></tr></table></figure></div>
+
+<ol start="3">
+<li><p>引入Retrofit及gson</p>
+<p>增加依赖</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">gradle</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">implementation <span class="string">'com.squareup.retrofit2:retrofit:2.3.0'</span></span><br><span class="line">implementation <span class="string">'com.squareup.retrofit2:converter-gson:2.3.0'</span></span><br><span class="line">implementation <span class="string">'com.google.code.gson:gson:2.8.6'</span></span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>配置DNS</p>
+<p>新建一个类，继承Dns</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AliDns</span> <span class="keyword">implements</span> <span class="title">Dns</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> HttpDnsService httpDns;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AliDns</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//传入account_id，account_id为HTTPDNS控制台添加应用时生成的</span></span><br><span class="line">        httpDns = HttpDns.getService(context, <span class="string">"account_id"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;InetAddress&gt; <span class="title">lookup</span><span class="params">(String hostname)</span> <span class="keyword">throws</span> UnknownHostException </span>&#123;</span><br><span class="line">        <span class="comment">//通过异步解析接口获取ip</span></span><br><span class="line">        String ip = httpDns.getIpByHostAsync(hostname);</span><br><span class="line">        <span class="comment">//Android9.0系统及以后版本，https请求无法直接访问，方便起见，直接在AndroidManifest.xml中配置android:usesCleartextTraffic="true"</span></span><br><span class="line">        <span class="keyword">if</span> (ip != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//如果ip不为null，直接使用该ip进行网络请求</span></span><br><span class="line">            Log.e(<span class="string">"AliDns"</span>, <span class="string">"ip:"</span> + ip);</span><br><span class="line">            List&lt;InetAddress&gt; inetAddresses = Arrays.asList(InetAddress.getAllByName(ip));</span><br><span class="line">            <span class="keyword">return</span> inetAddresses;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果返回null，走系统DNS服务解析域名</span></span><br><span class="line">        <span class="keyword">return</span> Dns.SYSTEM.lookup(hostname);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>设置OkHttpClient的dns</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">OkHttpClient client = <span class="keyword">new</span> OkHttpClient.Builder().dns(<span class="keyword">new</span> AliDns(getApplicationContext())).build();</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>调用请求</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder().client(client).baseUrl(<span class="string">"域名"</span>).addConverterFactory(GsonConverterFactory.create()).build();</span><br><span class="line">Api api = retrofit.create(Api<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">Call&lt;Bean&gt; call = api.getBanner();</span><br><span class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;Bean&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;Bean&gt; call, Response&lt;Bean&gt; response)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!response.isSuccessful()) &#123;</span><br><span class="line">            tv.setText(<span class="string">"请求失败，错误码:"</span> + response.code());</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">        Bean bean = response.body();</span><br><span class="line">        tv.setText(bean.toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;Bean&gt; call, Throwable t)</span> </span>&#123;</span><br><span class="line">    	tv.setText(t.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></div>
+
+</li>
+</ol>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p><a href="https://github.com/milovetingting/Samples" target="_blank" rel="noopener">https://github.com/milovetingting/Samples</a></p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>HttpDns</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android电量优化-Battery Historian环境搭建及简单使用</title>
     <url>/2020/12/12/Android/Android%E7%94%B5%E9%87%8F%E4%BC%98%E5%8C%96-Battery%20Historian%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<blockquote>
